@@ -1,0 +1,24 @@
+{
+  "name": "DropGala",
+  "short_name": "DropGala",
+  "lang": "en-US",
+  "description": "Great place to buy items with a fair price.",
+  "start_url": "/",
+  "scope": "https://business.dropgala.com/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "categories": ["shopping"],
+  "icons": [
+    {
+      "src": "/favicons//android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicons//android-chrome-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}

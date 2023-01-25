@@ -1,0 +1,11 @@
+export * as attributeQueries from './attribute.sql';
+export * as carouselQueries from './carousel.sql';
+export * as categoryQueries from './category.sql';
+export * as couponQueries from './coupon.sql';
+export * as loginQueries from './login.sql';
+export * as orderStatusQueries from './orderStatus.sql';
+export * as productQueries from './product.sql';
+export * as shippingQueries from './shipping.sql';
+export * as staffQueries from './staff.sql';
+export * as supplierQueries from './supplier.sql';
+export * as tagQueries from './tag.sql';

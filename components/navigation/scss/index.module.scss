@@ -1,0 +1,126 @@
+.menu-icon-container {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 18px;
+  cursor: pointer;
+  transition: 0.5s ease-in-out;
+
+  .span {
+    display: block;
+    position: relative;
+    left: 0;
+    height: 3px;
+    width: 30px;
+    background: #ececec;
+    opacity: 1;
+    transition: 0.25s all ease-in-out;
+
+    &--open {
+      &:nth-child(1) {
+        top: 9.5px;
+        width: 30px;
+        transform: rotate(135deg);
+      }
+
+      &:nth-child(2) {
+        left: -30px;
+        top: 6px;
+        opacity: 0;
+      }
+
+      &:nth-child(3) {
+        top: 2px;
+        width: 30px;
+        transform: rotate(-135deg);
+      }
+    }
+    &--close {
+      &:nth-child(1) {
+        top: 0;
+        background-clip: red;
+      }
+
+      &:nth-child(2) {
+        top: 5px;
+      }
+
+      &:nth-child(3) {
+        top: 10px;
+      }
+    }
+  }
+}
+
+.mini-slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: inherit;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+
+.notification-bubble{
+    position: absolute;
+    border-radius: 20px;
+    line-height: 0px;
+    height: 22px;
+    width: 22px;
+    box-sizing: content-box;
+    background-color: rgb(207, 19, 29);
+    top: 0;
+    right: -12px;
+    z-index: 5;
+    // padding: 0px 10px;
+    // margin-left: 0px;
+    // margin-top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span{
+      color: #fff;
+    }
+
+    &::before{
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffb5b585;
+      border-radius: 100%;
+      z-index: 0; // hide -1 / show 0
+      animation: pulse 2s infinite;
+      will-change: transform;
+      box-sizing: border-box;
+
+      @keyframes pulse{
+        0%{
+          transform:scale(1);
+          opacity:0;
+        }
+        10%{
+          opacity:1;
+        }
+        100%{
+          transform:scale(2.3);
+          opacity:0;
+        }
+      }
+    }
+}
+
+.border-hover{
+  border: 2px solid #807f7f;
+  box-shadow: 0 0 10px 2px #18181818;
+
+  &:hover{
+    border: 2px solid #a7e641;
+  }
+}

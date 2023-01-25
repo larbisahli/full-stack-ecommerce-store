@@ -1,0 +1,12 @@
+{
+  "USER-EXIT": "User already exist",
+  "EMAIL-EXIT": "Email already exist.",
+  "SERVER-ERROR": "Server error.",
+  "PERMISSION-DENIED": "Permission denied.",
+  "SOMETHING-HAPPENED": "Something happened.",
+  "UNKNOWN-ERROR": "Unknown error",
+  "USER-NOT-ACTIVE": "User is not active",
+  "USER-NOT-FOUND": "User does not exist",
+  "INCORRECT-PASSWORD": "Incorrect Password",
+  "INVALID-CSRF-TOKEN": "Invalid Token! Please refresh the page."
+}

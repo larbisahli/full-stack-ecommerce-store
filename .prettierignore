@@ -1,0 +1,10 @@
+.next
+.now
+.vercel
+.storybook
+coverage
+node_modules
+next-env.d.ts
+yarn.lock
+./utils/cities.min.json
+utils/cities.min.json

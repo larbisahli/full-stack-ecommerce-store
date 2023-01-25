@@ -1,0 +1,98 @@
+.simplebar-scrollbar::before {
+  background-color: #838383 !important;
+}
+
+.cut-line-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.cut-line-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cut-line-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.cut-line-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.cut-line-10 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 10;
+}
+
+.sidebar-triangle::after {
+  position: absolute;
+  right: -10px;
+  content: '';
+  width: 20px;
+  height: 20px;
+  background: rgb(243, 244, 246);
+  transform: rotate(45deg);
+  box-shadow: 0 0 5px 3px #6a6a6a94;
+}
+
+.nav-side-background {
+  background-color: #000000;
+  background-image: linear-gradient(315deg, #000000 0%, #08201a 74%);
+}
+
+.sub-nav-height-transition {
+  overflow-y: hidden;
+  max-height: 0px;
+  backdrop-filter: none;
+  transition: background 0.44s 0.2s cubic-bezier(0.52, 0.16, 0.24, 1),
+    max-height 0.56s cubic-bezier(0.52, 0.16, 0.24, 1);
+}
+
+.sub-nav-height-transition-open {
+  max-height: 800px;
+  transition: background 0.36s cubic-bezier(0.32, 0.08, 0.24, 1),
+    max-height 0.56s cubic-bezier(0.52, 0.16, 0.24, 1);
+  border-bottom: 1px solid #333;
+}
+
+.nav-sub-links-bg {
+  background: #2c2c2c8a;
+}
+
+.card {
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 5px 20px 0 rgb(0 0 0 / 5%);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.editor-wrapper-class {
+  @apply appearance-none;
+}
+
+.editor-class {
+  min-height: 150px;
+  @apply p-2 rounded appearance-none transition duration-300 ease-in-out text-heading text-sm hover:outline-none hover:ring-0 border border-border-base hover:border-accent;
+}
+
+.checkbox-rounded + label:before {
+  border-radius: 50% !important;
+}
+
+.rc-pagination-item {
+  padding: 0 2px;
+  width: auto !important;
+}

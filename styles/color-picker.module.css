@@ -1,0 +1,12 @@
+.color_picker {
+  @apply p-0 h-12 w-12 flex items-center bg-transparent rounded-full border border-border-200 outline-none appearance-none focus:outline-none focus:ring-0;
+}
+
+.color_picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color_picker::-webkit-color-swatch {
+  border-radius: 100%;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+}
