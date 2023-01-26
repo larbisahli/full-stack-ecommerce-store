@@ -8,7 +8,7 @@ export function getCategories(): string {
   FROM categories AS cate WHERE parent_id is null`;
 }
 
-export function getCategoriegetCategoriesForAdminsCount(): string {
+export function getCategoriesCount(): string {
   return `SELECT count(id) FROM categories WHERE parent_id is null`;
 }
 

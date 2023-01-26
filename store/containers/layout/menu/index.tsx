@@ -34,30 +34,37 @@ const Menu = ({ category }: Props) => {
         </MyLink>
       ) : (
         <HeadlessMenu>
-          <HeadlessMenu.Button>
-            <p className="font-semibold text-gray-800">{category.name}</p>
-          </HeadlessMenu.Button>
-          <Transition
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
-          >
-            <HeadlessMenu.Items className="bg-purple-700 absolute right-0 py-3 px-5">
-              {category?.subCategories?.map((sub) => (
-                <HeadlessMenu.Item
-                  as="a"
-                  key={`/${sub.name}`}
-                  href={sub.name}
-                  className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black"
-                >
-                  <MyLink href="/profile">{sub.name}</MyLink>
-                </HeadlessMenu.Item>
-              ))}
-            </HeadlessMenu.Items>
-          </Transition>
+          <div className="relative">
+            <HeadlessMenu.Button>
+              <p className="font-semibold text-gray-800">{category.name}</p>
+            </HeadlessMenu.Button>
+            <Transition
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+            >
+              <HeadlessMenu.Items
+                style={{ transform: 'translateX(-20%)' }}
+                className="z-10 absolute top-0 left-0 mt-3 bg-white divide-y divide-gray-100 rounded shadow-lg border border-solid border-gray-200 w-44 dark:bg-gray-700"
+              >
+                {category?.subCategories?.map((sub) => (
+                  <HeadlessMenu.Item
+                    as="a"
+                    key={`/${sub.name}`}
+                    href={sub.name}
+                    className="block px-5 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <MyLink href="/profile">
+                      <p className="font-semibold text-gray-700">{sub.name}</p>
+                    </MyLink>
+                  </HeadlessMenu.Item>
+                ))}
+              </HeadlessMenu.Items>
+            </Transition>
+          </div>
         </HeadlessMenu>
       )}
     </div>
