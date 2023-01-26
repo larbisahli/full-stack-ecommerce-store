@@ -57,8 +57,8 @@ export default function ProductsPage({ client }: SSRProps) {
   //   fetchPolicy: 'cache-and-network'
   // });
 
-  const productsCount = 0 // data?.productsCount?.count;
-  const productsForAdmin = [] // data?.productsForAdmin;
+  const productsCount = 0; // data?.productsCount?.count;
+  const productsForAdmin = []; // data?.productsForAdmin;
 
   useGetStaff(client);
   // useErrorLogger(error);

@@ -1,37 +1,34 @@
-import {
-  CookieNames,
-  ErrorNames,
-} from '@ts-types/enums';
-import {Pool, PoolClient, QueryResult } from 'pg';
+import { CookieNames, ErrorNames } from '@ts-types/enums';
+import { limit } from '@utils/utils';
+import { Pool, PoolClient, QueryResult } from 'pg';
 
-const CRUDPool:PoolClient = new Pool({
-    host: process.env.END_POINT,
-    port: process.env.PORT,
-    database: process.env.POSTGRES_DB,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    max: 10,
-  });
+const CRUDPool: PoolClient = new Pool({
+  host: process.env.END_POINT,
+  port: process.env.PORT,
+  database: process.env.POSTGRES_DB,
+  user: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  max: 10
+});
 
 export default class PostgresClient {
   protected readonly ErrorNames: typeof ErrorNames;
   protected readonly CookieNames: typeof CookieNames;
-  public POST: string
-  public GET: string
-  public DELETE: string
-  public limit: number
+  public POST: string;
+  public GET: string;
+  public DELETE: string;
+  public limit: number;
 
   constructor() {
     this.ErrorNames = ErrorNames;
     this.CookieNames = CookieNames;
-    this.POST = 'POST'
-    this.GET = 'GET'
-    this.DELETE = 'DELETE'
-    this.limit = 15
+    this.POST = 'POST';
+    this.GET = 'GET';
+    this.DELETE = 'DELETE';
+    this.limit = limit;
   }
 
   public transaction = async (): Promise<PoolClient> => {
-
     const client: PoolClient = await CRUDPool.connect();
 
     const query = client.query;

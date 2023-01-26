@@ -26,7 +26,7 @@ const Navbar = () => {
   return (
     <header style={{ zIndex: 100 }} className="bg-white shadow fixed w-full">
       <nav
-        style={{backgroundColor: '#181818'}}
+        style={{ backgroundColor: '#181818' }}
         className="px-5 md:px-8 py-2 flex items-center justify-between border-b border-gray-900"
       >
         {/* <!-- Mobile menu button --> */}

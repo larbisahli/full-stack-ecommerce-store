@@ -3,6 +3,8 @@ import '@fontsource/open-sans';
 import '@fontsource/open-sans/600.css';
 import '@fontsource/open-sans/700.css';
 import '@styles/main.css';
+import '@store/assets/styles/index.css';
+import 'typeface-open-sans';
 
 import ErrorBoundary from '@components/ErrorBoundary';
 import DefaultSeo from '@components/ui/default-seo';
@@ -13,6 +15,11 @@ import { ModalProvider } from '@components/ui/modal/modal.context';
 import { StaffInfoProvider } from '@contexts/staff.context';
 // import { SettingsProvider } from "@contexts/settings.context";
 import { UIProvider } from '@contexts/ui.context';
+import { CartProvider } from '@store/contexts/cart/cart.provider';
+// import { ModalProvider } from 'contexts/modal/modal.provider';
+import { DrawerProvider } from '@store/contexts/drawer/drawer.provider';
+import { SearchProvider } from '@store/contexts/search/use-search';
+import { StickyProvider } from '@store/contexts/sticky/sticky.provider';
 // import PageLoader from "@components/ui/page-loader/page-loader";
 // import { useSettingsQuery } from "@graphql/settings.graphql";
 import type { AppProps } from 'next/app';
@@ -75,20 +82,28 @@ function App({ Component, pageProps }: AppProps) {
         transition={Slide}
       />
       <ErrorBoundary>
-          <StaffInfoProvider>
-            <LoadingBar />
-            {/* <AppSettings> */}
-            <UIProvider>
-              <ModalProvider>
-                <ManagedModal />
-                <DefaultSeo />
-                <Layout {...pageProps}>
-                  <Component {...pageProps} />
-                </Layout>
-              </ModalProvider>
-            </UIProvider>
-            {/* </AppSettings> */}
-          </StaffInfoProvider>
+        <SearchProvider>
+          <StickyProvider>
+            <DrawerProvider>
+              <CartProvider>
+                <StaffInfoProvider>
+                  <LoadingBar />
+                  {/* <AppSettings> */}
+                  <UIProvider>
+                    <ModalProvider>
+                      <ManagedModal />
+                      <DefaultSeo />
+                      <Layout {...pageProps}>
+                        <Component {...pageProps} />
+                      </Layout>
+                    </ModalProvider>
+                  </UIProvider>
+                  {/* </AppSettings> */}
+                </StaffInfoProvider>
+              </CartProvider>
+            </DrawerProvider>
+          </StickyProvider>
+        </SearchProvider>
       </ErrorBoundary>
     </Fragment>
   );

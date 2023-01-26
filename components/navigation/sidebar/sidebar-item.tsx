@@ -5,7 +5,7 @@ import ActiveLink from '@components/ui/activeLink';
 import { useUI } from '@contexts/ui.context';
 import cn from 'classnames';
 import { useTranslation } from 'next-i18next';
-import React, { Dispatch, SetStateAction} from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface Props {
   id: string;
@@ -34,7 +34,7 @@ const SidebarItem = ({
   includes,
   line,
   showTriangle,
-  padding,
+  padding
 }: Props) => {
   const { t } = useTranslation();
 
@@ -42,31 +42,26 @@ const SidebarItem = ({
     <React.Fragment>
       {line && <div className="w-full h-px bg-sidenav-divider mt-2 mb-2"></div>}
       <ActiveLink
-          href={href}
-          activeClassName={cn('relative !bg-green-600 hover:!bg-green-500 !text-white', {
+        href={href}
+        activeClassName={cn(
+          'relative !bg-green-600 hover:!bg-green-500 !text-white',
+          {
             'sidebar-triangle': showTriangle
-          })}
-          className={cn(
-            'overflow-hidden flex w-full pl-6 hover:bg-gray-700 p-2 items-center text-base text-sidenav-color text-start focus:text-accent hover:border-solid hover:border-green-300 hover:border-l-2 border-l-2 border-transparent border-solid',
-            { 'nav-sub-links-bg': !!padding }
-          )}
-          includes={includes}
-        >
-          <SidebarLabel
-            icon={icon}
-            padding={padding}
-            label={label}
-          />
-        </ActiveLink>
+          }
+        )}
+        className={cn(
+          'overflow-hidden flex w-full pl-6 hover:bg-gray-700 p-2 items-center text-base text-sidenav-color text-start focus:text-accent hover:border-solid hover:border-green-300 hover:border-l-2 border-l-2 border-transparent border-solid',
+          { 'nav-sub-links-bg': !!padding }
+        )}
+        includes={includes}
+      >
+        <SidebarLabel icon={icon} padding={padding} label={label} />
+      </ActiveLink>
     </React.Fragment>
   );
 };
 
-const SidebarLabel = ({
-  icon,
-  padding,
-  label,
-}: LabelProps) => {
+const SidebarLabel = ({ icon, padding, label }: LabelProps) => {
   const { closeSidebar } = useUI();
 
   const handleCloseSidebar = () => {

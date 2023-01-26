@@ -57,7 +57,7 @@ const LoginForm = () => {
   //   }
   // });
 
-  const loading = true
+  const loading = true;
 
   useErrorLogger(error);
 

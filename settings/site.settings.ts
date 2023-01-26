@@ -100,7 +100,7 @@ export const siteSettings = {
         id: 'nMtvIg',
         href: '/settings',
         label: 'sidebar-nav-item-settings',
-        icon: 'SettingsIcon',
+        icon: 'SettingsIcon'
       }
     ]
   },

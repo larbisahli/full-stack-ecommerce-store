@@ -16,28 +16,26 @@ const Sidebar: React.FC<Props> = ({ absolute = false }) => {
 
   return (
     <aside
-      style={{backgroundColor: '#181818'}}
+      style={{ backgroundColor: '#181818' }}
       className={classNames(
         'w-64 xl:w-64 overflow-y-auto fixed start-0 bottom-0 h-full pt-22',
         { hidden: !absolute, 'lg:block': !absolute, block: absolute }
       )}
     >
       <Scrollbar className="flex flex-col w-full h-full py-3">
-        {siteSettings.sidebarLinks.admin.map(
-          ({ id, href, label, icon}) => (
-            <SidebarItem
-              key={id}
-              id={id}
-              href={href}
-              label={t(label)}
-              icon={icon}
-              includes={href}
-              showLinkId={showLinkIdLevel1}
-              setShowLinkId={setShowLinkIdLevel1}
-              showTriangle
-            />
-          )
-        )}
+        {siteSettings.sidebarLinks.admin.map(({ id, href, label, icon }) => (
+          <SidebarItem
+            key={id}
+            id={id}
+            href={href}
+            label={t(label)}
+            icon={icon}
+            includes={href}
+            showLinkId={showLinkIdLevel1}
+            setShowLinkId={setShowLinkIdLevel1}
+            showTriangle
+          />
+        ))}
         <div className="w-full h-32"></div>
       </Scrollbar>
     </aside>

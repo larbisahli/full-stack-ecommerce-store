@@ -37,8 +37,8 @@ export default function AttributePage({ client }: SSRProps) {
   //   fetchPolicy: 'cache-and-network'
   // });
 
-  const attributesCount = 0 // data?.attributesCount?.count;
-  const attributes = [] //data?.attributesForAdmin;
+  const attributesCount = 0; // data?.attributesCount?.count;
+  const attributes = []; //data?.attributesForAdmin;
 
   useGetStaff(client);
   // useErrorLogger(error);
@@ -103,8 +103,7 @@ export default function AttributePage({ client }: SSRProps) {
             'h-auto visible': visible,
             'h-0 invisible': !visible
           })}
-        >
-        </div>
+        ></div>
       </Card>
       <div></div>
       <AttributeList

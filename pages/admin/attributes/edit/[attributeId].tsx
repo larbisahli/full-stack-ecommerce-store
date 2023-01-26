@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-
 export default function UpdateAttributePage({ client }: SSRProps) {
   const { t } = useTranslation();
   const { query } = useRouter();
@@ -30,7 +29,7 @@ export default function UpdateAttributePage({ client }: SSRProps) {
   useGetStaff(client);
   // useErrorLogger(error);
 
-  const attribute = {} // data?.attributeForAdmin;
+  const attribute = {}; // data?.attributeForAdmin;
 
   // if (loading) {
   //   return <Loader text={t('common:text-loading')} />;

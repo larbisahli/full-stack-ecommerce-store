@@ -1,9 +1,6 @@
 import CategoryList from '@components/category/category-list';
 import Card from '@components/common/card';
-import SortForm from '@components/common/sort-form';
 import { Add } from '@components/icons/add';
-import { ArrowDown } from '@components/icons/arrow-down';
-import { ArrowUp } from '@components/icons/arrow-up';
 import AppLayout from '@components/layouts/app';
 import ErrorMessage from '@components/ui/error-message';
 import LinkButton from '@components/ui/link-button';
@@ -13,40 +10,33 @@ import { verifyAuth } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
 import { Category } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
-import { fetcher } from '@utils/utils';
-import cn from 'classnames';
+import { fetcher, limit } from '@utils/utils';
 import isEmpty from 'lodash/isEmpty';
 import type { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useState } from 'react';
-import useSwr from 'swr'
-
-const limit = 10;
+import useSwr from 'swr';
 
 interface TCategory {
-  categories: Category[]
-  count: number
+  categories: Category[];
+  count: number;
 }
 
 export default function Categories({ client }: SSRProps) {
   const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
-  const [visible, setVisible] = useState(false);
 
-  const { data, error, isLoading } = useSwr<TCategory>(page ? `/api/category/categories/${page}` : null, fetcher)
+  const { data, error, isLoading } = useSwr<TCategory>(
+    page ? `/api/admin/category/categories/${page}` : null,
+    fetcher
+  );
 
-  console.log({data, error})
-
-  const {categories = [], count = 0} = data
+  const { categories = [], count = 0 } = data ?? {};
 
   useGetStaff(client);
   useErrorLogger(error);
-
-  const toggleVisible = () => {
-    setVisible((v) => !v);
-  };
 
   const handlePagination = (current: number) => {
     setPage(current);
@@ -88,25 +78,7 @@ export default function Categories({ client }: SSRProps) {
                 </div>
               </LinkButton>
             </div>
-            <button
-              className="text-accent text-base font-semibold flex items-center md:ms-5 mt-5 md:mt-0"
-              onClick={toggleVisible}
-            >
-              {t('common:text-filter')}{' '}
-              {visible ? (
-                <ArrowUp className="ms-2" />
-              ) : (
-                <ArrowDown className="ms-2" />
-              )}
-            </button>
           </div>
-        </div>
-        <div
-          className={cn('w-full flex transition', {
-            'h-auto visible': visible,
-            'h-0 invisible': !visible
-          })}
-        >
         </div>
       </Card>
       <CategoryList

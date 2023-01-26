@@ -90,8 +90,8 @@ export interface CreatedUpdatedByAt {
     lastName: string;
     profile?: ImageType;
   }>;
-  page?: number
-  limit?: number
+  page?: number;
+  limit?: number;
 }
 
 export interface RoleType extends CreatedUpdatedByAt {
@@ -122,6 +122,7 @@ export interface Category extends CreatedUpdatedByAt {
   name?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   children?: Nullable<Array<CategoryRef>>;
+  subCategories?: Nullable<Array<CategoryRef>>;
   active?: Scalars['Boolean'];
   thumbnail?: ImageType;
   icon?: Nullable<Scalars['String']>;

@@ -1,0 +1,274 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+
+/* Importing scrollbar css */
+@import './scrollbar.css';
+@import './rc-collapse.css';
+
+/* Custom Css starts from here */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+  line-height: 1.625;
+  position: relative;
+  @apply font-open;
+  @apply text-gray-700;
+  @apply text-14px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-open;
+  @apply text-gray-900;
+  @apply font-semibold;
+}
+
+h1 {
+  @apply text-30px;
+}
+
+h2 {
+  @apply text-24px;
+}
+
+h3 {
+  @apply text-18px;
+}
+
+h4 {
+  @apply text-16px;
+}
+
+h5 {
+  @apply text-14px;
+}
+
+h6 {
+  @apply text-13px;
+}
+
+input[type='search'],
+input,
+button {
+  -webkit-appearance: none;
+}
+
+.menuIcon {
+  width: 26px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.bar {
+  width: 13px;
+  height: 3px;
+  display: flex;
+  transition: all 0.25s ease-in-out;
+  @apply bg-gray-900;
+  @apply rounded-sm;
+}
+
+.bar:nth-child(2) {
+  width: 26px;
+  margin: 5px 0;
+}
+
+.bar:last-child {
+  width: 18px;
+}
+
+.menuBtn:hover .bar:first-child {
+  width: 26px;
+}
+
+.menuBtn:hover .bar:nth-child(2) {
+  width: 13px;
+}
+
+.menu-item.active:before {
+  content: '';
+  width: 3px;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  @apply bg-gray-900;
+}
+
+/* Hero Section */
+.hero-section {
+  height: calc(100vh - 70px);
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .hero-section {
+    height: calc(100vh - 90px);
+    position: relative;
+  }
+}
+
+.hero-section:before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.05);
+  z-index: 1;
+}
+
+/* Cart Counter */
+.cart-counter {
+  position: absolute;
+  bottom: 24px;
+  right: -10px;
+}
+
+/* ScrollBar Height Calc */
+.cart-scrollbar {
+  max-height: calc(100vh - 233px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.checkout-scrollbar {
+  max-height: calc(100vh - 182px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.details-scrollbar {
+  max-height: calc(100vh - 182px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.menu-scrollbar {
+  max-height: calc(100vh - 138px);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* footer Social icons */
+.social {
+  color: #999999;
+  margin-right: 30px;
+  transition: all 0.2s ease-in-out;
+}
+
+.social:last-child {
+  margin-right: 0;
+}
+
+.social.facebook:hover {
+  color: #3b5999;
+}
+
+.social.twitter:hover {
+  color: #55acee;
+}
+
+.social.youtube:hover {
+  color: #cd201f;
+}
+
+.social.github:hover {
+  color: #211f1f;
+}
+
+.social.instagram:hover {
+  color: #e4405f;
+}
+
+.social.linkedin:hover {
+  color: #0077b5;
+}
+
+/* Carousel Css */
+@screen lg {
+  .react-multi-carousel-dot-list {
+    position: absolute;
+    bottom: 74px;
+    left: 160px;
+    width: auto;
+    right: auto;
+    bottom: 54px;
+    left: 160px;
+  }
+}
+
+/* Cart */
+.drawer {
+  height: 100%;
+  max-width: 450px;
+  z-index: 22;
+  bottom: 0;
+
+  @apply w-full;
+  @apply flex;
+  @apply flex-col;
+  @apply bg-white;
+  @apply shadow-cart;
+  @apply fixed;
+  @apply transition;
+  @apply duration-350;
+  @apply ease-in-out;
+}
+
+.drawer-cart {
+  right: 0;
+  transform: translate(450px, 0);
+}
+
+.drawer-menu {
+  left: 0;
+  transform: translate(-450px, 0);
+}
+
+.drawer-cart.open,
+.drawer-menu.open {
+  transform: translate(0, 0);
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 21;
+  @apply w-full;
+  @apply h-full;
+  @apply flex;
+  @apply fixed;
+  @apply top-0;
+  @apply left-0;
+}
+
+/* About Us */
+.page-title:after {
+  content: '';
+  position: relative;
+  bottom: -5px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  display: flex;
+  @apply bg-gray-900;
+}
+
+.about-img-grid img {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* Tailwind Utils */
+@tailwind utilities;

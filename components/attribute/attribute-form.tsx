@@ -161,7 +161,6 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
       //   variables: { id: item?.id },
       //   onCompleted: (data: { deleteAttributeValue: AttributeValue }) => {
       //     const value = data?.deleteAttributeValue?.value;
-
       //     if (!isEmpty(value)) {
       //       notify(t('common:successfully-deleted'), 'success');
       //       remove(index);
@@ -283,8 +282,8 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
           )}
 
           <Button
-            // loading={creating || updating}
-            // disabled={creating || updating}
+          // loading={creating || updating}
+          // disabled={creating || updating}
           >
             <div className="mr-1">
               <SaveIcon width="1.3rem" height="1.3rem" />

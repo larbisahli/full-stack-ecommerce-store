@@ -44,8 +44,8 @@ export default function HeroCarousel({ client }: SSRProps) {
   //   fetchPolicy: 'cache-and-network'
   // });
 
-  const heroCarouselListCount = 0 // data?.heroCarouselListCount?.count;
-  const heroCarouselListForAdmin = [] //data?.heroCarouselListForAdmin;
+  const heroCarouselListCount = 0; // data?.heroCarouselListCount?.count;
+  const heroCarouselListForAdmin = []; //data?.heroCarouselListForAdmin;
 
   useGetStaff(client);
   // useErrorLogger(error);

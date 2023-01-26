@@ -37,7 +37,7 @@ export default function UpdateProductPage({ client }: SSRProps) {
   useGetStaff(client);
   // useErrorLogger(error);
 
-  const productForAdmin = {} //data?.productForAdmin;
+  const productForAdmin = {}; //data?.productForAdmin;
 
   // if (loading) {
   //   return <Loader text={t('common:text-loading')} />;

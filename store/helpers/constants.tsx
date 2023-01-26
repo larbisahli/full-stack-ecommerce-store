@@ -1,0 +1,2 @@
+// CONSTANTS
+export const CURRENCY = '$';

@@ -107,7 +107,7 @@ function ProductVariableForm({
   const gallery = watch('gallery');
   const variations = variationState.variations;
   const variationOptions = variationState.variationOptions;
-  const attributes = []//data?.attributesForAdmin ?? [];
+  const attributes = []; //data?.attributesForAdmin ?? [];
 
   const attributeValuesChanges = [].concat(
     ...(variations?.map((v) => v?.selectedValues) ?? [])

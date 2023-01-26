@@ -1,0 +1,80 @@
+/* Accordion */
+.rc-collapse {
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+}
+
+.rc-collapse > .rc-collapse-item {
+  margin-bottom: 5px;
+  border-image: initial;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid #f1f1f1;
+}
+
+.rc-collapse > .rc-collapse-item:first-child {
+  border-top: 1px solid #f1f1f1;
+}
+
+.rc-collapse > .rc-collapse-item > .rc-collapse-header {
+  display: flex;
+  align-items: center;
+  padding: 23px 20px;
+  padding-right: 25px;
+  cursor: pointer;
+  outline: 0;
+  position: relative;
+  justify-content: space-between;
+}
+
+@media screen and (min-width: 1024px) {
+  .rc-collapse > .rc-collapse-item > .rc-collapse-header {
+    padding: 23px 30px;
+  }
+}
+
+.rc-collapse > .rc-collapse-item > .rc-collapse-header i {
+  order: 2;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #212121;
+}
+
+.rc-collapse > .rc-collapse-item > .rc-collapse-header h3 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  line-height: 1.5;
+  font-size: 14px;
+  color: #212121;
+  font-weight: 600;
+}
+
+.rc-collapse-content {
+  padding: 0px;
+}
+
+.rc-collapse-content > .rc-collapse-content-box {
+  box-sizing: border-box;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding: 0px 20px 23px;
+}
+
+@media screen and (min-width: 1024px) {
+  .rc-collapse-content > .rc-collapse-content-box {
+    padding: 0px 30px 23px;
+  }
+}
+
+.rc-collapse-content > .rc-collapse-content-box p {
+  font-family: inherit;
+  line-height: 1.75;
+  font-size: 14px;
+  color: #5a5a5a;
+  font-weight: 400;
+}

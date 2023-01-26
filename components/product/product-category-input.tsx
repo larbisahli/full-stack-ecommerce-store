@@ -36,7 +36,7 @@ const ProductCategoryInput = ({ control }: Props) => {
   //   }
   // );
 
-  const categories = []// data?.categoriesSelectAllForAdmin;
+  const categories = []; // data?.categoriesSelectAllForAdmin;
 
   // useErrorLogger(error);
 

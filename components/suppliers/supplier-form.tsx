@@ -60,7 +60,7 @@ export default function CreateOrUpdateSupplierForm({ initialValues }: IProps) {
   //   fetchPolicy: 'cache-and-network'
   // });
 
-  const countries = []// data?.countries;
+  const countries = []; // data?.countries;
 
   const { t } = useTranslation();
 

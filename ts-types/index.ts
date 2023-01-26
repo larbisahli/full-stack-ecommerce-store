@@ -61,7 +61,6 @@ export enum OrderField {
   UpdatedAt = 'updated_at'
 }
 
-
 export interface GraphQLContextType {
   req: Request;
   res: Response;

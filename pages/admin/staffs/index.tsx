@@ -51,7 +51,7 @@ export default function Staff({ client }: SSRProps) {
   //   }
   // );
 
-  const couponsCount =  0 //data?.staffsCount?.count;
+  const couponsCount = 0; //data?.staffsCount?.count;
 
   useGetStaff(client);
   // useErrorLogger(error);

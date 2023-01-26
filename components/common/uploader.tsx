@@ -141,91 +141,92 @@ export default function Uploader({ onChange, value, multiple }: any) {
     // });
   };
 
-  const thumbs = useMemo(() => {
-    if (isEmpty(images)) {
-      return null;
-    }
+  const thumbs = [];
+  // useMemo(() => {
+  //   if (isEmpty(images)) {
+  //     return null;
+  //   }
 
-    if (isArray(images)) {
-      return images?.map(({ image, placeholder }, idx) => {
-        return (
-          <div
-            className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative"
-            key={idx}
-          >
-            {deletedImage.includes(image) && (
-              <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
-                <Loader
-                  simple={true}
-                  borderColor={'#000'}
-                  className="w-8 h-8 z-50"
-                />
-              </div>
-            )}
+  //   if (isArray(images)) {
+  //     return images?.map(({ image, placeholder }, idx) => {
+  //       return (
+  //         <div
+  //           className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative"
+  //           key={idx}
+  //         >
+  //           {deletedImage.includes(image) && (
+  //             <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
+  //               <Loader
+  //                 simple={true}
+  //                 borderColor={'#000'}
+  //                 className="w-8 h-8 z-50"
+  //               />
+  //             </div>
+  //           )}
 
-            <div className="relative flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
-              {/* eslint-disable-next-line jsx-a11y/alt-text */}
-              <ImageComponent
-                src={image}
-                customPlaceholder={placeholder ?? '/placeholders/no-image.svg'}
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-            <button
-              type="button"
-              className="w-4 h-4 flex items-center justify-center rounded-full 
-                bg-red-600 text-xs text-light absolute top-1 
-                  end-1 shadow-xl outline-none"
-              onClick={(e) =>
-                handleDelete(e, { isMultiple: true, image, placeholder })
-              }
-            >
-              <CloseIcon width={10} height={10} />
-            </button>
-          </div>
-        );
-      });
-    } else {
-      return (
-        <div className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative">
-          {deletedImage.includes(images?.image) && (
-            <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
-              <Loader
-                simple={true}
-                borderColor={'#000'}
-                className="w-8 h-8 z-50"
-              />
-            </div>
-          )}
-          <div className="flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
-            {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <ImageComponent
-              src={images?.image ?? '/placeholders/no-image.svg'}
-              customPlaceholder={images?.placeholder}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-          <button
-            type="button"
-            className="w-4 h-4 flex items-center justify-center rounded-full 
-        bg-red-600 text-xs text-light absolute top-1 
-          end-1 shadow-xl outline-none"
-            onClick={(e) =>
-              handleDelete(e, {
-                isMultiple: false,
-                image: images?.image,
-                placeholder: images?.placeholder
-              })
-            }
-          >
-            <CloseIcon width={10} height={10} />
-          </button>
-        </div>
-      );
-    }
-  }, [images, deleteLoading, deletedImage]);
+  //           <div className="relative flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
+  //             {/* eslint-disable-next-line jsx-a11y/alt-text */}
+  //             <ImageComponent
+  //               src={image}
+  //               customPlaceholder={placeholder ?? '/placeholders/no-image.svg'}
+  //               layout="fill"
+  //               objectFit="cover"
+  //             />
+  //           </div>
+  //           <button
+  //             type="button"
+  //             className="w-4 h-4 flex items-center justify-center rounded-full
+  //               bg-red-600 text-xs text-light absolute top-1
+  //                 end-1 shadow-xl outline-none"
+  //             onClick={(e) =>
+  //               handleDelete(e, { isMultiple: true, image, placeholder })
+  //             }
+  //           >
+  //             <CloseIcon width={10} height={10} />
+  //           </button>
+  //         </div>
+  //       );
+  //     });
+  //   } else {
+  //     return (
+  //       <div className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative">
+  //         {deletedImage.includes(images?.image) && (
+  //           <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
+  //             <Loader
+  //               simple={true}
+  //               borderColor={'#000'}
+  //               className="w-8 h-8 z-50"
+  //             />
+  //           </div>
+  //         )}
+  //         <div className="flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
+  //           {/* eslint-disable-next-line jsx-a11y/alt-text */}
+  //           <ImageComponent
+  //             src={images?.image ?? '/placeholders/no-image.svg'}
+  //             customPlaceholder={images?.placeholder}
+  //             layout="fill"
+  //             objectFit="cover"
+  //           />
+  //         </div>
+  //         <button
+  //           type="button"
+  //           className="w-4 h-4 flex items-center justify-center rounded-full
+  //       bg-red-600 text-xs text-light absolute top-1
+  //         end-1 shadow-xl outline-none"
+  //           onClick={(e) =>
+  //             handleDelete(e, {
+  //               isMultiple: false,
+  //               image: images?.image,
+  //               placeholder: images?.placeholder
+  //             })
+  //           }
+  //         >
+  //           <CloseIcon width={10} height={10} />
+  //         </button>
+  //       </div>
+  //     );
+  //   }
+  // }, [images, deleteLoading, deletedImage]);
 
   return (
     <section className="upload">

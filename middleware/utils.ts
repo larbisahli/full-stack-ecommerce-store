@@ -22,7 +22,7 @@ export function verifyAuth(context: GetServerSidePropsContext) {
   // const cookies = new Cookies(req, res);
   // const jwtToken = cookies.get(CookieNames.STAFF_TOKEN_NAME);
 
-  return {client:{ id:'lol'}, error: null}
+  return { client: { id: 'lol' }, error: null };
 
   // try {
   //   if (!jwtToken) {

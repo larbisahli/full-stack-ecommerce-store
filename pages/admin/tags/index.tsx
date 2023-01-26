@@ -51,7 +51,7 @@ export default function Tags({ client }: SSRProps) {
   //   }
   // );
 
-  const tagsCount = 0 //data?.tagsCount?.count;
+  const tagsCount = 0; //data?.tagsCount?.count;
 
   useGetStaff(client);
   // useErrorLogger(error);

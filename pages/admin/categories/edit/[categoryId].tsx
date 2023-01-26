@@ -7,41 +7,40 @@ import { verifyAuth, XSRFHandler } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
 import { Category } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
+import { fetcher } from '@utils/utils';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import useSwr from 'swr';
 
 interface TCategory {
-  categoryForAdmin: Category;
+  category: Category;
 }
-interface OptionsVariable {
-  id: string | string[];
-}
-
 export default function UpdateCategoriesPage({ client }: SSRProps) {
   const { query } = useRouter();
   const { t } = useTranslation();
 
   const { categoryId } = query;
 
-  // const { data, loading, error } = useQuery<TCategory, OptionsVariable>(
-  //   CATEGORY,
-  //   {
-  //     variables: { id: categoryId },
-  //     fetchPolicy: 'cache-and-network'
-  //   }
-  // );
+  const { data, error, isLoading } = useSwr<TCategory>(
+    categoryId ? `/api/admin/category/${categoryId}` : null,
+    fetcher
+  );
+
+  const { category = {} } = data ?? {};
+
+  console.log({ category, data });
 
   useGetStaff(client);
-  // useErrorLogger(error);
+  useErrorLogger(error);
 
-  // if (loading) {
-  //   return <Loader text={t('common:text-loading')} />;
-  // }
-  // if (error) {
-  //   return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
-  // }
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (error) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
 
   return (
     <>
@@ -50,7 +49,7 @@ export default function UpdateCategoriesPage({ client }: SSRProps) {
           {t('form:form-title-edit-category')}
         </h1>
       </div>
-      <CreateOrUpdateCategoriesForm initialValues={{}} />
+      <CreateOrUpdateCategoriesForm initialValues={category} />
     </>
   );
 }

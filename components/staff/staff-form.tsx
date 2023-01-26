@@ -49,7 +49,7 @@ function SelectRoles({ control }: { control: Control<FormValues> }) {
   //   }
   // );
 
-  const roles = [] //data?.roles;
+  const roles = []; //data?.roles;
 
   // useErrorLogger(error);
 
@@ -243,8 +243,8 @@ const StaffCreateUpdateForm = ({ initialValues }: IProps) => {
       </div>
 
       <div className="mb-4 text-end">
-        <Button 
-        // loading={creating || updating} 
+        <Button
+        // loading={creating || updating}
         // disabled={creating || updating}
         >
           <div className="mr-1">

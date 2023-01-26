@@ -54,8 +54,8 @@ export default function SuppliersPage({ client }: SSRProps) {
   //   fetchPolicy: 'cache-and-network'
   // });
 
-  const suppliersCount = 0// data?.suppliersCount?.count;
-  const suppliers = [] //data?.suppliers;
+  const suppliersCount = 0; // data?.suppliersCount?.count;
+  const suppliers = []; //data?.suppliers;
 
   useGetStaff(client);
   // useErrorLogger(error);

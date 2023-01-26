@@ -36,7 +36,7 @@ const ProductTagInput = ({ control }: Props) => {
   //   }
   // );
 
-  const tags = [] //data?.tagsSelectForAdmin;
+  const tags = []; //data?.tagsSelectForAdmin;
 
   // useErrorLogger(error);
 

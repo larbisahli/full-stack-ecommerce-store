@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS staff_accounts (
 CREATE TABLE IF NOT EXISTS categories (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   parent_id UUID REFERENCES categories (id) ON DELETE SET NULL,
-  category_name VARCHAR(255) NOT NULL UNIQUE,
-  category_description TEXT,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  description TEXT,
   image TEXT,
   placeholder TEXT,
   active BOOLEAN DEFAULT TRUE,

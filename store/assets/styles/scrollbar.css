@@ -1,0 +1,83 @@
+/* Custom scrollbar design starts from here */
+.os-theme-thin > .os-scrollbar-vertical {
+  bottom: 14px;
+  width: 14px;
+  padding: 6px 0;
+}
+
+.os-theme-thin > .os-scrollbar > .os-scrollbar-track {
+  background: transparent;
+}
+
+.os-theme-thin > .os-scrollbar-horizontal > .os-scrollbar-track:before,
+.os-theme-thin > .os-scrollbar-vertical > .os-scrollbar-track:before {
+  content: '';
+  display: block;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.os-theme-thin > .os-scrollbar-vertical > .os-scrollbar-track:before,
+.os-theme-thin
+  > .os-scrollbar-vertical
+  > .os-scrollbar-track
+  > .os-scrollbar-handle:before {
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  left: 50%;
+  margin-left: -1px;
+}
+
+.os-theme-thin
+  > .os-scrollbar-vertical
+  > .os-scrollbar-track
+  > .os-scrollbar-handle {
+  width: 100%;
+  min-height: 15px;
+}
+
+.os-theme-thin > .os-scrollbar-vertical > .os-scrollbar-track:before,
+.os-theme-thin
+  > .os-scrollbar-vertical
+  > .os-scrollbar-track
+  > .os-scrollbar-handle:before {
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  left: 50%;
+  margin-left: -1px;
+}
+
+.os-theme-thin
+  > .os-scrollbar
+  > .os-scrollbar-track
+  > .os-scrollbar-handle:before {
+  content: '';
+  display: block;
+  position: absolute;
+  background: black;
+  border-radius: 10px;
+}
+
+.os-theme-thin
+  > .os-scrollbar-vertical
+  > .os-scrollbar-track
+  > .os-scrollbar-handle:hover:before,
+.os-theme-thin
+  > .os-scrollbar-vertical
+  > .os-scrollbar-track
+  > .os-scrollbar-handle.active:before {
+  width: 4px;
+  margin-left: -2px;
+}
+
+.os-theme-thin.os-host-transition
+  > .os-scrollbar-vertical
+  > .os-scrollbar-track
+  > .os-scrollbar-handle:before {
+  -webkit-transition: width 0.3s, margin-left 0.3s, background 0.2s;
+  transition: width 0.3s, margin-left 0.3s, background 0.2s;
+}
+
+/* Custom scrollbar design ends here */

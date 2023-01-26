@@ -37,7 +37,7 @@ export default function UpdateSupplierPage({ client }: SSRProps) {
   useGetStaff(client);
   // useErrorLogger(error);
 
-  const supplier = {}// data?.supplier;
+  const supplier = {}; // data?.supplier;
 
   // if (loading) {
   //   return <Loader text={t('common:text-loading')} />;
