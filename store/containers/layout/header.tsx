@@ -1,39 +1,24 @@
-import { useErrorLogger } from '@hooks/useErrorLogger';
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import CartIcon from '@store/assets/icons/cart-icon';
+import CategoriesSvg from '@store/assets/icons/categories';
 import Logo from '@store/assets/icons/logo';
 import PhoneIcon from '@store/assets/icons/phone';
-import Search from '@store/components/search-outline';
 import { useCart } from '@store/contexts/cart/cart.provider';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { StickyContext } from '@store/contexts/sticky/sticky.provider';
 import { useMedia } from '@store/helpers/use-media';
 import { Category } from '@ts-types/generated';
-import { fetcher } from '@utils/utils';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef } from 'react';
-import useSwr from 'swr';
 
 import Menu from './menu';
 
-interface TCategory {
+interface Props {
   categories: Category[];
 }
 
-export default function Header() {
-  const router = useRouter();
-
-  const { data, error, isLoading } = useSwr<TCategory>(
-    `/api/store/category/categories`,
-    fetcher
-  );
-
-  const { categories = [] } = data ?? {};
-
-  console.log({ categories });
-
-  useErrorLogger(error);
-
+export default function Header({ categories }: Props) {
   const isLargeScreen = useMedia('(min-width: 1024px)');
   const { dispatch } = useContext(DrawerContext);
 
@@ -74,10 +59,12 @@ export default function Header() {
     });
   };
 
-  const isHome = router.pathname === '/';
+  const categoryLimit = 5;
+  const selectedCategories = categories.slice(0, categoryLimit);
 
   return (
-    <header className="flex items-center shadow-mobile text-gray-700 body-font fixed bg-white w-full h-60px z-20 lg:shadow-header pr-20px md:pr-30px lg:pr-40px">
+    <header className="flex items-center justify-between shadow-mobile text-gray-700 body-font fixed bg-white w-full h-60px z-20 lg:shadow-header pr-20px md:pr-30px lg:pr-40px">
+      {/* MENU SECTION */}
       <div className="flex items-center justify-center">
         <button
           aria-label="Menu"
@@ -99,20 +86,29 @@ export default function Header() {
         </Link>
       </div>
 
-      {/* <div
-        className={`w-full ml-10px mr-20px lg:mr-10 lg:ml-auto transition duration-350 ease-in-out flex justify-center ${
-          isSticky ? 'lg:opacity-100 lg:visible' : 'lg:opacity-0 lg:invisible'
-        }`}
-      >
-        {isHome && <Search ref={searchRef} className="search-outline" />}
-      </div> */}
-
-      <div className="flex flex-1 h-full">
-        {categories?.map((category) => {
-          return <Menu key={category.id} category={category} />;
-        })}
-      </div>
-
+      {/* CATEGORIES SECTION */}
+      {isLargeScreen && (
+        <div className="flex flex-1 h-full">
+          {selectedCategories?.map((category) => {
+            return <Menu key={category.id} category={category} />;
+          })}
+          <div>
+            {categories?.length > categoryLimit && (
+              <div
+                onClick={showMenu}
+                role="button"
+                className="flex justify-center items-center mx-1 p-1 px-2 h-full cursor-pointer hover:bg-gray-100"
+              >
+                <CategoriesSvg />
+                <div className="font-semibold text-gray-800 px-2">
+                  All Categories
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* CART SECTION */}
       <div className="flex justify-center items-center">
         <div className="hidden items-center text-gray-900 mr-10 flex-shrink-0 lg:flex">
           <PhoneIcon />
@@ -128,8 +124,8 @@ export default function Header() {
         >
           <CartIcon width="20px" height="22px" />
           <span
-            className="w-18px h-18px flex items-center justify-center bg-gray-900 text-white absolute rounded-full"
-            style={{ fontSize: '10px', top: '-10px', right: '-10px' }}
+            className="w-18px h-18px flex items-center justify-center bg-gray-900 text-white absolute rounded-full font-semibold"
+            style={{ fontSize: '12px', top: '-10px', right: '-10px' }}
           >
             {itemsCount}
           </span>

@@ -46,7 +46,7 @@ const moduleExports = {
     loader: 'default'
   },
   env: {
-    API_URL: 'https://api.dropgala.com',
+    URL: 'http://127.0.0.1:3001',
     MEDIA_URL: 'https://media.dropgala.com',
     GTAG_MEASUREMENT_ID: 'G-TQMWTHM2FF',
     // NEXT_PUBLIC_GOOGLE_MAP_API_KEY: 'AIzaSyDB2j-G5LJM0yPNG0AqziJjgh1UOW10W7I',

@@ -38,6 +38,14 @@ const AttributeList = ({
 
   let columns = [
     {
+      title: t('table:table-item-id'),
+      dataIndex: 'id',
+      key: 'id',
+      align: 'center',
+      width: 80,
+      ellipsis: true
+    },
+    {
       title: t('table:table-item-name'),
       dataIndex: 'name',
       key: 'name',

@@ -1,62 +1,54 @@
 import AttributeList from '@components/attribute/attribute-list';
 import Card from '@components/common/card';
 import { Add } from '@components/icons/add';
-import { ArrowDown } from '@components/icons/arrow-down';
-import { ArrowUp } from '@components/icons/arrow-up';
 import AppLayout from '@components/layouts/app';
+import ErrorMessage from '@components/ui/error-message';
 import LinkButton from '@components/ui/link-button';
+import Loader from '@components/ui/loader/loader';
 import { useErrorLogger, useGetStaff } from '@hooks/index';
+import { useTime } from '@hooks/useTime';
 import { verifyAuth } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
-import { Attribute, OrderBy, SortOrder } from '@ts-types/generated';
+import { Attribute } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
-import cn from 'classnames';
+import { fetcher, limit } from '@utils/utils';
+import isEmpty from 'lodash/isEmpty';
 import type { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useState } from 'react';
-
-const limit = 10;
+import React, { useState } from 'react';
+import useSwr from 'swr';
 
 export default function AttributePage({ client }: SSRProps) {
   const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
-  const [visible, setVisible] = useState(false);
 
-  // const { data, loading, error, fetchMore } = useQuery<
-  //   TAttributes,
-  //   OptionsVariable
-  // >(ATTRIBUTES, {
-  //   variables: {
-  //     page,
-  //     limit,
-  //     orderBy,
-  //     sortedBy: SortOrder.Desc
-  //   },
-  //   fetchPolicy: 'cache-and-network'
-  // });
+  const { current } = useTime();
 
-  const attributesCount = 0; // data?.attributesCount?.count;
-  const attributes = []; //data?.attributesForAdmin;
+  const key = page
+    ? [`/api/admin/attribute/attributes/${page}?time=`, current]
+    : null;
+  const { data, error, isLoading } = useSwr<{
+    attributes: Attribute[];
+    count: number;
+  }>(key, fetcher);
+
+  const { attributes = [], count = 0 } = data ?? {};
 
   useGetStaff(client);
-  // useErrorLogger(error);
-
-  const toggleVisible = () => {
-    setVisible((v) => !v);
-  };
+  useErrorLogger(error);
 
   const handlePagination = (current: number) => {
     setPage(current);
   };
 
-  // if (loading) {
-  //   return <Loader text={t('common:text-loading')} />;
-  // }
-  // if (!isEmpty(error)) {
-  //   return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
-  // }
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (!isEmpty(error)) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
 
   return (
     <>
@@ -85,30 +77,13 @@ export default function AttributePage({ client }: SSRProps) {
                 </div>
               </LinkButton>
             </div>
-            <button
-              className="text-accent text-base font-semibold flex items-center md:ms-5 mt-5 md:mt-0"
-              onClick={toggleVisible}
-            >
-              {t('common:text-filter')}{' '}
-              {visible ? (
-                <ArrowUp className="ms-2" />
-              ) : (
-                <ArrowDown className="ms-2" />
-              )}
-            </button>
           </div>
         </div>
-        <div
-          className={cn('w-full flex transition', {
-            'h-auto visible': visible,
-            'h-0 invisible': !visible
-          })}
-        ></div>
       </Card>
       <div></div>
       <AttributeList
         attributes={attributes}
-        total={attributesCount}
+        total={count}
         onPagination={handlePagination}
         currentPage={page}
         perPage={limit}

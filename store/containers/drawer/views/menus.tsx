@@ -1,3 +1,9 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { PhoneIcon } from '@components/icons/phone';
+import { useErrorLogger } from '@hooks/useErrorLogger';
+import ChevronDown from '@store/assets/icons/chevron-down';
 import CloseIcon from '@store/assets/icons/close';
 import Logo from '@store/assets/icons/logo';
 import {
@@ -11,25 +17,18 @@ import {
 import ActiveLink from '@store/components/active-link';
 import { Scrollbar } from '@store/components/scrollbar';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
+import { Category } from '@ts-types/generated';
+import { fetcher } from '@utils/utils';
+import cd from 'classnames';
+import isEmpty from 'lodash/isEmpty';
 import Link from 'next/link';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
+import useSwr from 'swr';
 
+interface TCategory {
+  categories: Category[];
+}
 const menus = [
-  {
-    id: 1,
-    pathname: 'https://medsy-modern.vercel.app/',
-    title: 'Medsy Modern'
-  },
-  {
-    id: 2,
-    pathname: 'https://medsy-minimal.vercel.app/',
-    title: 'Medsy Minimal'
-  },
-  {
-    id: 3,
-    pathname: '/',
-    title: 'Medsy Classic'
-  },
   {
     id: 4,
     pathname: '/faq',
@@ -89,6 +88,16 @@ const social = [
 
 export default function DrawerMenu() {
   const { dispatch } = useContext(DrawerContext);
+
+  const { data, error } = useSwr<TCategory>(
+    `/api/store/category/categories`,
+    fetcher
+  );
+
+  const { categories = [] } = data ?? {};
+
+  useErrorLogger(error);
+
   const hideMenu = () => {
     dispatch({
       type: 'OPEN_MENU',
@@ -100,7 +109,7 @@ export default function DrawerMenu() {
 
   return (
     <>
-      <div className="flex flex-col w-full h-full">
+      <div className="flex flex-col w-full h-full overflow-auto">
         <div className="w-full h-90px bg-gray-100 flex justify-start items-center relative px-30px flex-shrink-0">
           <Link href="/">
             <a className="flex" onClick={hideMenu}>
@@ -110,7 +119,7 @@ export default function DrawerMenu() {
           </Link>
 
           <div className="flex items-center justify-end ml-auto pl-30px pr-50px text-gray-700 flex-shrink-0 lg:hidden">
-            {/* <PhoneIcon /> */}
+            <PhoneIcon width="15px" height="15px" />
             <span className="font-semibold text-base text-14px ml-3">
               +1 855-766-5885
             </span>
@@ -127,6 +136,13 @@ export default function DrawerMenu() {
 
         <Scrollbar className="menu-scrollbar flex-grow">
           <div className="flex flex-col py-60px pb-40px lg:pb-60px">
+            {categories.map((category) => (
+              <CategoryLinkComponent
+                key={category.id}
+                category={category}
+                hideMenu={hideMenu}
+              />
+            ))}
             {menus.map((menu, index) => (
               <ActiveLink
                 href={menu.pathname}
@@ -134,7 +150,7 @@ export default function DrawerMenu() {
                 key={index}
               >
                 <a
-                  className="menu-item relative text-gray-900 pl-30px pr-4 mb-8 transition duration-300 ease-in-out last:mb-0 hover:text-gray-900"
+                  className="hover:bg-gray-200 menu-item relative text-gray-900 pl-30px pr-4 py-4 mb-2 transition duration-300 ease-in-out last:mb-0 hover:text-gray-900"
                   onClick={hideMenu}
                 >
                   {menu.title}
@@ -162,3 +178,59 @@ export default function DrawerMenu() {
     </>
   );
 }
+
+const CategoryLinkComponent = ({
+  hideMenu,
+  category
+}: {
+  hideMenu: any;
+  category: Category;
+}) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div
+        className={cd('flex justify-between items-center border-gray-200', {
+          'border-b': !open
+        })}
+      >
+        <ActiveLink
+          href={`/category/${category.name}`}
+          activeClassName="font-semibold active"
+        >
+          <a
+            className="hover:bg-gray-200 flex-1 menu-item relative text-gray-900 pl-30px pr-4 py-5 transition duration-300 ease-in-out last:mb-0 hover:text-gray-900"
+            onClick={hideMenu}
+          >
+            {category.name}
+          </a>
+        </ActiveLink>
+        {!isEmpty(category.subCategories) && (
+          <div
+            className="hover:bg-gray-200 border-l p-4 cursor-pointer"
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <ChevronDown width="30px" height="30px" />
+          </div>
+        )}
+      </div>
+      {open && (
+        <div className="pl-6 flex flex-col border-b border-gray-200">
+          {category.subCategories?.map((sub) => {
+            return (
+              <ActiveLink
+                href={`/category/${sub.name}`}
+                key={sub.id}
+                activeClassName="font-semibold active"
+              >
+                <a className="hover:bg-gray-200 menu-item relative text-gray-700 pl-30px py-2 hover:text-gray-900">
+                  {sub.name}
+                </a>
+              </ActiveLink>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+};

@@ -3,27 +3,39 @@ import {
   useModalAction,
   useModalState
 } from '@components/ui/modal/modal.context';
-import { ATTRIBUTES, DELETE_ATTRIBUTE } from '@graphql/attribute';
-import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useTime } from '@hooks/useTime';
+import { notify } from '@lib/notify';
+import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
 
 const AttributeDeleteView = () => {
-  // const [deleteAttributeValue, { loading, error }] = useMutation(
-  //   DELETE_ATTRIBUTE,
-  //   {
-  //     refetchQueries: [
-  //       ATTRIBUTES,
-  //       'Attributes' // Query name
-  //     ]
-  //   }
-  // );
+  const { t } = useTranslation();
 
   const { id } = useModalState();
   const { closeModal } = useModalAction();
+  const [loading, setLoading] = useState(false);
 
-  // useErrorLogger(error);
+  const { revalidate } = useTime();
 
   async function handleDelete() {
-    // deleteAttributeValue({ variables: { id } });
+    setLoading(true);
+    fetch('/api/admin/attribute/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.attribute?.id) {
+          notify(t('common:successfully-deleted'), 'success');
+          revalidate();
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
     closeModal();
   }
 
@@ -31,7 +43,7 @@ const AttributeDeleteView = () => {
     <ConfirmationCard
       onCancel={closeModal}
       onDelete={handleDelete}
-      deleteBtnLoading={true}
+      deleteBtnLoading={loading}
     />
   );
 };

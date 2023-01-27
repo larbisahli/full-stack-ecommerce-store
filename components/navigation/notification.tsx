@@ -55,7 +55,7 @@ export default function NavNotification() {
               {({ active }) => (
                 <li className="border-b border-gray-100 cursor-pointer last:border-0">
                   <Link
-                    href={href}
+                    href={'/#'}
                     className={cn(
                       'block px-4 py-3 text-sm capitalize font-semibold transition duration-200 hover:text-accent',
                       active ? 'text-accent' : 'text-heading'

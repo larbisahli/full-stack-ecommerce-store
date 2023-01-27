@@ -7,64 +7,46 @@ import ErrorMessage from '@components/ui/error-message';
 import LinkButton from '@components/ui/link-button';
 import Loader from '@components/ui/loader/loader';
 import { useErrorLogger, useGetStaff } from '@hooks/index';
+import { useTime } from '@hooks/useTime';
 import { verifyAuth } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
-import { OrderBy, SortOrder, StaffType } from '@ts-types/generated';
+import { StaffType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
+import { fetcher, limit } from '@utils/utils';
 import isEmpty from 'lodash/isEmpty';
 import type { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import useSwr from 'swr';
 
 interface TStaff {
   staffs: StaffType[];
-  staffsCount: { count: number };
+  count: number;
 }
-
-interface OptionsVariable {
-  page: number;
-  limit: number;
-  orderBy: OrderBy;
-  sortedBy: SortOrder;
-}
-
-const limit = 10;
-
 export default function Staff({ client }: SSRProps) {
   const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
-  const [orderBy, setOrder] = useState(OrderBy.CREATED_AT);
-  const [staffsData, setStaffsData] = useState<StaffType[]>([] as StaffType[]);
 
-  // const { data, loading, error, fetchMore } = useQuery<TStaff, OptionsVariable>(
-  //   STAFFS,
-  //   {
-  //     variables: {
-  //       page,
-  //       limit,
-  //       orderBy,
-  //       sortedBy: SortOrder.Desc
-  //     },
-  //     fetchPolicy: 'cache-and-network'
-  //   }
-  // );
+  const { current } = useTime();
+  const key = page ? [`/api/admin/staff/staffs/${page}?time=`, current] : null;
+  const { data, error, isLoading } = useSwr<TStaff>(key, fetcher);
 
-  const couponsCount = 0; //data?.staffsCount?.count;
+  const { staffs = [], count = 0 } = data ?? {};
 
   useGetStaff(client);
-  // useErrorLogger(error);
-
-  // useEffect(() => {
-  //   const staffs = data?.staffs;
-  //   if (!isEmpty(staffs)) {
-  //     setStaffsData(() => staffs);
-  //   }
-  // }, [data]);
+  useErrorLogger(error);
 
   function handlePagination(current: any) {
     setPage(current);
+  }
+
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (!isEmpty(error)) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
   }
 
   return (
@@ -75,18 +57,7 @@ export default function Staff({ client }: SSRProps) {
             {t('form:input-label-staffs')}
           </h1>
         </div>
-        <div className="w-full xl:w-3/4 flex flex-col md:flex-row space-y-4 md:space-y-0 items-center ms-auto">
-          <SortForm
-            className="md:ms-5"
-            showLabel={false}
-            onOrderChange={({ value }: { value: OrderBy }) => {
-              setOrder(value);
-            }}
-            options={[
-              { id: 1, value: 'created_at', label: 'Created At' },
-              { id: 2, value: 'updated_at', label: 'Updated At' }
-            ]}
-          />
+        <div className="w-full xl:w-3/4 flex md:flex-row space-y-4 md:space-y-0 items-center ms-auto justify-end">
           <LinkButton
             href={`${ROUTES.STAFFS}/create`}
             className="h-12 ms-4 md:ms-6"
@@ -105,9 +76,9 @@ export default function Staff({ client }: SSRProps) {
         </div>
       </Card>
       <StaffList
-        staffs={staffsData}
+        staffs={staffs}
         onPagination={handlePagination}
-        total={couponsCount}
+        total={count}
         currentPage={page}
         perPage={limit}
       />

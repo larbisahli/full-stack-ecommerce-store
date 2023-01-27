@@ -29,6 +29,8 @@ const InstagramPost: React.FC<InstagramPostProps> = ({ postUrl }) => {
   const [data, setData] = useState<DataProps>(Object());
   const [userData, setUserData] = useState<UserDataProps>(Object());
 
+  console.log({ data, userData });
+
   useEffect(() => {
     let mounted = true;
 
@@ -78,6 +80,7 @@ const InstagramPost: React.FC<InstagramPostProps> = ({ postUrl }) => {
           src={data.thumbnail_url}
           alt={data.author_name}
         />
+        {/* <ImageComponent/> */}
         <svg
           className={InstagramItemIcon}
           width="17.999"

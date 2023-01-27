@@ -1,8 +1,9 @@
 import { StaffInfoContext } from '@contexts/staff.context';
 import { useErrorLogger } from '@hooks/index';
 import type { StaffType } from '@ts-types/generated';
+import { fetcher } from '@utils/utils';
 import { useContext, useEffect } from 'react';
-
+import useSwr from 'swr';
 interface TStaff {
   staff: StaffType;
 }
@@ -16,28 +17,21 @@ interface ClientType {
 export function useGetStaff(client?: ClientType) {
   const { staffInfo, setStaffInfo } = useContext(StaffInfoContext);
 
-  // const staffId = client?.staffId;
+  const staffId = client?.staffId;
 
-  // const { error } = useQuery<TStaff>(STAFF, {
-  //   variables: { id: staffId },
-  //   skip: Boolean(!staffId) || !!(staffId && staffInfo?.id),
-  //   onCompleted: (data: TStaff) => {
-  //     const staff = data?.staff;
-  //     const csrfToken = client?.csrfToken;
-  //     setStaffInfo({ ...staff, csrfToken });
-  //   }
-  // });
+  const { data, error } = useSwr<TStaff>(
+    staffId ? `/api/admin/staff/${staffId}` : null,
+    fetcher
+  );
 
-  // useErrorLogger(error);
+  useErrorLogger(error);
 
   useEffect(() => {
-    const csrfToken = client?.csrfToken;
-    if (csrfToken) {
-      setStaffInfo((prev) => {
-        return { ...prev, csrfToken };
-      });
+    const { staff = null } = data ?? {};
+    if (staff) {
+      setStaffInfo(staff);
     }
-  }, [client, setStaffInfo]);
+  }, [data, setStaffInfo]);
 
   return { staffInfo, setStaffInfo };
 }

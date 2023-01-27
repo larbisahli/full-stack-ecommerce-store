@@ -109,8 +109,6 @@ export interface StaffType extends CreatedUpdatedByAt {
   lastName: string;
   profile: ImageType;
   phoneNumber: Nullable<Scalars['Int']>;
-  role: RoleType;
-  roleId?: number;
   active: boolean;
   csrfToken?: string;
   csrfError?: string;
@@ -323,6 +321,21 @@ export interface Suppliers extends CreatedUpdatedByAt {
   country?: Nullable<CountriesType>;
   city?: Nullable<Scalars['String']> | { name: string };
   note?: Nullable<Scalars['String']>;
+}
+
+export interface HeroBannerType {
+  id?: Scalars['ID'];
+  destinationUrl?: Nullable<Scalars['String']>;
+  thumbnail?: ImageType;
+  title?: Scalars['String'];
+  description?: Nullable<Scalars['String']>;
+  btnLabel?: Scalars['String'];
+  styles?: {
+    textColor?: string;
+    btnBgc?: string;
+    btnTextColor?: string;
+  };
+  displayOrder?: Scalars['Int'];
 }
 
 export interface HeroCarouselType extends CreatedUpdatedByAt {

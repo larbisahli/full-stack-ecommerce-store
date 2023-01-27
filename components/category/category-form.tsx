@@ -126,9 +126,8 @@ export default function CreateOrUpdateCategoriesForm({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(variables)
     };
-
+    setLoading(true);
     if (isEmpty(initialValues)) {
-      setLoading(true);
       fetch('/api/admin/category/create', requestOptions)
         .then((response) => response.json())
         .then((data) => {
@@ -144,7 +143,6 @@ export default function CreateOrUpdateCategoriesForm({
           setLoading(false);
         });
     } else {
-      setLoading(true);
       fetch('/api/admin/category/update', requestOptions)
         .then((response) => response.json())
         .then((data) => {

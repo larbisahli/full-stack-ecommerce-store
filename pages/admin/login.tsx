@@ -9,7 +9,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Fragment, useEffect } from 'react';
 
-import shop from '../public/shop.jpg';
+import shop from '../../public/shop.jpg';
 
 const LoginPage = () => {
   const router = useRouter();
@@ -43,12 +43,12 @@ const LoginPage = () => {
           <LoginForm />
         </div>
         <div className="mt-5 flex justify-center items-center text-white bg-black w-full bg-opacity-40 h-12">
-          <p>© dropgala 2022 All rights reserved</p>
+          <p>© company 2022 All rights reserved</p>
           <span
             style={{ width: '1px', height: '20px' }}
             className="mx-2 bg-white"
           ></span>
-          <Link href="/" passHref>
+          <Link href="/contact-us" passHref>
             <a>
               <p>Contact Us</p>
             </a>
@@ -57,7 +57,7 @@ const LoginPage = () => {
             style={{ width: '1px', height: '20px' }}
             className="mx-2 bg-white"
           ></span>
-          <Link href="/" passHref>
+          <Link href="/terms" passHref>
             <a>
               <p>Terms</p>
             </a>
@@ -66,16 +66,7 @@ const LoginPage = () => {
             style={{ width: '1px', height: '20px' }}
             className="mx-2 bg-white"
           ></span>
-          <Link href="/" passHref>
-            <a>
-              <p>Terms</p>
-            </a>
-          </Link>
-          <span
-            style={{ width: '1px', height: '20px' }}
-            className="mx-2 bg-white"
-          ></span>
-          <Link href="/" passHref>
+          <Link href="/privacy" passHref>
             <a>
               <p>Privacy</p>
             </a>

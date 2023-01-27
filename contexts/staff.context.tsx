@@ -17,12 +17,6 @@ StaffInfoContext.displayName = 'StaffInfoContext';
 
 export const StaffInfoProvider: React.FC = ({ ...props }) => {
   const [staffInfo, setStaffInfo] = useState<StaffType | null>(null);
-
-  // useEffect(() => {
-  //   if (staffInfo) {
-  //   }
-  // }, [staffInfo]);
-
   return (
     <StaffInfoContext.Provider value={{ staffInfo, setStaffInfo }} {...props} />
   );

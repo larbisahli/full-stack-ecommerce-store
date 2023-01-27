@@ -17,6 +17,12 @@ export default function NavMenu() {
 
   const { staffInfo } = useGetStaff();
 
+  const {
+    profile: { image = null, placeholder = null } = {},
+    firstName = '',
+    lastName = ''
+  } = staffInfo ?? {};
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button
@@ -26,11 +32,12 @@ export default function NavMenu() {
         )}
       >
         <Avatar
-          src={staffInfo?.profile?.image ?? siteSettings.avatar.image}
-          customPlaceholder={
-            staffInfo?.profile?.placeholder ?? siteSettings.avatar.placeholder
-          }
+          src={image ?? siteSettings.avatar.image}
+          customPlaceholder={placeholder ?? siteSettings.avatar.placeholder}
         />
+        {firstName && (
+          <div className="text-gray-300 px-2 font-semibold">{`${firstName} ${lastName}`}</div>
+        )}
       </Menu.Button>
 
       <Transition
@@ -51,7 +58,7 @@ export default function NavMenu() {
               {({ active }) => (
                 <li className="border-b border-gray-100 cursor-pointer last:border-0">
                   <Link
-                    href={href}
+                    href={'/#'}
                     className={cn(
                       'block px-4 py-3 text-sm capitalize font-semibold transition duration-200 hover:text-accent',
                       active ? 'text-accent' : 'text-heading'

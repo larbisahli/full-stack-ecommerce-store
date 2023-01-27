@@ -17,7 +17,7 @@ export function getAttributesForAdmin(): string {
   (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name) FROM staff_accounts AS stc WHERE stc.id = att.created_by) AS "createdBy",
   (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) FROM staff_accounts AS stu WHERE stu.id = att.updated_by) AS "updatedBy",
   ARRAY((SELECT json_build_object('id', att_v.id, 'value', att_v.attribute_value) FROM attribute_values AS att_v WHERE att_v.attribute_id = att.id)) AS values
-  FROM attributes AS att ORDER BY $1 ASC LIMIT $2 OFFSET $3`;
+  FROM attributes AS att LIMIT $1 OFFSET $2`;
 }
 
 export function insertAttribute(): string {
@@ -25,11 +25,11 @@ export function insertAttribute(): string {
 }
 
 export function updateAttribute(): string {
-  return `UPDATE attributes SET attribute_name = $2, updated_by = $3 WHERE id = $1 RETURNING attribute_name AS name`;
+  return `UPDATE attributes SET attribute_name = $2, updated_by = $3 WHERE id = $1 RETURNING id`;
 }
 
 export function deleteAttribute(): string {
-  return `DELETE FROM attributes WHERE id = $1 RETURNING attribute_name AS name`;
+  return `DELETE FROM attributes WHERE id = $1 RETURNING id`;
 }
 
 // **** (attribute_values) Table ****
@@ -43,7 +43,7 @@ export function updateAttributeValues(): string {
 }
 
 export function deleteAttributeValue(): string {
-  return `DELETE FROM attribute_values WHERE id = $1 RETURNING attribute_value AS value`;
+  return `DELETE FROM attribute_values WHERE id = $1 RETURNING id`;
 }
 
 export function deleteAttributeValues(): string {

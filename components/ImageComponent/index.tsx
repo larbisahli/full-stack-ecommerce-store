@@ -8,7 +8,7 @@ interface Props extends ImageProps {
   src: string;
 }
 
-const ImageComponent = ({ src, customPlaceholder, ...props }: Props) => {
+const ImageComponent = ({ customPlaceholder, ...props }: Props) => {
   const Base64Placeholder = useGetDataUrl(customPlaceholder);
 
   return (
@@ -16,7 +16,6 @@ const ImageComponent = ({ src, customPlaceholder, ...props }: Props) => {
       blurDataURL={Base64Placeholder}
       placeholder="blur"
       alt={props.alt}
-      src={`${mediaURL}/${src}`}
       {...props}
     />
   );

@@ -13,6 +13,7 @@ import LoadingBar from '@components/ui/loading-bar';
 import ManagedModal from '@components/ui/modal/managed-modal';
 import { ModalProvider } from '@components/ui/modal/modal.context';
 import { StaffInfoProvider } from '@contexts/staff.context';
+import { TimeCacheProvider } from '@contexts/time.context';
 // import { SettingsProvider } from "@contexts/settings.context";
 import { UIProvider } from '@contexts/ui.context';
 import { CartProvider } from '@store/contexts/cart/cart.provider';
@@ -86,20 +87,22 @@ function App({ Component, pageProps }: AppProps) {
           <StickyProvider>
             <DrawerProvider>
               <CartProvider>
-                <StaffInfoProvider>
-                  <LoadingBar />
-                  {/* <AppSettings> */}
-                  <UIProvider>
-                    <ModalProvider>
-                      <ManagedModal />
-                      <DefaultSeo />
-                      <Layout {...pageProps}>
-                        <Component {...pageProps} />
-                      </Layout>
-                    </ModalProvider>
-                  </UIProvider>
-                  {/* </AppSettings> */}
-                </StaffInfoProvider>
+                <TimeCacheProvider>
+                  <StaffInfoProvider>
+                    <LoadingBar />
+                    {/* <AppSettings> */}
+                    <UIProvider>
+                      <ModalProvider>
+                        <ManagedModal />
+                        <DefaultSeo />
+                        <Layout {...pageProps}>
+                          <Component {...pageProps} />
+                        </Layout>
+                      </ModalProvider>
+                    </UIProvider>
+                    {/* </AppSettings> */}
+                  </StaffInfoProvider>
+                </TimeCacheProvider>
               </CartProvider>
             </DrawerProvider>
           </StickyProvider>

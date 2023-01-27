@@ -1,6 +1,14 @@
+import { PublicKEY } from '@middleware/jwt.keys';
 import { CookieNames, ErrorNames } from '@ts-types/enums';
+import { StaffType } from '@ts-types/generated';
+import { setCookie } from '@utils/cookies';
 import { limit } from '@utils/utils';
+import jwt, { Algorithm } from 'jsonwebtoken';
+import { isEmpty } from 'lodash';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool, PoolClient, QueryResult } from 'pg';
+
+import { loginQueries } from './sql';
 
 const CRUDPool: PoolClient = new Pool({
   host: process.env.END_POINT,
@@ -27,6 +35,55 @@ export default class PostgresClient {
     this.DELETE = 'DELETE';
     this.limit = limit;
   }
+
+  public authorization = async (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ): Promise<StaffType> => {
+    const jwtToken = req.cookies[this.CookieNames.STAFF_TOKEN_NAME];
+    if (!jwtToken) {
+      res.status(403).json({
+        error: {
+          message: 'No jwtToken Provided!'
+        }
+      });
+    }
+    const Alg: Algorithm = 'RS256';
+
+    const { staffId } = jwt.verify(jwtToken, PublicKEY, {
+      algorithms: Alg
+    });
+
+    const { rows } = await this.query<StaffType, string>(loginQueries.staff(), [
+      staffId
+    ]);
+
+    const staff = rows[0];
+
+    const PRODUCTION_ENV = process.env.NODE_ENV === 'production';
+
+    if (isEmpty(staff)) {
+      setCookie(res, this.CookieNames.STAFF_TOKEN_NAME, '', {
+        httpOnly: true,
+        secure: PRODUCTION_ENV,
+        maxAge: 0,
+        sameSite: 'strict',
+        path: '/'
+      });
+      throw new Error('User does not exist');
+    }
+    if (!staff.active) {
+      setCookie(res, this.CookieNames.STAFF_TOKEN_NAME, '', {
+        httpOnly: true,
+        secure: PRODUCTION_ENV,
+        maxAge: 0,
+        sameSite: 'strict',
+        path: '/'
+      });
+      throw new Error('User is not active');
+    }
+    return staff;
+  };
 
   public transaction = async (): Promise<PoolClient> => {
     const client: PoolClient = await CRUDPool.connect();

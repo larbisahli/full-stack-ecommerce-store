@@ -6,13 +6,7 @@ import Alert from '@components/ui/alert';
 import Button from '@components/ui/button';
 import Description from '@components/ui/description';
 import Input from '@components/ui/input';
-import {
-  CREATE_ATTRIBUTE,
-  DELETE_ATTRIBUTE_VALUE,
-  UPDATE_ATTRIBUTE
-} from '@graphql/attribute';
 import { useErrorLogger } from '@hooks/useErrorLogger';
-import { useGetStaff } from '@hooks/useGetStaff';
 import { notify } from '@lib/index';
 import { Nullable } from '@ts-types/custom.types';
 import { Attribute, AttributeValue } from '@ts-types/generated';
@@ -41,6 +35,7 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
   const router = useRouter();
 
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [deletedIndex, setDeletedIndex] = useState<number | null>(null);
 
@@ -54,58 +49,11 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
     defaultValues: initialValues ? initialValues : { name: null, values: [] }
   });
 
-  const { staffInfo } = useGetStaff();
-  const csrfToken = staffInfo?.csrfToken;
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'values',
     keyName: 'key'
   });
-
-  // const [createAttribute, { loading: creating }] = useMutation(
-  //   CREATE_ATTRIBUTE,
-  //   {
-  //     context: {
-  //       headers: {
-  //         'x-csrf-token': csrfToken
-  //       }
-  //     },
-  //     onCompleted: (data: { createAttribute: Attribute }) => {
-  //       if (!isEmpty(data)) {
-  //         notify(t('common:successfully-created'), 'success');
-  //         reset();
-  //         router.push(ROUTES.ATTRIBUTES);
-  //       }
-  //     }
-  //   }
-  // );
-
-  // const [updateAttribute, { loading: updating }] = useMutation(
-  //   UPDATE_ATTRIBUTE,
-  //   {
-  //     context: {
-  //       headers: {
-  //         'x-csrf-token': csrfToken
-  //       }
-  //     },
-  //     onCompleted: (data: { updateAttribute: Attribute }) => {
-  //       if (!isEmpty(data)) {
-  //         notify(t('common:successfully-updated'), 'success');
-  //         router.push(ROUTES.ATTRIBUTES);
-  //       }
-  //     }
-  //   }
-  // );
-
-  // const [deleteAttributeValue, { loading: deleteAttributeLoading }] =
-  //   useMutation(DELETE_ATTRIBUTE_VALUE, {
-  //     context: {
-  //       headers: {
-  //         'x-csrf-token': csrfToken
-  //       }
-  //     }
-  //   });
 
   useErrorLogger(error);
 
@@ -118,10 +66,28 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
       }
     }
 
+    setLoading(true);
+    console.log({ fields });
     if (isEmpty(initialValues)) {
-      // createAttribute({ variables: fields }).catch((err) => {
-      //   setError(err);
-      // });
+      fetch('/api/admin/attribute/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.attribute?.id) {
+            notify(t('common:successfully-created'), 'success');
+            router.push(ROUTES.ATTRIBUTES);
+            reset();
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error);
+          setLoading(false);
+        });
     } else {
       const changes = initialValues?.values
         ?.map((att_value_init: AttributeValue) =>
@@ -148,27 +114,51 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
         ]
       };
 
-      // updateAttribute({ variables }).catch((err) => {
-      //   setError(err);
-      // });
+      console.log({ variables });
+
+      fetch('/api/admin/attribute/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(variables)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.attribute?.id) {
+            notify(t('common:successfully-updated'), 'success');
+            router.push(ROUTES.ATTRIBUTES);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error);
+          setLoading(false);
+        });
     }
   };
 
   const removeAttributeValue = (item: AttributeValue, index: number) => {
     setDeletedIndex(index);
     if (item?.id) {
-      // deleteAttributeValue({
-      //   variables: { id: item?.id },
-      //   onCompleted: (data: { deleteAttributeValue: AttributeValue }) => {
-      //     const value = data?.deleteAttributeValue?.value;
-      //     if (!isEmpty(value)) {
-      //       notify(t('common:successfully-deleted'), 'success');
-      //       remove(index);
-      //     }
-      //   }
-      // }).catch((err) => {
-      //   setError(err);
-      // });
+      setLoading(true);
+      fetch('/api/admin/attribute/value/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item?.id })
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.attribute?.id) {
+            notify(t('common:successfully-deleted'), 'success');
+            remove(index);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error);
+          setLoading(false);
+        });
     } else {
       remove(index);
     }
@@ -245,14 +235,14 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
                       className="text-sm text-red-500 hover:text-red-700 transition-colors duration-200 focus:outline-none sm:mt-4 sm:col-span-1"
                     >
                       {t('form:button-label-remove')}
-                      {/* {deleteAttributeLoading && deletedIndex === index && (
+                      {loading && deletedIndex === index && (
                         <span
                           className="absolute h-4 w-4 ms-2 rounded-full border-2 border-transparent border-t-2 animate-spin"
                           style={{
                             borderTopColor: 'red'
                           }}
                         />
-                      )} */}
+                      )}
                     </button>
                   </div>
                 </div>
@@ -269,7 +259,7 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
           </Card>
         </div>
 
-        <div className="mb-4 text-end">
+        <div className="mb-4 flex justify-end items-center">
           {initialValues && (
             <Button
               variant="outline"
@@ -281,10 +271,7 @@ export default function CreateOrUpdateAttributeForm({ initialValues }: IProps) {
             </Button>
           )}
 
-          <Button
-          // loading={creating || updating}
-          // disabled={creating || updating}
-          >
+          <Button loading={loading} disabled={loading}>
             <div className="mr-1">
               <SaveIcon width="1.3rem" height="1.3rem" />
             </div>

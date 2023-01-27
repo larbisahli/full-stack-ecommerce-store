@@ -3,7 +3,6 @@ import Button from '@components/ui/button';
 import Checkbox from '@components/ui/checkbox';
 import Input from '@components/ui/input';
 import PasswordInput from '@components/ui/password-input';
-import { STAFF_LOGIN } from '@graphql/login';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import { ROUTES } from '@utils/routes';
@@ -39,6 +38,9 @@ const LoginForm = () => {
   const { t } = useTranslation();
 
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useErrorLogger(error);
 
   const {
     register,
@@ -49,27 +51,32 @@ const LoginForm = () => {
     resolver: yupResolver(loginFormSchema)
   });
 
-  // const [staffLogin, { loading }] = useMutation(STAFF_LOGIN, {
-  //   onCompleted: (data: { staffLogin: FormValues }) => {
-  //     if (data?.staffLogin?.success) {
-  //       router.push(ROUTES.DASHBOARD);
-  //     }
-  //   }
-  // });
-
-  const loading = true;
-
   useErrorLogger(error);
 
   async function onSubmit({ email, password, rememberMe }: FormValues) {
+    setLoading(true);
     const variables = {
       email,
       password,
       rememberMe
     };
-    // staffLogin({ variables }).catch((err) => {
-    //   setError(err);
-    // });
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(variables)
+    };
+    fetch('/api/admin/staff/login', requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.success) {
+          router.push(ROUTES.DASHBOARD);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
   }
 
   return (

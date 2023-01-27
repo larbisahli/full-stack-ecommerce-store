@@ -6,12 +6,7 @@ import { Table } from '@components/ui/table';
 import { useGetStaff } from '@hooks/useGetStaff';
 import { siteSettings } from '@settings/site.settings';
 import { Nullable } from '@ts-types/custom.types';
-import {
-  CreatedUpdatedByAt,
-  ImageType,
-  RoleType,
-  StaffType
-} from '@ts-types/generated';
+import { CreatedUpdatedByAt, ImageType, StaffType } from '@ts-types/generated';
 import { useIsRTL } from '@utils/locals';
 import { ROUTES } from '@utils/routes';
 import dayjs from 'dayjs';
@@ -39,7 +34,15 @@ const StaffList = ({
 
   const columns = [
     {
-      title: t('table:table-item-avatar'),
+      title: t('table:table-item-id'),
+      dataIndex: 'id',
+      key: 'id',
+      align: 'center',
+      width: 80,
+      ellipsis: true
+    },
+    {
+      title: t('table:table-item-profile'),
       dataIndex: 'profile',
       key: 'profile',
       align: 'center',
@@ -68,26 +71,6 @@ const StaffList = ({
       )
     },
     {
-      title: t('table:table-item-roles'),
-      dataIndex: 'role',
-      key: 'role',
-      align: alignLeft,
-      ellipsis: true,
-      width: 200,
-      render: (role: RoleType) => {
-        return (
-          <div>
-            <span
-              style={{ width: 'fit-content' }}
-              className="font-medium text-13px md:text-sm rounded block border border-sink-base px-2 py-1 bg-gray-100"
-            >
-              {role.roleName}
-            </span>
-          </div>
-        );
-      }
-    },
-    {
       title: t('table:table-item-status'),
       dataIndex: 'active',
       key: 'active',
@@ -96,9 +79,9 @@ const StaffList = ({
       render: (active: boolean) => {
         return (
           <Badge
-            className="!text-sm"
+            className="!test-sm"
             text={active ? 'Active' : 'Inactive'}
-            color={active ? 'bg-green-500' : 'bg-red-500'}
+            color={active ? 'bg-green' : 'bg-red'}
           />
         );
       }

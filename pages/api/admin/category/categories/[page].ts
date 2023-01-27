@@ -19,7 +19,6 @@ class Handler extends PostgresClient {
             categoryQueries.getCategoriesForAdmin(),
             [this.limit, offset]
           );
-          console.log({ categories });
           const { rows } = await this.query<{ count: number }, any>(
             categoryQueries.getCategoriesCount(),
             []

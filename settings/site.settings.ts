@@ -98,18 +98,18 @@ export const siteSettings = {
       },
       {
         id: 'nMtvIg',
-        href: '/settings',
+        href: ROUTES.SETTINGS,
         label: 'sidebar-nav-item-settings',
         icon: 'SettingsIcon'
       }
     ]
   },
   product: {
-    image: 'placeholders/image.jpg',
-    placeholder: 'placeholders/image__placeholder.png'
+    image: '/placeholders/image.jpg',
+    placeholder: '/placeholders/image__placeholder.png'
   },
   avatar: {
-    image: 'placeholders/avatar.jpg',
-    placeholder: 'placeholders/avatar__placeholder.png'
+    image: '/placeholders/avatar.jpg',
+    placeholder: '/placeholders/avatar__placeholder.png'
   }
 };

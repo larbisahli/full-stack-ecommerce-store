@@ -6,6 +6,7 @@ import ErrorMessage from '@components/ui/error-message';
 import LinkButton from '@components/ui/link-button';
 import Loader from '@components/ui/loader/loader';
 import { useErrorLogger, useGetStaff } from '@hooks/index';
+import { useTime } from '@hooks/useTime';
 import { verifyAuth } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
 import { Category } from '@ts-types/generated';
@@ -15,7 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import type { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import useSwr from 'swr';
 
 interface TCategory {
@@ -28,10 +29,11 @@ export default function Categories({ client }: SSRProps) {
 
   const [page, setPage] = useState(1);
 
-  const { data, error, isLoading } = useSwr<TCategory>(
-    page ? `/api/admin/category/categories/${page}` : null,
-    fetcher
-  );
+  const { current } = useTime();
+  const key = page
+    ? [`/api/admin/category/categories/${page}?time=`, current]
+    : null;
+  const { data, error, isLoading } = useSwr<TCategory>(key, fetcher);
 
   const { categories = [], count = 0 } = data ?? {};
 

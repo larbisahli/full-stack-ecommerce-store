@@ -11,12 +11,13 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
+      const staff = await this.authorization(req, res);
       switch (method) {
         case this.POST: {
           const { id, parentId, name, description } = body;
           const { rows } = await this.query<CategoryType, string>(
             categoryQueries.updateCategory(),
-            [id, parentId, name, description, null, null, null]
+            [id, parentId, name, description, null, null, staff?.id]
           );
           console.log(rows, { id, parentId, name, description });
           return res.status(200).json({ category: rows[0] });

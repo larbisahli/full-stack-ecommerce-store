@@ -1,37 +1,28 @@
 import { Menu as HeadlessMenu, Transition } from '@headlessui/react';
+import ActiveLink from '@store/components/active-link';
 import { Category } from '@ts-types/generated';
 import isEmpty from 'lodash/isEmpty';
-import Link from 'next/link';
-import { forwardRef, memo } from 'react';
-
-const MyLink = forwardRef((props, ref) => {
-  let { href, children, ...rest } = props;
-  return (
-    <Link href={href}>
-      <a ref={ref} {...rest}>
-        {children}
-      </a>
-    </Link>
-  );
-});
-
-MyLink.displayName = 'MyLink';
+import { memo } from 'react';
 
 interface Props {
   category: Category;
 }
 
 const Menu = ({ category }: Props) => {
-  console.log('MENU', { category });
   return (
     <div
       key={category.id}
       className="flex justify-center items-center mx-1 p-1 px-2 cursor-pointer hover:bg-gray-100"
     >
       {isEmpty(category?.subCategories) ? (
-        <MyLink href="/profile">
-          <p className="font-semibold text-gray-800">{category.name}</p>
-        </MyLink>
+        <ActiveLink
+          href={`/category/${category.name}`}
+          activeClassName="text-green-500 bg-gray-100"
+        >
+          <a>
+            <div className="font-semibold text-gray-800">{category.name}</div>
+          </a>
+        </ActiveLink>
       ) : (
         <HeadlessMenu>
           <div className="relative">
@@ -57,9 +48,16 @@ const Menu = ({ category }: Props) => {
                     href={sub.name}
                     className="block px-5 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    <MyLink href="/profile">
-                      <p className="font-semibold text-gray-700">{sub.name}</p>
-                    </MyLink>
+                    <ActiveLink
+                      href={`/category/${sub.name}`}
+                      activeClassName="text-green-500 bg-gray-100"
+                    >
+                      <a>
+                        <div className="font-semibold text-gray-700">
+                          {sub.name}
+                        </div>
+                      </a>
+                    </ActiveLink>
                   </HeadlessMenu.Item>
                 ))}
               </HeadlessMenu.Items>

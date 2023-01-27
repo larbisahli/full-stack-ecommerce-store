@@ -1,3 +1,4 @@
+import { PublicKEY } from '@middleware/jwt.keys';
 import { CookieNames } from '@ts-types/enums';
 import Cookies from 'cookies';
 import Tokens from 'csrf';
@@ -10,37 +11,33 @@ const tokens = new Tokens();
 const ENV = process.env;
 const PRODUCTION_ENV = ENV.NODE_ENV === 'production';
 
-const PublicKEY = process.env.JWTRS256_KEY_PUB;
-
 /*
  * @params {jwtToken} extracted from cookies
  * @return {object} object of extracted token
  */
 export function verifyAuth(context: GetServerSidePropsContext) {
-  // const { req, res } = context;
+  const { req, res } = context;
 
-  // const cookies = new Cookies(req, res);
-  // const jwtToken = cookies.get(CookieNames.STAFF_TOKEN_NAME);
+  const cookies = new Cookies(req, res);
+  const jwtToken = cookies.get(CookieNames.STAFF_TOKEN_NAME);
 
-  return { client: { id: 'lol' }, error: null };
+  try {
+    if (!jwtToken) {
+      return {
+        client: null,
+        error: { message: 'No jwtToken Provided!' }
+      };
+    }
+    const Alg: Algorithm = 'RS256';
 
-  // try {
-  //   if (!jwtToken) {
-  //     return {
-  //       client: null,
-  //       error: { message: 'No jwtToken Provided!' }
-  //     };
-  //   }
-  //   const Alg: Algorithm = 'RS256';
-
-  //   const client = jwt.verify(jwtToken, PublicKEY, {
-  //     algorithms: Alg
-  //   });
-  //   return { client, error: null };
-  // } catch (error) {
-  //   console.log('verifyAuth Error:>>', { error });
-  //   return { client: null, error: { ...serializeError(error), jwtToken } };
-  // }
+    const client = jwt.verify(jwtToken, PublicKEY, {
+      algorithms: Alg
+    });
+    return { client, error: null };
+  } catch (error) {
+    console.log('verifyAuth Error:>>', { error });
+    return { client: null, error: { ...serializeError(error), jwtToken } };
+  }
 }
 
 export async function XSRFHandler(context: GetServerSidePropsContext) {

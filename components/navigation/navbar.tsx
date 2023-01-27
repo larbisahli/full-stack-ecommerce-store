@@ -1,9 +1,11 @@
+import { ShopIcon } from '@components/icons/sidebar';
 import LinkButton from '@components/ui/link-button';
 import Logo from '@components/ui/logo';
 import { useUI } from '@contexts/ui.context';
 import { ROUTES } from '@utils/routes';
 import classNames from 'classnames/bind';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 
 import NavMenu from './menu';
@@ -52,7 +54,15 @@ const Navbar = () => {
           >
             {t('common:text-create-product')}
           </LinkButton>
-          <NavNotification />
+          {/* <NavNotification /> */}
+          <Link href={'/'}>
+            <a
+              target="_blank"
+              className="text-gray-200 p-2 hover:text-accent cursor-pointer"
+            >
+              <ShopIcon width="25px" height="25px" />
+            </a>
+          </Link>
           <NavMenu />
         </div>
       </nav>

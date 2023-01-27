@@ -12,6 +12,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React from 'react';
 import useSwr from 'swr';
 
 interface TCategory {
@@ -23,14 +24,13 @@ export default function UpdateCategoriesPage({ client }: SSRProps) {
 
   const { categoryId } = query;
 
-  const { data, error, isLoading } = useSwr<TCategory>(
-    categoryId ? `/api/admin/category/${categoryId}` : null,
-    fetcher
-  );
+  const random = React.useRef(Date.now());
+  const key = categoryId
+    ? [`/api/admin/category/${categoryId}?time=`, random.current]
+    : null;
+  const { data, error, isLoading } = useSwr<TCategory>(key, fetcher);
 
   const { category = {} } = data ?? {};
-
-  console.log({ category, data });
 
   useGetStaff(client);
   useErrorLogger(error);
