@@ -4,8 +4,8 @@ import {
   useModalState
 } from '@components/ui/modal/modal.context';
 import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useTime } from '@hooks/useTime';
 import { notify } from '@lib/index';
-import { StaffType } from '@ts-types/generated';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
@@ -13,33 +13,30 @@ const StaffDeleteView = () => {
   const { t } = useTranslation();
 
   const [error, setError] = useState(null);
-  // const [deleteAttributeValue, { loading }] = useMutation(DELETE_STAFF, {
-  //   refetchQueries: [
-  //     STAFFS,
-  //     'Staffs' // Query name
-  //   ]
-  // });
+  const [loading, setLoading] = useState(false);
 
+  const { revalidate } = useTime();
   const { id } = useModalState();
   const { closeModal } = useModalAction();
 
   useErrorLogger(error);
 
   async function handleDelete() {
-    // deleteAttributeValue({
-    //   variables: { id },
-    //   onCompleted: ({ deleteStaff }: { deleteStaff: StaffType }) => {
-    //     const { firstName, lastName } = deleteStaff;
-    //     notify(
-    //       `${t('common:sidebar-nav-item-staff')} '${firstName} ${lastName}' ${t(
-    //         'common:successfully-deleted'
-    //       )}`,
-    //       'success'
-    //     );
-    //   }
-    // }).catch((err) => {
-    //   setError(err);
-    // });
+    fetch('/api/admin/staff/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+      .then(() => {
+        notify(`${t('common:successfully-deleted')}`, 'success');
+        setLoading(false);
+        revalidate();
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(error);
+        setLoading(false);
+      });
     closeModal();
   }
 
@@ -47,7 +44,7 @@ const StaffDeleteView = () => {
     <ConfirmationCard
       onCancel={closeModal}
       onDelete={handleDelete}
-      // deleteBtnLoading={loading}
+      deleteBtnLoading={loading}
     />
   );
 };

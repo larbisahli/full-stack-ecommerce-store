@@ -6,7 +6,6 @@ import React from 'react';
 type AvatarProps = {
   className?: string;
   src: string;
-  customPlaceholder: string;
   alt?: string;
   width?: number;
   height?: number;
@@ -14,7 +13,6 @@ type AvatarProps = {
 
 const Avatar: React.FC<AvatarProps> = ({
   src,
-  customPlaceholder,
   className,
   alt = 'Avatar',
   ...rest
@@ -30,7 +28,6 @@ const Avatar: React.FC<AvatarProps> = ({
       <ImageComponent
         alt={alt}
         src={src}
-        customPlaceholder={customPlaceholder}
         layout="fill"
         objectFit="cover"
         priority={true}

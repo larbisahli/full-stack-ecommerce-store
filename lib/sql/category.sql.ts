@@ -16,10 +16,10 @@ export function getCategoriesCount(): string {
 
 export function getCategoryForAdmin(): string {
   return `SELECT cate.id, cate.parent_id AS "parentId", cate.name, cate.description,
-  json_build_object('image', cate.image, 'placeholder', cate.placeholder) as thumbnail, cate.created_at AS "createdAt", cate.updated_at AS "updatedAt", 
-  (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name, 'profile', json_build_object('image', stc.image, 'placeholder', stc.placeholder)) 
+  cate.image, cate.created_at AS "createdAt", cate.updated_at AS "updatedAt", 
+  (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name)
   FROM staff_accounts AS stc WHERE stc.id = cate.created_by) AS "createdBy",
-  (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name, 'profile', json_build_object('image', stu.image, 'placeholder', stu.placeholder)) 
+  (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name)
   FROM staff_accounts AS stu WHERE stu.id = cate.updated_by) AS "updatedBy",
   (SELECT json_build_object('id', parent_cate.id, 'name', parent_cate.name) FROM categories AS parent_cate WHERE parent_cate.id = cate.parent_id) AS parent,
   (SELECT EXISTS(SELECT cate_check.id FROM categories AS cate_check WHERE cate_check.parent_id = cate.id)) AS "hasChildren"
@@ -65,13 +65,13 @@ export function getCategoriesSelectAllForAdmin(): string {
 
 // COALESCE((SELECT MAX(display_order)+1 FROM categories)
 export function insertCategory(): string {
-  return `INSERT INTO categories(parent_id, name, description, image, placeholder, created_by)
-          VALUES($1, $2, NULLIF($3, ''), $4, $5, $6) RETURNING id, name
+  return `INSERT INTO categories(parent_id, name, description, image, created_by)
+          VALUES($1, $2, NULLIF($3, ''), $4, $5) RETURNING id, name
       `;
 }
 
 export function updateCategory(): string {
-  return `UPDATE categories SET parent_id = $2, name = $3, description = $4, image = $5, placeholder = $6,  updated_by = $7
+  return `UPDATE categories SET parent_id = $2, name = $3, description = $4, image = $5,  updated_by = $6
          WHERE id = $1 RETURNING id, name
       `;
 }

@@ -62,7 +62,7 @@ const defaultValues = {
   name: '',
   description: null,
   parent: null,
-  thumbnail: null,
+  image: null,
   icon: null
 };
 
@@ -112,10 +112,7 @@ export default function CreateOrUpdateCategoriesForm({
       id: initialValues?.id,
       name: values.name,
       description: values.description,
-      // thumbnail: {
-      //   image: values.thumbnail?.image,
-      //   placeholder: values.thumbnail?.placeholder
-      // },
+      image: values.image,
       parentId: isEmpty(values?.parent) ? null : values?.parent?.id
     };
 
@@ -149,7 +146,6 @@ export default function CreateOrUpdateCategoriesForm({
           if (data?.category?.id) {
             notify(t('common:successfully-updated'), 'success');
             router.push(ROUTES.CATEGORIES);
-            reset();
           }
           setLoading(false);
         })
@@ -174,7 +170,7 @@ export default function CreateOrUpdateCategoriesForm({
         />
 
         <Card className="w-full sm:w-8/12 md:w-2/3">
-          <FileInput name="thumbnail" control={control} multiple={false} />
+          <FileInput name="image" control={control} multiple={false} />
         </Card>
       </div>
 

@@ -1,15 +1,9 @@
-import { useGetDataUrl } from '@hooks/useGetDataUrl';
-import { mediaURL } from '@utils/utils';
 import Image, { ImageProps } from 'next/image';
 import React, { memo } from 'react';
 
-interface Props extends ImageProps {
-  customPlaceholder: string;
-  src: string;
-}
-
-const ImageComponent = ({ customPlaceholder, ...props }: Props) => {
-  const Base64Placeholder = useGetDataUrl(customPlaceholder);
+const ImageComponent = (props: ImageProps) => {
+  const Base64Placeholder =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8+utrPQAJNQNlcqdyCgAAAABJRU5ErkJggg==';
 
   return (
     <Image

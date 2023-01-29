@@ -37,11 +37,7 @@ const moduleExports = {
   images: {
     deviceSizes: [320, 420, 768, 1024, 1200],
     // iconSizes: [],
-    domains: [
-      '127.0.0.1',
-      'media.dropgala.com',
-      'dropgala.s3.eu-west-3.amazonaws.com'
-    ],
+    domains: ['127.0.0.1', 'ecom-bucket.fra1.digitaloceanspaces.com'],
     path: '/_next/image',
     loader: 'default'
   },
@@ -58,7 +54,12 @@ const moduleExports = {
     POSTGRES_PASSWORD: 'crud_password',
     POSTGRES_DB: 'development',
     PORT: 5432,
-    END_POINT: '127.0.0.1'
+    END_POINT: '127.0.0.1',
+    S3_BUCKET_NAME: 'ecom-bucket',
+    S3_REGION: 'fra1',
+    S3_ACCESS_KEY_ID: 'DO00H9TH8LTB7GVXQD2X',
+    S3_SECRET_ACCESS_KEY: 'vgNsUneQXlOGcZP7blBiuxkh0AvKLBRQg5D5frE+dVo',
+    S3_ENDPOINT: 'https://ecom-bucket.fra1.digitaloceanspaces.com'
   },
   typescript: {
     ignoreBuildErrors: true

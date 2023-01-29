@@ -2,24 +2,23 @@ import { CloseIcon } from '@components/icons/close-icon';
 import { UploadIcon } from '@components/icons/upload-icon';
 import ImageComponent from '@components/ImageComponent';
 import Loader from '@components/ui/loader/loader';
-import { DELETE_IMAGE_OBJECT } from '@graphql/common';
-import { useErrorLogger, useGetStaff } from '@hooks/index';
 import { notify } from '@lib/notify';
-import { apiURL } from '@utils/utils';
+import S3 from '@lib/S3/react-aws-s3';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-interface ImageType {
-  bucket: string;
-  image: string;
-  mimeType: string;
-  originalname: string;
-  placeholder: string;
-  success: boolean;
-}
+const config = {
+  bucketName: process.env.S3_BUCKET_NAME,
+  region: process.env.S3_REGION,
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  s3Url: process.env.S3_ENDPOINT
+};
+
+const ReactS3Client = new S3(config);
 
 export default function Uploader({ onChange, value, multiple }: any) {
   const { t } = useTranslation();
@@ -27,24 +26,11 @@ export default function Uploader({ onChange, value, multiple }: any) {
   const imagesCache = useRef<string[]>([]);
 
   const [error, setError] = useState(null);
-  const [images, setImages] = useState<ImageType | ImageType[]>(value);
+  const [images, setImages] = useState<string | string[]>(value);
   const [deletedImage, setDeletedImage] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // const { staffInfo } = useGetStaff();
-  // const csrfToken = staffInfo?.csrfToken;
-
-  // const [deleteImageObject, { loading: deleteLoading }] = useMutation(
-  //   DELETE_IMAGE_OBJECT,
-  //   {
-  //     context: {
-  //       headers: {
-  //         'x-csrf-token': csrfToken
-  //       }
-  //     }
-  //   }
-  // );
-  // useErrorLogger(error);
+  console.log({ images });
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
@@ -62,36 +48,35 @@ export default function Uploader({ onChange, value, multiple }: any) {
         }
 
         for await (const file of acceptedFiles) {
-          var formData = new FormData();
-          formData.append('image', file);
-          fetch(`${apiURL}/upload`, {
-            credentials: 'include',
-            method: 'POST',
-            body: formData
-          }).then(async (res) => {
-            const image = (await res.json()) as ImageType;
+          console.log({ file });
+          if (['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+            ReactS3Client.uploadFile(file)
+              .then((data) => {
+                const image = data.key as string;
 
-            if (image.success) {
-              if (multiple) {
-                setImages((prev) => [...((prev as ImageType[]) ?? []), image]);
-                imagesCache.current.push(image.image);
-              } else {
-                setImages(image as ImageType);
+                if (image) {
+                  if (multiple) {
+                    setImages((prev) => [...((prev as string[]) ?? []), image]);
+                    imagesCache.current.push(image);
+                  } else {
+                    setImages(image);
+                    setLoading(false);
+                  }
+                }
+
+                if (acceptedFiles.length === imagesCache.current.length) {
+                  setLoading(false);
+                }
+                console.log(`<:FINISHED UPLOAD:>`, image);
+              })
+              .catch((err) => {
+                console.error(err);
                 setLoading(false);
-              }
-            }
-
-            // @ts-ignore
-            if (image?.error?.message) {
-              // @ts-ignore
-              notify(image?.error?.message, 'error');
-            }
-
-            if (acceptedFiles.length === imagesCache.current.length) {
-              setLoading(false);
-            }
-            console.log(`<:FINISHED UPLOAD:>`, image);
-          });
+              });
+          } else {
+            notify('Image type not supported!', 'error');
+            setLoading(false);
+          }
         }
       } catch (error) {
         // send error to sentry
@@ -107,11 +92,7 @@ export default function Uploader({ onChange, value, multiple }: any) {
 
   const handleDelete = (
     e,
-    {
-      isMultiple,
-      image,
-      placeholder
-    }: { isMultiple: boolean; image: string; placeholder: string }
+    { isMultiple, image }: { isMultiple: boolean; image: string }
   ) => {
     e.preventDefault();
 
@@ -119,114 +100,119 @@ export default function Uploader({ onChange, value, multiple }: any) {
       return [...prev, image];
     });
 
-    // deleteImageObject({
-    //   variables: { image, placeholder },
-    //   onCompleted: (data: { deleteImageObject: { image: string } }) => {
-    //     const image = data?.deleteImageObject.image;
-    //     if (!isEmpty(data)) {
-    //       let images_;
-    //       if (isArray(images) && isMultiple) {
-    //         images_ = images?.filter((file) => file.image !== image);
-    //       } else {
-    //         images_ = null;
-    //       }
-    //       setImages(images_);
-    //       onChange(images_);
-    //       setDeletedImage([]);
-    //       notify(t('common:successfully-deleted'), 'success');
-    //     }
-    //   }
-    // }).catch((err) => {
-    //   setError(err);
-    // });
+    try {
+      fetch('/api/admin/media/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image })
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isEmpty(data?.Deleted)) {
+            const image = data?.Deleted[0].key;
+            let images_;
+            if (isArray(images) && isMultiple) {
+              images_ = images?.filter((file) => file !== image);
+            } else {
+              images_ = null;
+            }
+            setImages(images_);
+            onChange(images_);
+            setDeletedImage([]);
+            notify(t('common:successfully-deleted'), 'success');
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const thumbs = [];
-  // useMemo(() => {
-  //   if (isEmpty(images)) {
-  //     return null;
-  //   }
+  const thumbs = useMemo(() => {
+    if (isEmpty(images)) {
+      return null;
+    }
 
-  //   if (isArray(images)) {
-  //     return images?.map(({ image, placeholder }, idx) => {
-  //       return (
-  //         <div
-  //           className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative"
-  //           key={idx}
-  //         >
-  //           {deletedImage.includes(image) && (
-  //             <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
-  //               <Loader
-  //                 simple={true}
-  //                 borderColor={'#000'}
-  //                 className="w-8 h-8 z-50"
-  //               />
-  //             </div>
-  //           )}
+    if (isArray(images)) {
+      return images?.map((image, idx) => {
+        return (
+          <div
+            className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative"
+            key={idx}
+          >
+            {deletedImage.includes(image) && (
+              <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
+                <Loader
+                  simple={true}
+                  borderColor={'#000'}
+                  className="w-8 h-8 z-50"
+                />
+              </div>
+            )}
 
-  //           <div className="relative flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
-  //             {/* eslint-disable-next-line jsx-a11y/alt-text */}
-  //             <ImageComponent
-  //               src={image}
-  //               customPlaceholder={placeholder ?? '/placeholders/no-image.svg'}
-  //               layout="fill"
-  //               objectFit="cover"
-  //             />
-  //           </div>
-  //           <button
-  //             type="button"
-  //             className="w-4 h-4 flex items-center justify-center rounded-full
-  //               bg-red-600 text-xs text-light absolute top-1
-  //                 end-1 shadow-xl outline-none"
-  //             onClick={(e) =>
-  //               handleDelete(e, { isMultiple: true, image, placeholder })
-  //             }
-  //           >
-  //             <CloseIcon width={10} height={10} />
-  //           </button>
-  //         </div>
-  //       );
-  //     });
-  //   } else {
-  //     return (
-  //       <div className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative">
-  //         {deletedImage.includes(images?.image) && (
-  //           <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
-  //             <Loader
-  //               simple={true}
-  //               borderColor={'#000'}
-  //               className="w-8 h-8 z-50"
-  //             />
-  //           </div>
-  //         )}
-  //         <div className="flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
-  //           {/* eslint-disable-next-line jsx-a11y/alt-text */}
-  //           <ImageComponent
-  //             src={images?.image ?? '/placeholders/no-image.svg'}
-  //             customPlaceholder={images?.placeholder}
-  //             layout="fill"
-  //             objectFit="cover"
-  //           />
-  //         </div>
-  //         <button
-  //           type="button"
-  //           className="w-4 h-4 flex items-center justify-center rounded-full
-  //       bg-red-600 text-xs text-light absolute top-1
-  //         end-1 shadow-xl outline-none"
-  //           onClick={(e) =>
-  //             handleDelete(e, {
-  //               isMultiple: false,
-  //               image: images?.image,
-  //               placeholder: images?.placeholder
-  //             })
-  //           }
-  //         >
-  //           <CloseIcon width={10} height={10} />
-  //         </button>
-  //       </div>
-  //     );
-  //   }
-  // }, [images, deleteLoading, deletedImage]);
+            <div className="relative flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
+              <ImageComponent
+                src={`${process.env.S3_ENDPOINT}/${image}`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+            <button
+              type="button"
+              className="w-4 h-4 flex items-center justify-center rounded-full
+                bg-red-600 text-xs text-light absolute top-1
+                  end-1 shadow-xl outline-none"
+              onClick={(e) => handleDelete(e, { isMultiple: true, image })}
+            >
+              <CloseIcon width={10} height={10} />
+            </button>
+          </div>
+        );
+      });
+    } else {
+      return (
+        <div className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative">
+          {deletedImage.includes(images) && (
+            <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
+              <Loader
+                simple={true}
+                borderColor={'#000'}
+                className="w-8 h-8 z-50"
+              />
+            </div>
+          )}
+          <div className="flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <ImageComponent
+              src={`${process.env.S3_ENDPOINT}/${images}`}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <button
+            type="button"
+            className="w-4 h-4 flex items-center justify-center rounded-full
+        bg-red-600 text-xs text-light absolute top-1
+          end-1 shadow-xl outline-none"
+            onClick={(e) =>
+              handleDelete(e, {
+                isMultiple: false,
+                image: images
+              })
+            }
+          >
+            <CloseIcon width={10} height={10} />
+          </button>
+        </div>
+      );
+    }
+  }, [images, deletedImage]);
 
   return (
     <section className="upload">

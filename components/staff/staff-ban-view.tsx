@@ -3,19 +3,15 @@ import {
   useModalAction,
   useModalState
 } from '@components/ui/modal/modal.context';
-import { BAN_STAFF, STAFFS } from '@graphql/staff';
 import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useTime } from '@hooks/useTime';
 import { useState } from 'react';
 
 const StaffBanView = () => {
   const [error, setError] = useState(null);
-  // const [BanStaff, { loading }] = useMutation(BAN_STAFF, {
-  //   refetchQueries: [
-  //     STAFFS,
-  //     'Staffs' // Query name
-  //   ]
-  // });
+  const [loading, setLoading] = useState(false);
 
+  const { revalidate } = useTime();
   const { id, meta } = useModalState();
   const { closeModal } = useModalAction();
 
@@ -24,24 +20,42 @@ const StaffBanView = () => {
   async function handleDelete() {
     if (meta === 'ban') {
       // Block staff
-      // BanStaff({
-      //   variables: {
-      //     id,
-      //     active: false
-      //   }
-      // }).catch((err) => {
-      //   setError(err);
-      // });
+      fetch('/api/admin/staff/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          active: false
+        })
+      })
+        .then(() => {
+          setLoading(false);
+          revalidate();
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error);
+          setLoading(false);
+        });
     } else {
       // Unblock staff
-      // BanStaff({
-      //   variables: {
-      //     id,
-      //     active: true
-      //   }
-      // }).catch((err) => {
-      //   setError(err);
-      // });
+      fetch('/api/admin/staff/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          active: true
+        })
+      })
+        .then(() => {
+          setLoading(false);
+          revalidate();
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error);
+          setLoading(false);
+        });
     }
     closeModal();
   }
@@ -56,7 +70,7 @@ const StaffBanView = () => {
           ? 'Are you sure you want to block this Staff?'
           : 'Are you sure you want to unblock this Staff?'
       }
-      // deleteBtnLoading={loading}
+      deleteBtnLoading={loading}
     />
   );
 };

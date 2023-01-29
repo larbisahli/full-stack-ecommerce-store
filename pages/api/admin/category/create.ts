@@ -14,10 +14,10 @@ class Handler extends PostgresClient {
       const staff = await this.authorization(req, res);
       switch (method) {
         case this.POST: {
-          const { parentId, name, description } = body;
+          const { parentId, name, description, image } = body;
           const { rows } = await this.query<CategoryType, string>(
             categoryQueries.insertCategory(),
-            [parentId, name, description, null, null, staff?.id]
+            [parentId, name, description, image, staff?.id]
           );
           console.log({ rows });
           return res.status(200).json({ category: rows[0] });
@@ -28,7 +28,7 @@ class Handler extends PostgresClient {
       }
     } catch (error) {
       console.log('------->', error);
-      res.status(500).end({
+      res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,

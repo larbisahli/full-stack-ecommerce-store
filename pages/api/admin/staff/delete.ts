@@ -1,7 +1,6 @@
 import PostgresClient from '@lib/database';
-import { categoryQueries, staffQueries } from '@lib/sql';
+import { staffQueries } from '@lib/sql';
 import { StaffType } from '@ts-types/generated';
-import { setCookie } from '@utils/cookies';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -10,29 +9,30 @@ class Handler extends PostgresClient {
   }
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { query, method } = req;
-    const id = query.id as string;
+    const { method, body } = req;
     try {
       await this.authorization(req, res);
-
       switch (method) {
-        case this.GET: {
+        case this.POST: {
+          const { id } = body;
+
           const { rows } = await this.query<StaffType, string>(
-            staffQueries.getStaff(),
+            staffQueries.deleteStaff(),
             [id]
           );
+
           return res.status(200).json({ staff: rows[0] });
         }
         default:
-          res.setHeader('Allow', ['GET']);
-          res.status(405).end(`There was some error!`);
+          res.setHeader('Allow', ['POST']);
+          res.status(405).end(`There was some error`);
       }
     } catch (error) {
       return res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'staff'
+          from: 'updateCategory'
         }
       });
     }

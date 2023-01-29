@@ -7,17 +7,16 @@ import { verifyAuth, XSRFHandler } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
 import { StaffType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
+import { fetcher } from '@utils/utils';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React from 'react';
+import useSwr from 'swr';
 
 interface TStaff {
   staff: StaffType;
-}
-
-interface OptionsVariable {
-  id: string | string[];
 }
 
 export default function EditStaffPage({ client }: SSRProps) {
@@ -26,20 +25,23 @@ export default function EditStaffPage({ client }: SSRProps) {
 
   const { staffId } = query;
 
-  // const { data, loading, error } = useQuery<TStaff, OptionsVariable>(STAFF, {
-  //   variables: { id: staffId },
-  //   fetchPolicy: 'cache-and-network'
-  // });
+  const random = React.useRef(Date.now());
+  const key = staffId
+    ? [`/api/admin/staff/${staffId}?time=`, random.current]
+    : null;
+  const { data, error, isLoading } = useSwr<TStaff>(key, fetcher);
+
+  const { staff } = data ?? {};
 
   useGetStaff(client);
-  // useErrorLogger(error);
+  useErrorLogger(error);
 
-  // if (loading) {
-  //   return <Loader text={t('common:text-loading')} />;
-  // }
-  // if (error) {
-  //   return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
-  // }
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (error) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
 
   return (
     <>
@@ -48,7 +50,7 @@ export default function EditStaffPage({ client }: SSRProps) {
           {t('form:form-title-create-staff')}
         </h1>
       </div>
-      <StaffCreateUpdateForm initialValues={{}} />
+      <StaffCreateUpdateForm initialValues={staff} />
     </>
   );
 }

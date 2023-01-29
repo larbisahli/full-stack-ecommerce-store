@@ -49,11 +49,12 @@ const StaffList = ({
       width: 74,
       render: (profile: ImageType, record: StaffType) => (
         <Avatar
-          src={profile?.image ?? siteSettings.avatar.image}
-          alt={`${record?.firstName} ${record?.lastName}`}
-          customPlaceholder={
-            profile?.placeholder ?? siteSettings.avatar.placeholder
+          src={
+            profile
+              ? `${process.env.S3_ENDPOINT}/${profile}`
+              : siteSettings.avatar.image
           }
+          alt={`${record?.firstName} ${record?.lastName}`}
         />
       )
     },
@@ -81,7 +82,7 @@ const StaffList = ({
           <Badge
             className="!test-sm"
             text={active ? 'Active' : 'Inactive'}
-            color={active ? 'bg-green' : 'bg-red'}
+            color={active ? 'bg-green' : 'bg-red-600'}
           />
         );
       }
@@ -90,6 +91,14 @@ const StaffList = ({
       title: t('table:table-item-email'),
       dataIndex: 'email',
       key: 'email',
+      align: alignLeft,
+      width: 200,
+      ellipsis: true
+    },
+    {
+      title: t('table:table-item-phone'),
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
       align: alignLeft,
       width: 200,
       ellipsis: true

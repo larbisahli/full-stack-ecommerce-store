@@ -11,6 +11,5 @@ export const staffValidationSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref('password'), null], 'form:error-match-passwords')
     .required('form:error-confirm-password'),
-  password: yup.string().required('form:error-password-required'),
-  role: yup.object().required('form:error-role-required')
+  password: yup.string().required('form:error-password-required')
 });

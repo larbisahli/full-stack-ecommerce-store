@@ -82,13 +82,13 @@ export interface CreatedUpdatedByAt {
     id: string;
     firstName: string;
     lastName: string;
-    profile?: ImageType;
+    profile?: string;
   }>;
   updatedBy?: Nullable<{
     id: string;
     firstName: string;
     lastName: string;
-    profile?: ImageType;
+    profile?: string;
   }>;
   page?: number;
   limit?: number;
@@ -122,7 +122,7 @@ export interface Category extends CreatedUpdatedByAt {
   children?: Nullable<Array<CategoryRef>>;
   subCategories?: Nullable<Array<CategoryRef>>;
   active?: Scalars['Boolean'];
-  thumbnail?: ImageType;
+  image?: string;
   icon?: Nullable<Scalars['String']>;
   hasChildren?: Scalars['Boolean'];
   parent?: Nullable<CategoryRef>;
@@ -134,7 +134,7 @@ export interface CategoryRef extends CreatedUpdatedByAt {
   name?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   active?: Scalars['Boolean'];
-  thumbnail?: ImageType;
+  image?: string;
   icon?: Nullable<Scalars['String']>;
   // parent?: Nullable<Category>;
 }
@@ -273,8 +273,8 @@ export interface Product extends CreatedUpdatedByAt {
   status?: ProductStatus;
   disableOutOfStock?: Scalars['Boolean'];
   note?: Nullable<Scalars['String']>;
-  thumbnail?: Nullable<ImageType>;
-  gallery?: Nullable<ImageType[]>;
+  thumbnail?: string;
+  gallery?: Nullable<string[]>;
   categories?: Array<Category>;
   suppliers?: Nullable<Array<Suppliers>>;
   tags?: Nullable<Array<Nullable<Tag>>>;
@@ -304,13 +304,6 @@ export interface VariationOptionsType {
   sku: Scalars['String'];
 }
 
-// Attachment
-export interface ImageType {
-  id?: Scalars['String'];
-  image?: Scalars['String'];
-  placeholder?: Scalars['String'];
-  isThumbnail?: boolean;
-}
 export interface Suppliers extends CreatedUpdatedByAt {
   id?: Scalars['ID'];
   name?: Scalars['String'];
@@ -326,7 +319,7 @@ export interface Suppliers extends CreatedUpdatedByAt {
 export interface HeroBannerType {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;
-  thumbnail?: ImageType;
+  image?: string;
   title?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   btnLabel?: Scalars['String'];
@@ -341,7 +334,7 @@ export interface HeroBannerType {
 export interface HeroCarouselType extends CreatedUpdatedByAt {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;
-  thumbnail?: ImageType;
+  image?: string;
   title?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   btnLabel?: Scalars['String'];

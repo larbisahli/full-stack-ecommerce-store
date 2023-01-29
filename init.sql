@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS staff_accounts (
   password_hash TEXT NOT NULL,
   active BOOLEAN DEFAULT TRUE,
   image TEXT DEFAULT NULL,
-  placeholder TEXT DEFAULT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   created_by UUID REFERENCES staff_accounts(id),
@@ -26,7 +25,6 @@ CREATE TABLE IF NOT EXISTS categories (
   name VARCHAR(255) NOT NULL UNIQUE,
   description TEXT,
   image TEXT,
-  placeholder TEXT,
   active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -69,7 +67,6 @@ CREATE TABLE IF NOT EXISTS gallery (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   product_id UUID REFERENCES products(id),
   image TEXT NOT NULL,
-  placeholder TEXT NOT NULL,
   is_thumbnail BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (id)
 ) PARTITION BY HASH(id);
@@ -195,7 +192,6 @@ CREATE TABLE IF NOT EXISTS slideshows (
   title VARCHAR(80),
   destination_url TEXT,
   image TEXT NOT NULL,
-  placeholder TEXT NOT NULL,
   description VARCHAR(160),
   btn_label VARCHAR(50),
   display_order INTEGER NOT NULL,

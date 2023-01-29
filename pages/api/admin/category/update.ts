@@ -14,10 +14,10 @@ class Handler extends PostgresClient {
       const staff = await this.authorization(req, res);
       switch (method) {
         case this.POST: {
-          const { id, parentId, name, description } = body;
+          const { id, parentId, name, description, image } = body;
           const { rows } = await this.query<CategoryType, string>(
             categoryQueries.updateCategory(),
-            [id, parentId, name, description, null, null, staff?.id]
+            [id, parentId, name, description, image, staff?.id]
           );
           console.log(rows, { id, parentId, name, description });
           return res.status(200).json({ category: rows[0] });

@@ -4,24 +4,17 @@ import Button from '@components/ui/button';
 import Description from '@components/ui/description';
 import FileInput from '@components/ui/file-input';
 import Input from '@components/ui/input';
-import Label from '@components/ui/label';
 import PasswordInput from '@components/ui/password-input';
-import SelectInput from '@components/ui/select-input';
-import { CREATE_STAFF, ROLES_FOR_SELECT, UPDATE_STAFF } from '@graphql/staff';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  useErrorLogger,
-  useGetStaff,
-  useWarnIfUnsavedChanges
-} from '@hooks/index';
+import { useErrorLogger, useWarnIfUnsavedChanges } from '@hooks/index';
 import { notify } from '@lib/index';
-import { RoleType, StaffType } from '@ts-types/generated';
+import { StaffType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
 import isEmpty from 'lodash/isEmpty';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
-import { Control, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { staffValidationSchema } from './staff-validation-schema';
 
@@ -33,47 +26,12 @@ type IProps = {
   initialValues?: StaffType | null;
 };
 
-interface TRolesSelect {
-  roles: RoleType[];
-}
-
-interface OptionsVariable {}
-
-function SelectRoles({ control }: { control: Control<FormValues> }) {
-  const { t } = useTranslation();
-
-  // const { data, loading, error } = useQuery<TRolesSelect, OptionsVariable>(
-  //   ROLES_FOR_SELECT,
-  //   {
-  //     variables: {}
-  //   }
-  // );
-
-  const roles = []; //data?.roles;
-
-  // useErrorLogger(error);
-
-  return (
-    <div>
-      <Label>{t('form:input-label-roles')}</Label>
-      <SelectInput
-        name="role"
-        control={control}
-        getOptionLabel={(option: RoleType) => option.roleName}
-        getOptionValue={(option: RoleType) => option.id}
-        options={roles}
-        isClearable={true}
-        // isLoading={loading}
-      />
-    </div>
-  );
-}
-
 const StaffCreateUpdateForm = ({ initialValues }: IProps) => {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
   const {
@@ -94,65 +52,56 @@ const StaffCreateUpdateForm = ({ initialValues }: IProps) => {
     resolver: yupResolver(staffValidationSchema)
   });
 
-  const { staffInfo } = useGetStaff();
-  const csrfToken = staffInfo?.csrfToken;
-
-  // const [createStaff, { loading: creating }] = useMutation(CREATE_STAFF, {
-  //   context: {
-  //     headers: {
-  //       'x-csrf-token': csrfToken
-  //     }
-  //   },
-  //   onCompleted: (data: { createStaff: StaffType }) => {
-  //     if (!isEmpty(data)) {
-  //       reset();
-  //       notify(t('common:successfully-created'), 'success');
-  //       router.push(ROUTES.STAFFS);
-  //     }
-  //   }
-  // });
-  // const [updateStaff, { loading: updating }] = useMutation(UPDATE_STAFF, {
-  //   context: {
-  //     headers: {
-  //       'x-csrf-token': csrfToken
-  //     }
-  //   },
-  //   onCompleted: (data: { updateStaff: StaffType }) => {
-  //     if (!isEmpty(data)) {
-  //       notify(t('common:successfully-updated'), 'success');
-  //       router.push(ROUTES.STAFFS);
-  //     }
-  //   }
-  // });
-
   useErrorLogger(error);
 
   async function onSubmit(values: FormValues) {
     const variables = {
+      id: initialValues?.id,
       firstName: values.firstName,
       lastName: values.lastName,
       phoneNumber: values.phoneNumber,
-      profile: {
-        image: values?.profile?.image,
-        placeholder: values?.profile?.placeholder
-      },
-      roleId: values.role.id,
+      profile: values?.profile,
       password: values.password,
       email: values.email
     };
 
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(variables)
+    };
+
     setUnsavedChanges(false);
+    setLoading(true);
     if (isEmpty(initialValues)) {
-      // createStaff({ variables }).catch((err) => {
-      //   setError(err);
-      // });
+      fetch('/api/admin/staff/create', requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.staff?.id) {
+            notify(t('common:successfully-created'), 'success');
+            router.push(ROUTES.STAFFS);
+            reset();
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     } else {
-      // updateStaff({ variables: { id: initialValues?.id, ...variables } }).catch(
-      //   (err) => {
-      //     setError(err);
-      //     setUnsavedChanges(true);
-      //   }
-      // );
+      fetch('/api/admin/staff/update', requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.staff?.id) {
+            notify(t('common:successfully-updated'), 'success');
+            router.push(ROUTES.STAFFS);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     }
   }
 
@@ -232,21 +181,11 @@ const StaffCreateUpdateForm = ({ initialValues }: IProps) => {
               />
             </div>
           )}
-          <SelectRoles control={control} />
-          {errors?.role && (
-            <p className="my-2 text-xs text-start text-red-500">
-              {/* @ts-ignore */}
-              {t(errors?.role?.message!)}
-            </p>
-          )}
         </Card>
       </div>
 
       <div className="mb-4 text-end">
-        <Button
-        // loading={creating || updating}
-        // disabled={creating || updating}
-        >
+        <Button loading={loading} disabled={loading}>
           <div className="mr-1">
             <SaveIcon width="1.3rem" height="1.3rem" />
           </div>
