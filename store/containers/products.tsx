@@ -40,6 +40,8 @@ const Products = React.forwardRef(
       });
     };
 
+    console.log({ searchableItems });
+
     return (
       <div className="w-full mt-35px xxl:mt-60px px-4 lg:px-35px" ref={ref}>
         {searchableItems.length ? (
@@ -67,5 +69,7 @@ const Products = React.forwardRef(
     );
   }
 );
+
+Products.displayName = 'Products';
 
 export default Products;

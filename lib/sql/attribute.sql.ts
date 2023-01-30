@@ -6,8 +6,6 @@ export function getAttributesCount(): string {
 
 export function getAttributeForAdmin(): string {
   return `SELECT att.id, att.attribute_name AS name, att.created_at AS "createdAt", att.updated_at as "updatedAt", 
-  (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name, 'profile', json_build_object('image', stc.image, 'placeholder', stc.placeholder)) FROM staff_accounts AS stc WHERE stc.id = att.created_by) AS "createdBy",
-  (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name, 'profile', json_build_object('image', stu.image, 'placeholder', stu.placeholder)) FROM staff_accounts AS stu WHERE stu.id = att.updated_by) AS "updatedBy",
   ARRAY((SELECT json_build_object('id', att_v.id, 'value', att_v.attribute_value, 'color', att_v.color) FROM attribute_values AS att_v WHERE att_v.attribute_id = att.id)) AS values
   FROM attributes AS att WHERE att.id = $1`;
 }

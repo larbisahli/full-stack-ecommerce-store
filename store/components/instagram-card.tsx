@@ -29,8 +29,6 @@ const InstagramPost: React.FC<InstagramPostProps> = ({ postUrl }) => {
   const [data, setData] = useState<DataProps>(Object());
   const [userData, setUserData] = useState<UserDataProps>(Object());
 
-  console.log({ data, userData });
-
   useEffect(() => {
     let mounted = true;
 

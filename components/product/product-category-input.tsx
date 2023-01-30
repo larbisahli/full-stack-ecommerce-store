@@ -1,44 +1,33 @@
 import Label from '@components/ui/label';
 import SelectInput from '@components/ui/select-input';
-import { CATEGORIES_FOR_SELECT_ALL } from '@graphql/category';
 import { useErrorLogger } from '@hooks/useErrorLogger';
-import { Category, OrderBy } from '@ts-types/generated';
+import { Category } from '@ts-types/generated';
+import { fetcher } from '@utils/utils';
 import { useTranslation } from 'next-i18next';
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { Control } from 'react-hook-form';
+import useSwr from 'swr';
 
 interface Props {
   control: Control<any>;
 }
 
-interface TCategorySelect {
-  categoriesSelectAllForAdmin: Category[];
-}
-
-interface OptionsVariable {
-  page: number;
-  limit: number;
-  orderBy: OrderBy;
-}
-
 const ProductCategoryInput = ({ control }: Props) => {
   const { t } = useTranslation('common');
 
-  // const { data, loading, error } = useQuery<TCategorySelect, OptionsVariable>(
-  //   CATEGORIES_FOR_SELECT_ALL,
-  //   {
-  //     variables: {
-  //       page: 1,
-  //       limit: 999,
-  //       orderBy: OrderBy.CREATED_AT
-  //     },
-  //     fetchPolicy: 'cache-and-network'
-  //   }
-  // );
+  const random = React.useRef(Date.now());
+  const key = [
+    '/api/admin/category/categories/select/all?time=',
+    random.current
+  ];
+  const { data, error, isLoading } = useSwr<{ categories: Category[] }>(
+    key,
+    fetcher
+  );
 
-  const categories = []; // data?.categoriesSelectAllForAdmin;
+  const { categories = [] } = data ?? {};
 
-  // useErrorLogger(error);
+  useErrorLogger(error);
 
   return (
     <div className="mb-5">
@@ -50,7 +39,7 @@ const ProductCategoryInput = ({ control }: Props) => {
         getOptionLabel={(option: Category) => option.name}
         getOptionValue={(option: Category) => option.id}
         options={categories}
-        // isLoading={loading}
+        isLoading={isLoading}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
-import { staffQueries } from '@lib/sql';
-import { StaffType } from '@ts-types/generated';
+import { carouselQueries } from '@lib/sql';
+import { HeroCarouselType } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -12,15 +12,13 @@ class Handler extends PostgresClient {
     const { query, method } = req;
     const id = query.id as string;
     try {
-      await this.authorization(req, res);
-
       switch (method) {
         case this.GET: {
-          const { rows } = await this.query<StaffType, string>(
-            staffQueries.getStaff(),
+          const { rows } = await this.query<HeroCarouselType, string>(
+            carouselQueries.getHeroSlideForAdmin(),
             [id]
           );
-          return res.status(200).json({ staff: rows[0] });
+          return res.status(200).json({ banner: rows[0] });
         }
         default:
           res.setHeader('Allow', ['GET']);
@@ -31,7 +29,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'staff'
+          from: 'banner'
         }
       });
     }

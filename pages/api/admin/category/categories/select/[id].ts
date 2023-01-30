@@ -17,6 +17,7 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.GET: {
+          await this.authorization(req, res);
           const { rows } = await this.query<CategoryType, string | number>(
             categoryQueries.getCategoriesParentsSelectForAdminWithId(),
             [id, limit, offset]

@@ -38,15 +38,15 @@ const HeroCarouselList = ({
       key: 'thumbnail',
       align: alignLeft,
       width: 150,
-      render: (thumbnail: { image: string; placeholder: string }) => (
+      render: (thumbnail: string) => (
         <div
           style={{ maxWidth: '100px' }}
           className="rounded shadow min-w-0 overflow-hidden"
         >
           <ImageComponent
-            src={thumbnail?.image ?? siteSettings.product.image}
-            customPlaceholder={
-              thumbnail?.placeholder ?? siteSettings.product.placeholder
+            src={
+              `${process.env.S3_ENDPOINT}/${thumbnail}` ??
+              siteSettings.product.image
             }
             layout="fill"
             objectFit="contain"

@@ -69,6 +69,7 @@
     "sass": "^1.54.0",
     "serialize-error": "^11.0.0",
     "short-uuid": "^4.2.2",
+    "slugify": "^1.6.5",
     "swiper": "^8.4.6",
     "swr": "^2.0.1",
     "typeface-open-sans": "^1.1.13",

@@ -35,7 +35,6 @@ export default function Uploader({ onChange, value, multiple }: any) {
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
     multiple,
-    maxSize: 5 * (1024 * 1024),
     onDrop: async (acceptedFiles) => {
       try {
         setLoading(true);
@@ -49,7 +48,11 @@ export default function Uploader({ onChange, value, multiple }: any) {
 
         for await (const file of acceptedFiles) {
           console.log({ file });
-          if (['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+          if (
+            ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(
+              file.type
+            )
+          ) {
             ReactS3Client.uploadFile(file)
               .then((data) => {
                 const image = data.key as string;

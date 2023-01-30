@@ -6,60 +6,48 @@ import ErrorMessage from '@components/ui/error-message';
 import LinkButton from '@components/ui/link-button';
 import Loader from '@components/ui/loader/loader';
 import { useErrorLogger, useGetStaff } from '@hooks/index';
+import { useTime } from '@hooks/useTime';
 import { verifyAuth } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
 import { HeroCarouselType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
+import { fetcher, limit } from '@utils/utils';
 import isEmpty from 'lodash/isEmpty';
 import type { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useState } from 'react';
+import useSwr from 'swr';
 
-interface THeroCarousel {
-  heroCarouselListForAdmin: HeroCarouselType[];
-  heroCarouselListCount: { count: number };
+interface TBanner {
+  banners: HeroCarouselType[];
+  count: number;
 }
-
-interface OptionsVariable {
-  page: number;
-  limit: number;
-}
-
-const limit = 10;
 
 export default function HeroCarousel({ client }: SSRProps) {
   const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
 
-  // const { data, loading, error, fetchMore } = useQuery<
-  //   THeroCarousel,
-  //   OptionsVariable
-  // >(HERO_CAROUSEL_LIST, {
-  //   variables: {
-  //     page,
-  //     limit
-  //   },
-  //   fetchPolicy: 'cache-and-network'
-  // });
+  const { current } = useTime();
+  const key = page ? [`/api/admin/banner/banners?time=`, current] : null;
+  const { data, error, isLoading } = useSwr<TBanner>(key, fetcher);
 
-  const heroCarouselListCount = 0; // data?.heroCarouselListCount?.count;
-  const heroCarouselListForAdmin = []; //data?.heroCarouselListForAdmin;
+  const { banners = [], count = 0 } = data ?? {};
 
   useGetStaff(client);
-  // useErrorLogger(error);
+  useErrorLogger(error);
 
   const handlePagination = (current: number) => {
     setPage(current);
   };
 
-  // if (loading) {
-  //   return <Loader text={t('common:text-loading')} />;
-  // }
-  // if (!isEmpty(error)) {
-  //   return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
-  // }
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (!isEmpty(error)) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
 
   return (
     <>
@@ -94,8 +82,8 @@ export default function HeroCarousel({ client }: SSRProps) {
         </div>
       </Card>
       <HeroCarouselList
-        heroCarouselList={heroCarouselListForAdmin}
-        total={heroCarouselListCount}
+        heroCarouselList={banners}
+        total={0}
         onPagination={handlePagination}
         currentPage={page}
         perPage={limit}

@@ -21,7 +21,7 @@ class Handler extends PostgresClient {
           return res.status(200).json({ attribute: rows[0] });
         }
         default:
-          res.setHeader('Allow', ['POST']);
+          res.setHeader('Allow', ['GET']);
           res.status(405).end(`There was some error!`);
       }
     } catch (error) {

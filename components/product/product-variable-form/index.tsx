@@ -4,16 +4,12 @@ import Description from '@components/ui/description';
 import Label from '@components/ui/label';
 import Loader from '@components/ui/loader/loader';
 import Title from '@components/ui/title';
-import { ATTRIBUTES_FOR_SELECT } from '@graphql/attribute';
 import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useTime } from '@hooks/useTime';
 import type { Product, VariationType } from '@ts-types/generated';
-import {
-  Attribute,
-  OrderBy,
-  SortOrder,
-  VariationActions
-} from '@ts-types/generated';
+import { Attribute, VariationActions } from '@ts-types/generated';
 import { cartesian } from '@utils/cartesian';
+import { fetcher } from '@utils/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import differenceWith from 'lodash/differenceWith';
 import isEmpty from 'lodash/isEmpty';
@@ -23,6 +19,7 @@ import dynamic from 'next/dynamic';
 import { useTranslation } from 'next-i18next';
 import React, { memo, useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import useSwr from 'swr';
 
 import {
   VariationAction,
@@ -41,17 +38,6 @@ type IProps = {
   variationState?: VariationReducerType;
   dispatchVariationState?: React.Dispatch<VariationAction>;
 };
-
-interface TAttributeSelect {
-  attributesForAdmin: Attribute[];
-}
-
-interface OptionsVariable {
-  page: number;
-  limit: number;
-  orderBy: OrderBy;
-  sortedBy: SortOrder;
-}
 
 interface CartesianType {
   id: string;
@@ -82,20 +68,20 @@ function ProductVariableForm({
 }: IProps) {
   const { t } = useTranslation();
 
-  // const { data, loading, error } = useQuery<TAttributeSelect, OptionsVariable>(
-  //   ATTRIBUTES_FOR_SELECT,
-  //   {
-  //     variables: {
-  //       page: 1,
-  //       limit: 999,
-  //       orderBy: OrderBy.CREATED_AT,
-  //       sortedBy: SortOrder.Desc
-  //     },
-  //     fetchPolicy: 'cache-and-network'
-  //   }
-  // );
+  const random = React.useRef(Date.now());
+  const key = [
+    '/api/admin/attribute/attributes/select/all?time=',
+    random.current
+  ];
+  const {
+    data,
+    error,
+    isLoading: loading
+  } = useSwr<{ attributes: Attribute[] }>(key, fetcher);
 
-  // useErrorLogger(error);
+  const { attributes = [] } = data ?? {};
+
+  useErrorLogger(error);
 
   const { watch } = useFormContext();
 
@@ -107,7 +93,6 @@ function ProductVariableForm({
   const gallery = watch('gallery');
   const variations = variationState.variations;
   const variationOptions = variationState.variationOptions;
-  const attributes = []; //data?.attributesForAdmin ?? [];
 
   const attributeValuesChanges = [].concat(
     ...(variations?.map((v) => v?.selectedValues) ?? [])
@@ -206,7 +191,7 @@ function ProductVariableForm({
                   {...{
                     variant,
                     attributes,
-                    // loading,
+                    loading,
                     index,
                     dispatchVariationState
                   }}
@@ -315,7 +300,7 @@ const VariationComponent = ({
         <button
           onClick={remove}
           type="button"
-          className="text-sm text-red-500 hover:text-red-700 
+          className="text-sm text-red-500 hover:text-red-700
           transition-colors duration-200 focus:outline-none"
         >
           {t('form:button-label-remove')}

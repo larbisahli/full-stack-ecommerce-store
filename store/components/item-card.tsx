@@ -1,3 +1,6 @@
+import ImageComponent from '@components/ImageComponent';
+import { siteSettings } from '@settings/site.settings';
+import { Product } from '@ts-types/generated';
 import React from 'react';
 
 import { CURRENCY } from '../helpers/constants';
@@ -16,17 +19,8 @@ import {
   ItemCardRoundedDot,
   ItemCardType
 } from './utils/theme';
-
-interface ItemProps {
-  image: string;
-  name: string;
-  price: number;
-  type: string;
-  quantity: number;
-}
-
 interface ItemCardProps {
-  item: ItemProps;
+  item: Product;
   value: number;
   onClick?: (e: any) => void;
   onDecrement?: (e: any) => void;
@@ -45,9 +39,13 @@ const ItemCard: React.FC<ItemCardProps> = ({
     <div className={baseClassName}>
       <div className={ItemCardBaseContent}>
         <div className={ItemCardImage}>
-          <img
-            className="object-cover"
-            src={item.image}
+          <ImageComponent
+            src={
+              `${process.env.S3_ENDPOINT}/${item.thumbnail}` ??
+              siteSettings.product.image
+            }
+            layout="fill"
+            objectFit="contain"
             alt={' Alt ' + item.name}
           />
         </div>
@@ -55,12 +53,12 @@ const ItemCard: React.FC<ItemCardProps> = ({
         <div className={ItemCardContent}>
           <span className={ItemCardPrice}>
             {CURRENCY}
-            {item.price}
+            {/* {item.price} */}
           </span>
           <span className={ItemCardName}>{item.name}</span>
 
           <div className={ItemCardInformation}>
-            <span className={ItemCardType}>{item.type}</span>
+            {/* <span className={ItemCardType}>{item.type}</span> */}
             <span className={ItemCardRoundedDot} />
             <span className={ItemCardQuantity}>{item.quantity} Pieces</span>
           </div>

@@ -12,13 +12,8 @@ import Loader from '@components/ui/loader/loader';
 import Radio from '@components/ui/radio';
 import SelectInput from '@components/ui/select-input';
 import TextArea from '@components/ui/text-area';
-import { CREATE_PRODUCT, UPDATE_PRODUCT } from '@graphql/product';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  useErrorLogger,
-  useGetStaff,
-  useWarnIfUnsavedChanges
-} from '@hooks/index';
+import { useErrorLogger, useWarnIfUnsavedChanges } from '@hooks/index';
 import { notify } from '@lib/index';
 import type { Product } from '@ts-types/generated';
 import { ProductStatus, ProductType } from '@ts-types/generated';
@@ -33,9 +28,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import ProductCategoryInput from './product-category-input';
 import ProductInfoForm from './product-info-form';
-import ProductShippingInfoForm from './product-shipping-info';
-import ProductSupplierInput from './product-supplier-input';
-import ProductTagInput from './product-tag-input';
 import { productValidationSchema } from './product-validation-schema';
 import ProductVariableForm from './product-variable-form';
 import { creationVariable, updateVariable } from './variablesSubmission';
@@ -63,19 +55,7 @@ const defaultValues = {
   note: '',
   thumbnail: [],
   gallery: [],
-  categories: [],
-  suppliers: [],
-  tags: [],
-  productShippingInfo: {
-    weight: 0,
-    weightUnit: { unit: 'kg' },
-    volume: 0,
-    volumeUnit: { unit: 'L' },
-    dimensionWidth: 0,
-    dimensionHeight: 0,
-    dimensionDepth: 0,
-    dimensionUnit: { unit: 'L' }
-  }
+  categories: []
 };
 
 type IProps = {
@@ -100,6 +80,7 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
     }
   );
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [shortDescription, setShortDescription] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [unsavedChanges, setUnsavedChanges] = useState(true);
@@ -133,38 +114,6 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
     formState: { errors }
   } = methods;
 
-  const { staffInfo } = useGetStaff();
-  const csrfToken = staffInfo?.csrfToken;
-
-  // const [createProduct, { loading: creating }] = useMutation(CREATE_PRODUCT, {
-  //   context: {
-  //     headers: {
-  //       'x-csrf-token': csrfToken
-  //     }
-  //   },
-  //   onCompleted: (data: { createAttribute: Product }) => {
-  //     if (!isEmpty(data)) {
-  //       notify(t('common:successfully-created'), 'success');
-  //       reset();
-  //       router.push(ROUTES.PRODUCTS);
-  //     }
-  //   }
-  // });
-
-  // const [updateProduct, { loading: updating }] = useMutation(UPDATE_PRODUCT, {
-  //   context: {
-  //     headers: {
-  //       'x-csrf-token': csrfToken
-  //     }
-  //   },
-  //   onCompleted: (data: { updateAttribute: Product }) => {
-  //     if (!isEmpty(data)) {
-  //       notify(t('common:successfully-updated'), 'success');
-  //       router.push(ROUTES.PRODUCTS);
-  //     }
-  //   }
-  // });
-
   useErrorLogger(error);
 
   const onSubmit = async (_values: FormValues) => {
@@ -177,27 +126,52 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
 
     if (lockedSubmission) return;
 
-    // setLockedSubmission(true);
-    setUnsavedChanges(false);
-
+    setLockedSubmission(true);
+    setLoading(true);
     if (isEmpty(initialValues)) {
       const variables = creationVariable(values);
-      // createProduct({ variables }).catch((err) => {
-      //   setError(err);
-      //   setUnsavedChanges(true);
-      // });
+      console.log('Create:>', { _values, variables });
+      fetch('/api/admin/product/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(variables)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.product?.id) {
+            notify(t('common:successfully-created'), 'success');
+            router.push(ROUTES.PRODUCTS);
+            reset();
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     } else {
       const variables = updateVariable(values, initialValues);
-      // updateProduct({
-      //   variables: {
-      //     ...variables
-      //   }
-      // }).catch((err) => {
-      //   setError(err);
-      //   setUnsavedChanges(true);
-      // });
+      console.log('Update:>', { _values, variables });
+      fetch('/api/admin/category/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(variables)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.product?.id) {
+            notify(t('common:successfully-updated'), 'success');
+            router.push(ROUTES.PRODUCTS);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     }
     setLockedSubmission(false);
+    setUnsavedChanges(false);
   };
 
   useWarnIfUnsavedChanges(unsavedChanges, () => {
@@ -259,8 +233,6 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
               <ProductCategoryInput control={control} />
               {/* @ts-ignore */}
               <ValidationError message={t(errors.categories?.message)} />
-              <ProductSupplierInput control={control} />
-              <ProductTagInput control={control} />
             </Card>
           </div>
 
@@ -385,12 +357,6 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
               />
             ))}
 
-          {/* Shipping Info */}
-          <ProductShippingInfoForm
-            control={control}
-            initialValues={initialValues}
-          />
-
           <div className="mb-4 text-end">
             {initialValues && (
               <Button
@@ -402,15 +368,12 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
                 {t('form:button-label-back')}
               </Button>
             )}
-            {/* <Button
-              loading={updating || creating}
-              disabled={updating || creating}
-            >
+            <Button loading={loading} disabled={loading}>
               <div className="mr-1">
                 <SaveIcon width="1.3rem" height="1.3rem" />
               </div>
               <div>{t('form:button-label-save')}</div>
-            </Button> */}
+            </Button>
           </div>
         </form>
       </FormProvider>

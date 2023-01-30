@@ -60,7 +60,7 @@ export function getCategoriesParentsSelectForAdminWithId(): string {
 }
 
 export function getCategoriesSelectAllForAdmin(): string {
-  return `SELECT cate.id, cate.name FROM categories AS cate ORDER BY $1 ASC LIMIT $2 OFFSET $3`;
+  return `SELECT cate.id, cate.name FROM categories AS cate`;
 }
 
 // COALESCE((SELECT MAX(display_order)+1 FROM categories)

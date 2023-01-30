@@ -96,22 +96,22 @@ export function getProductForAdmin(): string {
 
 export function getProductsForAdmin(): string {
   return `SELECT pd.id, pd.product_name AS name, jsonb_build_object('id', pd.product_type) AS type, pd.published, pd.created_at AS "createdAt",
-  
-  CASE 
+
+  CASE
     WHEN pd.product_type = 'simple' THEN pd.quantity
-    WHEN pd.product_type = 'variable' THEN (SELECT SUM(vp.quantity) 
+    WHEN pd.product_type = 'variable' THEN (SELECT SUM(vp.quantity)
     FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE) END AS "quantity",
-  
+
   CASE WHEN pd.product_type = 'variable' THEN (SELECT MAX(vp.sale_price) FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE) END AS "maxPrice",
   CASE WHEN pd.product_type = 'variable' THEN (SELECT MIN(vp.sale_price) FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE) END AS "minPrice",
   CASE WHEN pd.product_type = 'simple' THEN pd.sale_price END AS "salePrice",
-  
-  (SELECT json_build_object('id', gal.id, 'image', gal.image, 'placeholder', gal.placeholder) FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail,
-  ARRAY(SELECT json_build_object('id', cate.id, 'name', cate.category_name) FROM categories cate WHERE cate.id IN (SELECT pc.category_id FROM product_categories pc WHERE pc.product_id = pd.id)) AS categories,
+
+  (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail,
+  ARRAY(SELECT json_build_object('id', cate.id, 'name', cate.name) FROM categories cate WHERE cate.id IN (SELECT pc.category_id FROM product_categories pc WHERE pc.product_id = pd.id)) AS categories,
 
   (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name) FROM staff_accounts AS stc WHERE stc.id = pd.created_by) AS "createdBy",
   (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) FROM staff_accounts AS stu WHERE stu.id = pd.updated_by) AS "updatedBy"
-  FROM products AS pd ORDER BY $1 ASC LIMIT $2 OFFSET $3`;
+  FROM products AS pd LIMIT $1 OFFSET $2`;
 }
 
 export function getProductsCount(): string {
@@ -141,7 +141,7 @@ export function updateProductUpdateBy(): string {
 // **** galleries ****
 
 export function insertImage(): string {
-  return `INSERT INTO gallery(product_id, image, placeholder, is_thumbnail) VALUES($1, $2, $3, $4) RETURNING id`;
+  return `INSERT INTO gallery(product_id, image, is_thumbnail) VALUES($1, $2, $3) RETURNING id`;
 }
 
 export function getImage(): string {
@@ -325,6 +325,6 @@ export function getPopularProducts(): string {
     FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE ORDER BY vp.compare_price LIMIT 1)
     WHEN pd.product_type = 'simple' THEN pd.compare_price END AS "comparePrice",
   
-  (SELECT json_build_object('image', gal.image, 'placeholder', gal.placeholder) FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
+  (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
   FROM products AS pd WHERE pd.published IS TRUE LIMIT $1`;
 }

@@ -42,12 +42,12 @@ const ProductList = ({
       key: 'thumbnail',
       align: alignLeft,
       width: 85,
-      render: (thumbnail: ImageType) => (
+      render: (thumbnail: string) => (
         <div className="shadow min-w-0 overflow-hidden">
           <ImageComponent
-            src={thumbnail?.image ?? siteSettings.product.image}
-            customPlaceholder={
-              thumbnail?.placeholder ?? siteSettings.product.placeholder
+            src={
+              `${process.env.S3_ENDPOINT}/${thumbnail}` ??
+              siteSettings.product.image
             }
             layout="fill"
             objectFit="contain"
@@ -68,7 +68,7 @@ const ProductList = ({
       title: t('table:table-item-categories'),
       dataIndex: 'categories',
       key: 'categories',
-      width: 180,
+      width: 200,
       align: 'center',
       ellipsis: true,
       render: (categories: Category[]) => {
@@ -91,7 +91,7 @@ const ProductList = ({
       title: t('table:table-item-unit'),
       dataIndex: 'salePrice',
       key: 'salePrice',
-      align: alignRight,
+      align: 'center',
       width: 100,
       render: (salePrice: number, record: Product) => {
         if (record?.maxPrice > 0 && record?.minPrice > 0) {

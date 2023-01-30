@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
-import { categoryQueries } from '@lib/sql';
-import { Category as CategoryType } from '@ts-types/generated';
+import { carouselQueries } from '@lib/sql';
+import { HeroCarouselType } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -9,30 +9,35 @@ class Handler extends PostgresClient {
   }
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
-    const limit = 999;
     const { method } = req;
-
     try {
       switch (method) {
         case this.GET: {
-          await this.authorization(req, res);
-          const { rows } = await this.query<CategoryType, string | number>(
-            categoryQueries.getCategoriesParentsSelectForAdmin(),
-            [limit]
+          const { rows: banners } = await this.query<HeroCarouselType, unknown>(
+            carouselQueries.getHeroCarouselListForAdmin(),
+            []
           );
-          return res.status(200).json({ categories: rows });
+
+          const { rows } = await this.query<HeroCarouselType, unknown>(
+            carouselQueries.getHeroBannerCount(),
+            []
+          );
+
+          const { count: value } = rows[0];
+          const count = value ? Number(value) : 0;
+
+          return res.status(200).json({ banners, count });
         }
         default:
           res.setHeader('Allow', ['GET']);
           res.status(405).end(`There was some error!`);
       }
     } catch (error) {
-      return res.status(500).json({
+      res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,
-          error,
           message: error?.message,
-          from: 'categoriesSelectForAdmin'
+          from: 'banners'
         }
       });
     }
@@ -40,4 +45,5 @@ class Handler extends PostgresClient {
 }
 
 const { execute } = new Handler();
+
 export default execute;

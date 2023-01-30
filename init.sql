@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS staff_accounts (
   image TEXT DEFAULT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id),
-  updated_by UUID REFERENCES staff_accounts(id),
+  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   PRIMARY KEY (id)
 );
 
@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS categories (
   active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id),
-  updated_by UUID REFERENCES staff_accounts(id),
+  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   PRIMARY KEY (id)
 );
 
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS products (
   note TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id),
-  updated_by UUID REFERENCES staff_accounts(id),
+  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   CHECK (compare_price > sale_price OR compare_price = 0),
   PRIMARY KEY (id)
 );
@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS attributes (
   attribute_name VARCHAR(255) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id),
-  updated_by UUID REFERENCES staff_accounts(id),
+  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   PRIMARY KEY (id)
 );
 
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS orders (
   order_delivered_carrier_date TIMESTAMPTZ,
   order_delivered_customer_date TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_by UUID REFERENCES staff_accounts(id),
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   PRIMARY KEY (id) -- It's better to use Two-Phase Locking inside your transaction (SELECT ... FOR UPDATE) to prevent double booking problems for this table.
 );
 
@@ -200,14 +200,14 @@ CREATE TABLE IF NOT EXISTS slideshows (
   styles JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id),
-  updated_by UUID REFERENCES staff_accounts(id),
+  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  account_id UUID REFERENCES staff_accounts(id),
+  account_id UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   title VARCHAR(100),
   content TEXT,
   seen BOOLEAN,
@@ -242,8 +242,8 @@ CREATE TABLE IF NOT EXISTS suppliers (
   note TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id),
-  updated_by UUID REFERENCES staff_accounts(id),
+  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
+  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
   PRIMARY KEY (id)
 );
 

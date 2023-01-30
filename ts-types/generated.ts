@@ -319,7 +319,7 @@ export interface Suppliers extends CreatedUpdatedByAt {
 export interface HeroBannerType {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;
-  image?: string;
+  thumbnail?: string;
   title?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   btnLabel?: Scalars['String'];
@@ -334,7 +334,7 @@ export interface HeroBannerType {
 export interface HeroCarouselType extends CreatedUpdatedByAt {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;
-  image?: string;
+  thumbnail?: string;
   title?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   btnLabel?: Scalars['String'];

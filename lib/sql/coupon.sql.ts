@@ -5,9 +5,7 @@ export function getCouponsCount(): string {
 // **** ADMIN QUERIES ****
 export function getCouponForAdmin(): string {
   return `SELECT cop.id, cop.code, cop.order_amount_limit AS "orderAmountLimit", cop.discount_value AS "discountValue", cop.discount_type AS "discountType", 
-      cop.times_used AS "timesUsed", cop.max_usage AS "maxUsage", cop.coupon_start_date AS "couponStartDate", cop.coupon_end_date AS "couponEndDate", cop.created_at AS "createAt", cop.updated_at AS "updatedAt", 
-      (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name, 'profile', json_build_object('image', stc.image, 'placeholder', stc.placeholder)) FROM staff_accounts AS stc WHERE stc.id = cop.created_by) AS "createdBy",
-      (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name, 'profile', json_build_object('image', stu.image, 'placeholder', stu.placeholder)) FROM staff_accounts AS stu WHERE stu.id = cop.updated_by) AS "updatedBy"
+      cop.times_used AS "timesUsed", cop.max_usage AS "maxUsage", cop.coupon_start_date AS "couponStartDate", cop.coupon_end_date AS "couponEndDate", cop.created_at AS "createAt", cop.updated_at AS "updatedAt"
       FROM coupons AS cop WHERE cop.id = $1`;
 }
 

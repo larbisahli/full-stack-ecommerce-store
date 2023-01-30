@@ -17,7 +17,7 @@ import { fetcher } from '@utils/utils';
 import isEmpty from 'lodash/isEmpty';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Control, useForm } from 'react-hook-form';
 import useSwr from 'swr';
 
@@ -29,10 +29,15 @@ function SelectCategories({ control }: { control: Control<FormValues> }) {
   const { query } = useRouter();
   const { categoryId } = query;
 
-  const { data, error, isLoading } = useSwr<{ categories: Category[] }>(
+  const random = React.useRef(Date.now());
+  const key = [
     categoryId
-      ? `/api/admin/category/categories/select/${categoryId}`
-      : '/api/admin/category/categories/select',
+      ? `/api/admin/category/categories/select/${categoryId}?time=`
+      : '/api/admin/category/categories/select?time',
+    random.current
+  ];
+  const { data, error, isLoading } = useSwr<{ categories: Category[] }>(
+    key,
     fetcher
   );
 

@@ -10,14 +10,10 @@ import Input from '@components/ui/input';
 import Label from '@components/ui/label';
 import Radio from '@components/ui/radio';
 import TextArea from '@components/ui/text-area';
-import {
-  useErrorLogger,
-  useGetStaff,
-  useWarnIfUnsavedChanges
-} from '@hooks/index';
+import { useErrorLogger, useWarnIfUnsavedChanges } from '@hooks/index';
 import { notify } from '@lib/index';
 import { Nullable } from '@ts-types/custom.types';
-import { HeroCarouselType, ImageType } from '@ts-types/generated';
+import { HeroCarouselType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
@@ -40,7 +36,7 @@ const defaultValues = {
   displayOrder: 0,
   status: 'draft',
   styles: {
-    textColor: '#ffffff',
+    textColor: '#cccccc',
     btnBgc: '#dcdbdb',
     btnTextColor: '#222121'
   }
@@ -55,6 +51,7 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
   const { t } = useTranslation();
 
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
   const {
@@ -73,44 +70,11 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
       : (defaultValues as HeroCarouselType)
   });
 
-  const { staffInfo } = useGetStaff();
-  const csrfToken = staffInfo?.csrfToken;
-
   const styles = watch('styles');
-  const thumbnail = watch('thumbnail') as ImageType;
+  const thumbnail = watch('thumbnail') as string;
   const btnLabel = watch('btnLabel');
   const title = watch('title');
   const description = watch('description');
-
-  // const [createHeroSlider, { loading: creating, reset: resetCreateMutation }] =
-  //   useMutation(CREATE_HERO_SLIDE, {
-  //     context: {
-  //       headers: {
-  //         'x-csrf-token': csrfToken
-  //       }
-  //     },
-  //     onCompleted: (data: { createHeroSlide: HeroCarouselType }) => {
-  //       if (!isEmpty(data)) {
-  //         notify(t('common:successfully-created'), 'success');
-  //         reset();
-  //         router.push(ROUTES.HERO_CAROUSEL);
-  //       }
-  //     }
-  //   });
-  // const [updateHeroSlider, { loading: updating, reset: resetUpdateMutation }] =
-  //   useMutation(UPDATE_HERO_SLIDE, {
-  //     context: {
-  //       headers: {
-  //         'x-csrf-token': csrfToken
-  //       }
-  //     },
-  //     onCompleted: (data: { updateCategory: HeroCarouselType }) => {
-  //       if (!isEmpty(data)) {
-  //         notify(t('common:successfully-updated'), 'success');
-  //         router.push(ROUTES.HERO_CAROUSEL);
-  //       }
-  //     }
-  //   });
 
   useErrorLogger(error);
 
@@ -121,12 +85,10 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
     }
 
     const variables = {
+      id: initialValues?.id,
       title: values.title,
       destinationUrl: values.destinationUrl,
-      thumbnail: {
-        image: values.thumbnail?.image,
-        placeholder: values.thumbnail?.placeholder
-      },
+      thumbnail: values.thumbnail,
       description: values.description,
       btnLabel: values.btnLabel,
       displayOrder: Number(values.displayOrder),
@@ -134,19 +96,45 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
       styles: values.styles
     };
 
+    console.log({ variables });
+
     setUnsavedChanges(false);
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(variables)
+    };
+    setLoading(true);
     if (isEmpty(initialValues)) {
-      // createHeroSlider({ variables }).catch((err) => {
-      //   setError(err);
-      //   resetCreateMutation();
-      // });
+      fetch('/api/admin/banner/create', requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.banner?.id) {
+            notify(t('common:successfully-created'), 'success');
+            router.push(ROUTES.HERO_CAROUSEL);
+            reset();
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     } else {
-      // updateHeroSlider({
-      //   variables: { id: initialValues?.id, ...variables }
-      // }).catch((err) => {
-      //   setError(err);
-      //   resetUpdateMutation();
-      // });
+      fetch('/api/admin/banner/update', requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.banner?.id) {
+            notify(t('common:successfully-updated'), 'success');
+            router.push(ROUTES.HERO_CAROUSEL);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     }
   };
 
@@ -165,7 +153,7 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
 
         <Card className="w-full sm:w-8/12 md:w-2/3">
           <FileInput name="thumbnail" control={control} multiple={false} />
-          {!!thumbnail?.image && (
+          {!!thumbnail && (
             <div>
               <div className="my-2 border-b border-dashed border-border-base"></div>
               <HeroBannerCard
@@ -280,7 +268,7 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
           </ColorPicker>
         </Card>
       </div>
-      <div className="mb-4 text-end">
+      <div className="mb-4 flex justify-end items-center">
         {initialValues && (
           <Button
             variant="outline"
@@ -292,12 +280,12 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
           </Button>
         )}
 
-        {/* <Button loading={creating || updating} disabled={creating || updating}>
+        <Button loading={loading} disabled={loading}>
           <div className="mr-1">
             <SaveIcon width="1.3rem" height="1.3rem" />
           </div>
           <div>{t('form:button-label-save')}</div>
-        </Button> */}
+        </Button>
       </div>
     </form>
   );

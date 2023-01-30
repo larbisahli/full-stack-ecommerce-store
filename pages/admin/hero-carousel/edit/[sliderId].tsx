@@ -5,12 +5,15 @@ import Loader from '@components/ui/loader/loader';
 import { useErrorLogger, useGetStaff } from '@hooks/index';
 import { verifyAuth, XSRFHandler } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
-import { Category } from '@ts-types/generated';
+import { HeroBannerType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
+import { fetcher } from '@utils/utils';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React from 'react';
+import useSwr from 'swr';
 
 export default function UpdateHeroSliderPage({ client }: SSRProps) {
   const { query } = useRouter();
@@ -18,24 +21,26 @@ export default function UpdateHeroSliderPage({ client }: SSRProps) {
 
   const { sliderId } = query;
 
-  // const { data, loading, error } = useQuery<THeroSlider, OptionsVariable>(
-  //   HERO_SLIDE,
-  //   {
-  //     variables: { id: sliderId },
-  //     fetchPolicy: 'cache-and-network'
-  //   }
-  // );
+  const random = React.useRef(Date.now());
+  const key = sliderId
+    ? [`/api/admin/banner/${sliderId}?time=`, random.current]
+    : null;
+  const { data, error, isLoading } = useSwr<{ banner: HeroBannerType }>(
+    key,
+    fetcher
+  );
+
+  const { banner = {} } = data ?? {};
 
   useGetStaff(client);
+  useErrorLogger(error);
 
-  // useErrorLogger(error);
-
-  // if (loading) {
-  //   return <Loader text={t('common:text-loading')} />;
-  // }
-  // if (error) {
-  //   return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
-  // }
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (error) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
 
   return (
     <>
@@ -44,7 +49,7 @@ export default function UpdateHeroSliderPage({ client }: SSRProps) {
           {t('form:form-title-edit-hero-slider')}
         </h1>
       </div>
-      <CreateOrUpdateSlideForm initialValues={{}} />
+      <CreateOrUpdateSlideForm initialValues={banner} />
     </>
   );
 }

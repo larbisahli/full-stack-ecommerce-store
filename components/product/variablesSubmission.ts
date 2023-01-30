@@ -21,32 +21,8 @@ const creationVariable = (values: Product): Product => {
     categories: values?.categories?.map(({ id }) => {
       return { id };
     }),
-    tags: values?.tags?.map(({ id }: Tag) => {
-      return { id };
-    }),
-    suppliers: values?.suppliers?.map(({ id }: Suppliers) => {
-      return { id };
-    }),
-    thumbnail: {
-      image: values?.thumbnail?.image,
-      placeholder: values?.thumbnail?.placeholder
-    },
-    gallery: values.gallery?.map((img) => {
-      return {
-        image: img?.image,
-        placeholder: img?.placeholder
-      };
-    }),
-    productShippingInfo: {
-      weight: Number(values?.productShippingInfo?.weight),
-      weightUnit: values?.productShippingInfo?.weightUnit,
-      volume: Number(values?.productShippingInfo?.volume),
-      volumeUnit: values?.productShippingInfo?.volumeUnit,
-      dimensionWidth: Number(values?.productShippingInfo?.dimensionWidth),
-      dimensionHeight: Number(values?.productShippingInfo?.dimensionHeight),
-      dimensionDepth: Number(values?.productShippingInfo?.dimensionDepth),
-      dimensionUnit: values?.productShippingInfo?.dimensionUnit
-    },
+    thumbnail: values?.thumbnail,
+    gallery: values.gallery,
     variations: values?.variations?.map((v) => {
       return {
         attribute: { id: v.attribute.id },
@@ -108,30 +84,6 @@ const updateVariable = (values: Product, initialValues: Product) => {
     isEqual
   );
 
-  // 4) tags block
-  const tagsAdditions = differenceWith(
-    values?.tags,
-    initialValues?.tags,
-    isEqual
-  );
-  const tagsDeletions = differenceWith(
-    initialValues?.tags,
-    values?.tags,
-    isEqual
-  );
-
-  // 5) suppliers block
-  const suppliersAdditions = differenceWith(
-    values?.suppliers,
-    initialValues?.suppliers,
-    isEqual
-  );
-  const suppliersDeletions = differenceWith(
-    initialValues?.suppliers,
-    values?.suppliers,
-    isEqual
-  );
-
   // 6) product main info block
   const isVariable = values.type.id === ProductType.Variable;
 
@@ -166,16 +118,6 @@ const updateVariable = (values: Product, initialValues: Product) => {
   };
   const productMainEqual = isEqual(initProductValues, newProductValues);
   const productMain = productMainEqual ? {} : newProductValues;
-
-  // 7) product shipping info block
-  const productShippingInfoEqual = isEqual(
-    initialValues?.productShippingInfo,
-    values?.productShippingInfo
-  );
-
-  const productShippingInfo = productShippingInfoEqual
-    ? {}
-    : values?.productShippingInfo;
 
   // 8) variation options block
   const variationOptions = values?.variationOptions
@@ -268,7 +210,6 @@ const updateVariable = (values: Product, initialValues: Product) => {
     id: initialValues?.id,
     additions: {
       productMain,
-      productShippingInfo,
       gallery: galleryAdditions?.map((img) => {
         return {
           image: img?.image,
@@ -282,12 +223,6 @@ const updateVariable = (values: Product, initialValues: Product) => {
             placeholder: thumbnailAddition[0]?.placeholder
           },
       categories: categoriesAdditions?.map(({ id }) => {
-        return { id };
-      }),
-      tags: tagsAdditions?.map(({ id }) => {
-        return { id };
-      }),
-      suppliers: suppliersAdditions?.map(({ id }) => {
         return { id };
       }),
       variationOptions: variationOptionsAdditions?.map((vo) => {
@@ -312,12 +247,6 @@ const updateVariable = (values: Product, initialValues: Product) => {
         ? null
         : { id: thumbnailDeletion[0]?.id },
       categories: categoriesDeletions?.map(({ id }) => {
-        return { id };
-      }),
-      tags: tagsDeletions?.map(({ id }) => {
-        return { id };
-      }),
-      suppliers: suppliersDeletions?.map(({ id }) => {
         return { id };
       }),
       variationOptions: variationOptionsDeletions?.map((v) => {

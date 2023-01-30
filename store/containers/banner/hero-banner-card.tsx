@@ -36,8 +36,7 @@ const HeroBannerCard: FC<BannerProps> = ({
         style={{ zIndex: -1 }}
       >
         <ImageComponent
-          src={thumbnail?.image}
-          customPlaceholder={thumbnail?.placeholder}
+          src={`${process.env.S3_ENDPOINT}/${thumbnail}`}
           layout="fill"
           objectFit="cover"
         />
@@ -72,7 +71,7 @@ const HeroBannerCard: FC<BannerProps> = ({
           </h2>
           <p
             className={cn(
-              'text-base md:text-[17px] xl:text-lg leading-7 md:leading-8 xl:leading-[1.92em] xl:px-16',
+              'text-base md:text-[17px] font-semibold xl:text-lg leading-7 md:leading-8 xl:leading-[1.92em] xl:px-16',
               {
                 'text-skin-base text-opacity-80 2xl:px-32':
                   variant === 'default',

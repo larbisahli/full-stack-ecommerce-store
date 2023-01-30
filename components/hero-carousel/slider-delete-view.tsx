@@ -3,28 +3,43 @@ import {
   useModalAction,
   useModalState
 } from '@components/ui/modal/modal.context';
-import { DELETE_HERO_SLIDE, HERO_CAROUSEL_LIST } from '@graphql/hero-carousel';
 import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useTime } from '@hooks/useTime';
+import { notify } from '@lib/notify';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 const SliderDeleteView = () => {
+  const { t } = useTranslation();
+
   const [error, setError] = useState(null);
-  // const [deleteSlide, { loading }] = useMutation(DELETE_HERO_SLIDE, {
-  //   refetchQueries: [
-  //     HERO_CAROUSEL_LIST,
-  //     'HeroCarouselList' // Query name
-  //   ]
-  // });
 
   const { id } = useModalState();
   const { closeModal } = useModalAction();
+  const [loading, setLoading] = useState(false);
+  const { revalidate } = useTime();
 
   useErrorLogger(error);
 
   async function handleDelete() {
-    // deleteSlide({ variables: { id } }).catch((err) => {
-    //   setError(err);
-    // });
+    setLoading(true);
+    fetch('/api/admin/banner/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.banner?.id) {
+          notify(t('common:successfully-deleted'), 'success');
+          revalidate();
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
     closeModal();
   }
 
@@ -32,7 +47,7 @@ const SliderDeleteView = () => {
     <ConfirmationCard
       onCancel={closeModal}
       onDelete={handleDelete}
-      // deleteBtnLoading={loading}
+      deleteBtnLoading={loading}
     />
   );
 };
