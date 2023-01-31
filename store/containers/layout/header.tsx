@@ -10,7 +10,7 @@ import { StickyContext } from '@store/contexts/sticky/sticky.provider';
 import { useMedia } from '@store/helpers/use-media';
 import { Category } from '@ts-types/generated';
 import Link from 'next/link';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import Menu from './menu';
 
@@ -22,9 +22,17 @@ export default function Header({ categories }: Props) {
   const isLargeScreen = useMedia('(min-width: 1024px)');
   const { dispatch } = useContext(DrawerContext);
 
+  const [renderCategory, setRenderCategory] = useState(false);
+
   const {
     state: { isSticky }
   } = useContext(StickyContext);
+
+  useEffect(() => {
+    if (isLargeScreen) {
+      setRenderCategory(true);
+    }
+  }, [isLargeScreen]);
 
   const { itemsCount } = useCart();
   const searchRef = useRef(null);
@@ -87,7 +95,7 @@ export default function Header({ categories }: Props) {
       </div>
 
       {/* CATEGORIES SECTION */}
-      {isLargeScreen && (
+      {renderCategory && (
         <div className="flex flex-1 h-full">
           {selectedCategories?.map((category) => {
             return <Menu key={category.id} category={category} />;

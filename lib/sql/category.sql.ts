@@ -16,11 +16,7 @@ export function getCategoriesCount(): string {
 
 export function getCategoryForAdmin(): string {
   return `SELECT cate.id, cate.parent_id AS "parentId", cate.name, cate.description,
-  cate.image, cate.created_at AS "createdAt", cate.updated_at AS "updatedAt", 
-  (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name)
-  FROM staff_accounts AS stc WHERE stc.id = cate.created_by) AS "createdBy",
-  (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name)
-  FROM staff_accounts AS stu WHERE stu.id = cate.updated_by) AS "updatedBy",
+  (SELECT json_build_object('image', cate.image)) as thumbnail,
   (SELECT json_build_object('id', parent_cate.id, 'name', parent_cate.name) FROM categories AS parent_cate WHERE parent_cate.id = cate.parent_id) AS parent,
   (SELECT EXISTS(SELECT cate_check.id FROM categories AS cate_check WHERE cate_check.parent_id = cate.id)) AS "hasChildren"
   FROM categories AS cate WHERE cate.id = $1`;
@@ -38,17 +34,6 @@ export function getCategoriesForAdmin(): string {
   FROM staff_accounts AS child_stu WHERE child_stu.id = child_cate.updated_by))) 
   FROM categories AS child_cate WHERE child_cate.parent_id = cate.id)) AS children
   FROM categories AS cate WHERE cate.parent_id IS NULL LIMIT $1 OFFSET $2`;
-}
-
-export function getCategoriesChildrenForAdmin(): string {
-  return `SELECT cate.id, cate.parent_id AS "parentId", cate.name, cate.description, cate.icon, 
-  cate.created_at AS "createdAt", cate.updated_at AS "updatedAt", 
-  (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name) 
-  FROM staff_accounts AS stc WHERE stc.id = cate.created_by) AS "createdBy",
-  (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) 
-  FROM staff_accounts AS stu WHERE stu.id = cate.updated_by) AS "updated_by",
-  (SELECT EXISTS(SELECT cate_check.id FROM categories AS cate_check WHERE cate_check.parent_id = cate.id)) AS "hasChildren"
-  FROM categories AS cate WHERE cate.parent_id = $1 ORDER BY updated_at ASC`;
 }
 
 export function getCategoriesParentsSelectForAdmin(): string {

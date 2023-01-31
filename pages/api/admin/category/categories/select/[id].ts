@@ -10,7 +10,6 @@ class Handler extends PostgresClient {
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const limit = 999;
-    const offset = 999;
 
     const { query, method } = req;
     const id = query.id as string;
@@ -20,9 +19,9 @@ class Handler extends PostgresClient {
           await this.authorization(req, res);
           const { rows } = await this.query<CategoryType, string | number>(
             categoryQueries.getCategoriesParentsSelectForAdminWithId(),
-            [id, limit, offset]
+            [id, limit]
           );
-          return res.status(200).json(rows);
+          return res.status(200).json({ categories: rows });
         }
         default:
           res.setHeader('Allow', ['GET']);

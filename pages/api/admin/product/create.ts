@@ -3,6 +3,7 @@ import { productQueries } from '@lib/sql';
 import {
   Attribute,
   AttributeValue,
+  ImageType,
   VariationOptionsType
 } from '@ts-types/generated';
 import { ProductType } from 'aws-sdk/clients/servicecatalog';
@@ -57,16 +58,16 @@ class Handler extends PostgresClient {
             // ---------------- images ----------------
             // Thumbnail
             if (!isEmpty(values.thumbnail)) {
-              await client.query<string, (string | boolean)[]>(
+              await client.query<ImageType, (string | boolean)[]>(
                 productQueries.insertImage(),
-                [productId, values.thumbnail, true]
+                [productId, values.thumbnail?.image, true]
               );
             }
 
             // Gallery
             if (!isEmpty(values.gallery)) {
-              for await (const image of values.gallery) {
-                await client.query<string, (string | boolean)[]>(
+              for await (const { image } of values.gallery) {
+                await client.query<ImageType, (string | boolean)[]>(
                   productQueries.insertImage(),
                   [productId, image, false]
                 );

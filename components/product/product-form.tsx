@@ -152,7 +152,7 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
     } else {
       const variables = updateVariable(values, initialValues);
       console.log('Update:>', { _values, variables });
-      fetch('/api/admin/category/update', {
+      fetch('/api/admin/product/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(variables)
@@ -357,7 +357,7 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
               />
             ))}
 
-          <div className="mb-4 text-end">
+          <div className="mb-4 flex justify-end items-center">
             {initialValues && (
               <Button
                 variant="outline"

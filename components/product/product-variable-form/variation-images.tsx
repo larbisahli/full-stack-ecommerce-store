@@ -5,7 +5,6 @@ import ImageComponent from '@components/ImageComponent';
 import Checkbox from '@components/ui/checkbox';
 import Label from '@components/ui/label';
 import { useId } from '@hooks/index';
-import type { ImageType } from '@ts-types/generated';
 import { VariationActions } from '@ts-types/generated';
 import cn from 'classnames';
 import { isEmpty } from 'lodash';
@@ -19,7 +18,7 @@ interface VariationImagesProps {
   dispatchVariationState?: React.Dispatch<VariationAction>;
   selectedImage: string | null;
   options: string[];
-  gallery: ImageType[];
+  gallery: string[];
 }
 
 const VariationImages = ({
@@ -55,13 +54,12 @@ const VariationImages = ({
     <div className="mb-5 mt-5">
       <Label>{t('form:input-label-select-image')}</Label>
       <div className="flex items-center">
-        {gallery?.map(({ image, placeholder }, idx) => {
+        {gallery?.map((image, idx) => {
           return (
             <GalleryShowcase
               HandleInputChange={HandleInputChange}
               selectedImage={selectedImage}
               image={image}
-              placeholder={placeholder}
               key={idx}
             />
           );
@@ -71,12 +69,7 @@ const VariationImages = ({
   );
 };
 
-const GalleryShowcase = ({
-  HandleInputChange,
-  image,
-  placeholder,
-  selectedImage
-}) => {
+const GalleryShowcase = ({ HandleInputChange, image, selectedImage }) => {
   const isCurrentImg = image === selectedImage;
 
   const id = useId();
@@ -98,8 +91,11 @@ const GalleryShowcase = ({
         }}
       >
         <ImageComponent
-          src={image ?? '/placeholders/no-image.svg'}
-          customPlaceholder={placeholder}
+          src={
+            image
+              ? `${process.env.S3_ENDPOINT}/${image}`
+              : '/placeholders/no-image.svg'
+          }
           layout="fill"
           objectFit="cover"
         />

@@ -14,7 +14,7 @@ interface Props {
 const HeroSliderBlock: React.FC<Props> = ({
   heroBanners,
   className = 'mb-7',
-  contentClassName = 'py-24'
+  contentClassName = 'py-20'
 }) => {
   return (
     <div className={className}>
@@ -30,7 +30,7 @@ const HeroSliderBlock: React.FC<Props> = ({
         speed={1500}
       >
         {heroBanners?.map((banner: any) => (
-          <SwiperSlide key={`banner--key${banner.id}`}>
+          <SwiperSlide key={`banner--key:${banner.id}`}>
             <HeroBannerCard
               banner={banner}
               variant="slider"

@@ -107,7 +107,7 @@ export interface StaffType extends CreatedUpdatedByAt {
   confirmPassword?: string;
   firstName: string;
   lastName: string;
-  profile: ImageType;
+  profile: string;
   phoneNumber: Nullable<Scalars['Int']>;
   active: boolean;
   csrfToken?: string;
@@ -122,7 +122,7 @@ export interface Category extends CreatedUpdatedByAt {
   children?: Nullable<Array<CategoryRef>>;
   subCategories?: Nullable<Array<CategoryRef>>;
   active?: Scalars['Boolean'];
-  image?: string;
+  thumbnail?: ImageType;
   icon?: Nullable<Scalars['String']>;
   hasChildren?: Scalars['Boolean'];
   parent?: Nullable<CategoryRef>;
@@ -273,8 +273,8 @@ export interface Product extends CreatedUpdatedByAt {
   status?: ProductStatus;
   disableOutOfStock?: Scalars['Boolean'];
   note?: Nullable<Scalars['String']>;
-  thumbnail?: string;
-  gallery?: Nullable<string[]>;
+  thumbnail?: ImageType;
+  gallery?: Nullable<ImageType[]>;
   categories?: Array<Category>;
   suppliers?: Nullable<Array<Suppliers>>;
   tags?: Nullable<Array<Nullable<Tag>>>;
@@ -284,6 +284,10 @@ export interface Product extends CreatedUpdatedByAt {
   // [key: string]: any;
 }
 
+export interface ImageType {
+  id?: string;
+  image: string;
+}
 export interface VariationType {
   attribute: Attribute;
   selectedValues: Array<Nullable<AttributeValue>>;
@@ -319,7 +323,7 @@ export interface Suppliers extends CreatedUpdatedByAt {
 export interface HeroBannerType {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;
-  thumbnail?: string;
+  thumbnail?: ImageType;
   title?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   btnLabel?: Scalars['String'];
@@ -334,7 +338,7 @@ export interface HeroBannerType {
 export interface HeroCarouselType extends CreatedUpdatedByAt {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;
-  thumbnail?: string;
+  thumbnail?: ImageType;
   title?: Scalars['String'];
   description?: Nullable<Scalars['String']>;
   btnLabel?: Scalars['String'];

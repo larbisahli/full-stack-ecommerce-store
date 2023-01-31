@@ -8,44 +8,41 @@ import { verifyAuth, XSRFHandler } from '@middleware/utils';
 import type { SSRProps } from '@ts-types/custom.types';
 import type { Product } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
+import { fetcher } from '@utils/utils';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React from 'react';
+import useSwr from 'swr';
 
 interface TProduct {
-  productForAdmin: Product;
+  product: Product;
 }
-interface productVariable {
-  id: string | string[];
-}
-
 export default function UpdateProductPage({ client }: SSRProps) {
   const { t } = useTranslation();
   const { query } = useRouter();
 
   const { productId } = query;
 
-  // const { data, loading, error } = useQuery<TProduct, productVariable>(
-  //   PRODUCT,
-  //   {
-  //     variables: { id: productId },
-  //     fetchPolicy: 'cache-and-network'
-  //   }
-  // );
+  const random = React.useRef(Date.now());
+  const key = productId
+    ? [`/api/admin/product/${productId}?time=`, random.current]
+    : null;
+  const { data, error, isLoading } = useSwr<TProduct>(key, fetcher);
+
+  const { product = null } = data ?? {};
 
   useGetStaff(client);
-  // useErrorLogger(error);
+  useErrorLogger(error);
 
-  const productForAdmin = {}; //data?.productForAdmin;
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
 
-  // if (loading) {
-  //   return <Loader text={t('common:text-loading')} />;
-  // }
-
-  // if (error) {
-  //   return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
-  // }
+  if (error) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
 
   return (
     <>
@@ -54,7 +51,7 @@ export default function UpdateProductPage({ client }: SSRProps) {
           {t('form:edit-product')}
         </h1>
       </div>
-      <CreateOrUpdateProductForm initialValues={productForAdmin} />
+      <CreateOrUpdateProductForm initialValues={product} />
     </>
   );
 }

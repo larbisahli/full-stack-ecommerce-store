@@ -5,7 +5,11 @@ import Pagination from '@components/ui/pagination';
 import { Table } from '@components/ui/table';
 import { siteSettings } from '@settings/site.settings';
 import { Nullable } from '@ts-types/custom.types';
-import { CreatedUpdatedByAt, HeroCarouselType } from '@ts-types/generated';
+import {
+  CreatedUpdatedByAt,
+  HeroCarouselType,
+  ImageType
+} from '@ts-types/generated';
 import { useIsRTL } from '@utils/locals';
 import { ROUTES } from '@utils/routes';
 import dayjs from 'dayjs';
@@ -38,14 +42,14 @@ const HeroCarouselList = ({
       key: 'thumbnail',
       align: alignLeft,
       width: 150,
-      render: (thumbnail: string) => (
+      render: (thumbnail: ImageType) => (
         <div
           style={{ maxWidth: '100px' }}
           className="rounded shadow min-w-0 overflow-hidden"
         >
           <ImageComponent
             src={
-              `${process.env.S3_ENDPOINT}/${thumbnail}` ??
+              `${process.env.S3_ENDPOINT}/${thumbnail?.image}` ??
               siteSettings.product.image
             }
             layout="fill"

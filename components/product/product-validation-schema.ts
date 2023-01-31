@@ -26,12 +26,5 @@ export const productValidationSchema = yup.object().shape({
   //   .number()
   //   .typeError('form:error-amount-must-number')
   //   .required('form:error-quantity-required'),
-  categories: yup.array().min(1, 'Category Required'),
-  productShippingInfo: yup.object().shape({
-    weight: yup.number().typeError('form:error-amount-must-number'),
-    volume: yup.number().typeError('form:error-amount-must-number'),
-    dimensionWidth: yup.number().typeError('form:error-amount-must-number'),
-    dimensionHeight: yup.number().typeError('form:error-amount-must-number'),
-    dimensionDepth: yup.number().typeError('form:error-amount-must-number')
-  })
+  categories: yup.array().min(1, 'Category Required')
 });

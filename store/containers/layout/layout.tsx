@@ -14,7 +14,7 @@ const Layout = (props) => (
     <Drawer />
     <Header categories={props.categories} />
     <div className="flex flex-col w-full h-full flex-grow">
-      <div className="pt-90px flex-auto">{props.children}</div>
+      <div className="pt-60px flex-auto">{props.children}</div>
       <Footer />
     </div>
     <CartDrawer />

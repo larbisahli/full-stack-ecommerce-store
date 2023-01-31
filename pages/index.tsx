@@ -46,7 +46,6 @@ export default function Home({ categories, banners, products, error }: props) {
       <HeroBlock heroBanners={banners} />
       <HowItWorks />
       <Products items={products} ref={elRef} />
-      <InstagramReview />
     </Layout>
   );
 }

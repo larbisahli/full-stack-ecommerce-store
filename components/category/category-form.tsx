@@ -117,7 +117,7 @@ export default function CreateOrUpdateCategoriesForm({
       id: initialValues?.id,
       name: values.name,
       description: values.description,
-      image: values.image,
+      thumbnail: values.thumbnail,
       parentId: isEmpty(values?.parent) ? null : values?.parent?.id
     };
 
@@ -175,7 +175,7 @@ export default function CreateOrUpdateCategoriesForm({
         />
 
         <Card className="w-full sm:w-8/12 md:w-2/3">
-          <FileInput name="image" control={control} multiple={false} />
+          <FileInput name="thumbnail" control={control} multiple={false} />
         </Card>
       </div>
 

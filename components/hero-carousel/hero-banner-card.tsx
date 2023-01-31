@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import ImageComponent from '@components/ImageComponent';
+import { ImageType } from '@ts-types/generated';
 import cn from 'classnames';
 
 interface ShowCaseProps {
-  thumbnail: string;
+  thumbnail: ImageType;
   btnLabel?: string;
   title?: string;
   description?: string;
@@ -29,7 +30,7 @@ const HeroBannerCard = ({
         style={{ zIndex: -1, borderRadius: '3px' }}
       >
         <ImageComponent
-          src={`${process.env.S3_ENDPOINT}/${thumbnail}`}
+          src={`${process.env.S3_ENDPOINT}/${thumbnail?.image}`}
           layout="fill"
           objectFit="cover"
         />

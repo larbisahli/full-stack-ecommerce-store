@@ -9,8 +9,8 @@ export function getProduct(): string {
   pd.compare_price AS "comparePrice", pd.disable_out_of_stock AS "disableOutOfStock", 
   pd.quantity, pd.short_description AS "shortDescription", pd.product_description AS "description", jsonb_build_object('id', pd.product_type) AS "type",
 
-  (SELECT json_build_object('id', galt.id, 'image', galt.image, 'placeholder', galt.placeholder) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS "thumbnail",
-  ARRAY(SELECT json_build_object('id', galg.id, 'image', galg.image, 'placeholder', galg.placeholder) FROM gallery galg WHERE galg.product_id = pd.id ORDER BY galg.is_thumbnail DESC) AS "gallery",
+  (SELECT json_build_object('id', galt.id, 'image', galt.image) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS "thumbnail",
+  ARRAY(SELECT json_build_object('id', galg.id, 'image', galg.image) FROM gallery galg WHERE galg.product_id = pd.id ORDER BY galg.is_thumbnail DESC) AS "gallery",
   
   ARRAY(SELECT json_build_object('id', tag.id, 'name', tag.tag_name) FROM tags tag WHERE tag.id IN (SELECT pt.tag_id FROM product_tags pt WHERE pt.product_id = pd.id)) AS "tags",
 
@@ -66,17 +66,11 @@ export function getProductForAdmin(): string {
   pd.disable_out_of_stock AS "disableOutOfStock", pd.quantity, pd.published, pd.created_at AS "createdAt", pd.updated_at AS "updatedAt", pd.note, 
   pd.product_description AS "description", pd.short_description AS "shortDescription", pd.sku, jsonb_build_object('id', pd.product_type) AS "type",
 
-  (SELECT json_build_object('id', galt.id, 'image', galt.image, 'placeholder', galt.placeholder) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS thumbnail,
-  ARRAY(SELECT json_build_object('id', galg.id, 'image', galg.image, 'placeholder', galg.placeholder) FROM gallery galg WHERE galg.product_id = pd.id AND galg.is_thumbnail = false) AS gallery,
+  (SELECT json_build_object('id', galt.id, 'image', galt.image) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS thumbnail,
+  ARRAY(SELECT json_build_object('id', galg.id, 'image', galg.image) FROM gallery galg WHERE galg.product_id = pd.id AND galg.is_thumbnail = false) AS gallery,
 
-  (SELECT json_build_object('id', psf.id, 'productId', psf.product_id, 'weight', psf.weight, 'weightUnit', json_build_object('unit', psf.weight_unit), 'volume', psf.volume, 'volumeUnit', json_build_object('unit', psf.volume_unit), 
-								 'dimensionWidth', psf.dimension_width, 'dimensionHeight', psf.dimension_height, 'dimensionDepth', 
-								 psf.dimension_depth, 'dimensionUnit', json_build_object('unit', psf.dimension_unit)) FROM product_shipping_info psf WHERE psf.product_id = pd.id ) AS "productShippingInfo",
+  ARRAY(SELECT json_build_object('id', cate.id, 'name', cate.name) FROM categories cate WHERE cate.id IN (SELECT pc.category_id FROM product_categories pc WHERE pc.product_id = pd.id)) AS "categories",
 
-  ARRAY(SELECT json_build_object('id', cate.id, 'name', cate.category_name) FROM categories cate WHERE cate.id IN (SELECT pc.category_id FROM product_categories pc WHERE pc.product_id = pd.id)) AS "categories",
-  ARRAY(SELECT json_build_object('id', tag.id, 'name', tag.tag_name) FROM tags tag WHERE tag.id IN (SELECT pt.tag_id FROM product_tags pt WHERE pt.product_id = pd.id)) AS "tags",
-  ARRAY(SELECT json_build_object('id', sup.id, 'name', sup.supplier_name) FROM suppliers sup WHERE sup.id IN (SELECT ps.supplier_id FROM product_suppliers ps WHERE ps.product_id = pd.id)) AS "suppliers",
-            
   ARRAY(SELECT json_build_object('id', vo.id, 'title', vo.title, 'image', (SELECT img.image FROM gallery img WHERE img.id = vo.image_id), 'salePrice', vo.sale_price, 
 								 'comparePrice', vo.compare_price, 'buyingPrice', vo.buying_price, 
 								 'quantity', vo.quantity, 'sku', vo.sku, 'isDisable', NOT(vo.active),
@@ -87,10 +81,7 @@ export function getProductForAdmin(): string {
   ARRAY(SELECT json_build_object('attribute', json_build_object('id', pa.attribute_id, 'name', (SELECT att.attribute_name FROM attributes att WHERE att.id = pa.attribute_id)), 
   'selectedValues', ARRAY(SELECT json_build_object('id', pav.attribute_value_id, 'value', (SELECT att_v.attribute_value 
   FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id)) FROM product_attribute_values pav WHERE pav.product_attribute_id = pa.id)) 
-  FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations",
-
-  (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name) FROM staff_accounts AS stc WHERE stc.id = pd.created_by) AS "createdBy",
-  (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) FROM staff_accounts AS stu WHERE stu.id = pd.updated_by) AS "updatedBy"
+  FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations"
   FROM products AS pd WHERE pd.id = $1`;
 }
 
@@ -121,14 +112,14 @@ export function getProductsCount(): string {
 export function insertProduct(): string {
   return `INSERT INTO products(
           slug, product_name, sku, sale_price, compare_price, buying_price, quantity,
-          short_description, product_description, product_type, published, disable_out_of_stock, note, created_by) 
+          short_description, product_description, product_type, published, disable_out_of_stock, note, created_by)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NULLIF($13, ''), $14) RETURNING id, product_name AS name
       `;
 }
 
 export function updateProduct(): string {
   return `UPDATE products SET slug = $2, product_name = $3, sku = $4, sale_price = $5,
-         compare_price = $6, buying_price = $7, quantity = $8, short_description = $9, product_description = $10, 
+         compare_price = $6, buying_price = $7, quantity = $8, short_description = $9, product_description = $10,
          product_type = $11, published = $12, disable_out_of_stock = $13, note = NULLIF($14, ''), updated_by = $15 WHERE id = $1
       `;
 }
@@ -318,12 +309,12 @@ export function getPopularProducts(): string {
   CASE 
     WHEN pd.product_type = 'variable' THEN (SELECT MIN(vp.sale_price) 
     FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE)
-    WHEN pd.product_type = 'simple' THEN pd.sale_price END AS "salePrice",
+    WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END AS "salePrice",
   
   CASE 
     WHEN pd.product_type = 'variable' THEN (SELECT DISTINCT ON(vp.compare_price) vp.compare_price 
     FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE ORDER BY vp.compare_price LIMIT 1)
-    WHEN pd.product_type = 'simple' THEN pd.compare_price END AS "comparePrice",
+    WHEN pd.product_type = 'simple' THEN pd.compare_price::FLOAT END AS "comparePrice",
   
   (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
   FROM products AS pd WHERE pd.published IS TRUE LIMIT $1`;

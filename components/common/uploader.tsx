@@ -4,6 +4,7 @@ import ImageComponent from '@components/ImageComponent';
 import Loader from '@components/ui/loader/loader';
 import { notify } from '@lib/notify';
 import S3 from '@lib/S3/react-aws-s3';
+import { ImageType } from '@ts-types/generated';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'next-i18next';
@@ -20,14 +21,14 @@ const config = {
 
 const ReactS3Client = new S3(config);
 
-export default function Uploader({ onChange, value, multiple }: any) {
+export default function Uploader({ onChange, value = [], multiple }: any) {
   const { t } = useTranslation();
 
-  const imagesCache = useRef<string[]>([]);
+  const imagesCache = useRef<ImageType[]>([]);
 
   const [error, setError] = useState(null);
-  const [images, setImages] = useState<string | string[]>(value);
-  const [deletedImage, setDeletedImage] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageType | ImageType[]>(value);
+  const [deletedImage, setDeletedImage] = useState<ImageType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   console.log({ images });
@@ -59,10 +60,13 @@ export default function Uploader({ onChange, value, multiple }: any) {
 
                 if (image) {
                   if (multiple) {
-                    setImages((prev) => [...((prev as string[]) ?? []), image]);
-                    imagesCache.current.push(image);
+                    setImages((prev) => [
+                      ...((prev as ImageType[]) ?? []),
+                      { image }
+                    ]);
+                    imagesCache.current.push({ image });
                   } else {
-                    setImages(image);
+                    setImages({ image });
                     setLoading(false);
                   }
                 }
@@ -100,7 +104,7 @@ export default function Uploader({ onChange, value, multiple }: any) {
     e.preventDefault();
 
     setDeletedImage((prev) => {
-      return [...prev, image];
+      return [...prev, { image }];
     });
 
     try {
@@ -115,9 +119,9 @@ export default function Uploader({ onChange, value, multiple }: any) {
             const image = data?.Deleted[0].key;
             let images_;
             if (isArray(images) && isMultiple) {
-              images_ = images?.filter((file) => file !== image);
+              images_ = images?.filter((file) => file.image !== image);
             } else {
-              images_ = null;
+              images_ = [];
             }
             setImages(images_);
             onChange(images_);
@@ -142,13 +146,13 @@ export default function Uploader({ onChange, value, multiple }: any) {
     }
 
     if (isArray(images)) {
-      return images?.map((image, idx) => {
+      return images?.map(({ image }, idx) => {
         return (
           <div
             className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative"
             key={idx}
           >
-            {deletedImage.includes(image) && (
+            {deletedImage.some((file) => file.image === image) && (
               <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
                 <Loader
                   simple={true}
@@ -181,7 +185,7 @@ export default function Uploader({ onChange, value, multiple }: any) {
     } else {
       return (
         <div className="inline-flex flex-col overflow-hidden border border-border-200 rounded mt-2 me-2 relative">
-          {deletedImage.includes(images) && (
+          {deletedImage.some((file) => file.image === images?.image) && (
             <div className="absolute top-0 right-0 left-0 bottom-0 w-16 h-16 z-40 bg-red-50 opacity-80 flex justify-center items-center">
               <Loader
                 simple={true}
@@ -193,7 +197,7 @@ export default function Uploader({ onChange, value, multiple }: any) {
           <div className="flex items-center justify-center min-w-0 w-16 h-16 overflow-hidden">
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <ImageComponent
-              src={`${process.env.S3_ENDPOINT}/${images}`}
+              src={`${process.env.S3_ENDPOINT}/${images?.image}`}
               layout="fill"
               objectFit="cover"
             />
@@ -206,7 +210,7 @@ export default function Uploader({ onChange, value, multiple }: any) {
             onClick={(e) =>
               handleDelete(e, {
                 isMultiple: false,
-                image: images
+                image: images?.image
               })
             }
           >

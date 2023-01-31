@@ -212,15 +212,13 @@ const updateVariable = (values: Product, initialValues: Product) => {
       productMain,
       gallery: galleryAdditions?.map((img) => {
         return {
-          image: img?.image,
-          placeholder: img?.placeholder
+          image: img?.image
         };
       }),
       thumbnail: isEmpty(thumbnailDeletion)
         ? null
         : {
-            image: thumbnailAddition[0]?.image,
-            placeholder: thumbnailAddition[0]?.placeholder
+            image: thumbnailAddition[0]?.image
           },
       categories: categoriesAdditions?.map(({ id }) => {
         return { id };

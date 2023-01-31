@@ -20,7 +20,7 @@ class Handler extends PostgresClient {
           const {
             title,
             destinationUrl,
-            thumbnail,
+            thumbnail: { image = null },
             description,
             btnLabel,
             displayOrder,
@@ -33,7 +33,7 @@ class Handler extends PostgresClient {
           >(carouselQueries.insertSlide(), [
             title,
             destinationUrl,
-            thumbnail,
+            image,
             description,
             btnLabel,
             displayOrder,

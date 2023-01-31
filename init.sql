@@ -134,34 +134,8 @@ CREATE TABLE IF NOT EXISTS variant_values (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS customers (
-  id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL,
-  active BOOLEAN DEFAULT TRUE,
-  registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS customer_addresses (
-  id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  customer_id UUID REFERENCES customers(id),
-  address_line1 TEXT NOT NULL,
-  address_line2 TEXT,
-  phone_number VARCHAR(255) NOT NULL,
-  dial_code VARCHAR(100) NOT NULL,
-  country VARCHAR(255) NOT NULL,
-  postal_code VARCHAR(255) NOT NULL,
-  city VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS orders (
   id VARCHAR(50) NOT NULL,
-  customer_id UUID REFERENCES customers(id),
   order_approved_at TIMESTAMPTZ,
   order_delivered_carrier_date TIMESTAMPTZ,
   order_delivered_customer_date TIMESTAMPTZ,
@@ -231,28 +205,6 @@ CREATE TABLE IF NOT EXISTS card_items (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS suppliers (
-  id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  supplier_name VARCHAR(255) NOT NULL,
-  company VARCHAR(255),
-  phone_number VARCHAR(255),
-  address_line1 TEXT NOT NULL,
-  address_line2 TEXT,
-  city VARCHAR(255),
-  note TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
-  updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS product_suppliers (
-  product_id UUID REFERENCES products(id) NOT NULL,
-  supplier_id UUID REFERENCES suppliers(id) NOT NULL,
-  PRIMARY KEY (product_id, supplier_id)
-);
-
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION update_at_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();
 RETURN NEW;
@@ -265,7 +217,6 @@ CREATE TRIGGER gallery_set_update BEFORE UPDATE ON gallery FOR EACH ROW EXECUTE 
 CREATE TRIGGER attribute_set_update BEFORE UPDATE ON attributes FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER product_set_update BEFORE UPDATE ON products FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER staff_set_update BEFORE UPDATE ON staff_accounts FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
-CREATE TRIGGER customer_set_update BEFORE UPDATE ON customers FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER order_set_update BEFORE UPDATE ON orders FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER slideshow_set_update BEFORE UPDATE ON slideshows FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER notification_set_update BEFORE UPDATE ON notifications FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
@@ -281,8 +232,6 @@ CREATE TABLE gallery_part3 PARTITION OF gallery FOR VALUES WITH (modulus 3, rema
 
 -- products
 CREATE INDEX idx_product_publish ON products (published);
--- customers
-CREATE INDEX idx_customer_email ON customers (email);
 -- product_categories
 CREATE INDEX idx_product_category ON product_categories (product_id, category_id);
 -- gallery
@@ -300,17 +249,11 @@ CREATE INDEX idx_variant_option_id_variants ON variants (variant_option_id);
 -- variant_values
 CREATE INDEX idx_variant_id_variant_values ON variant_values (variant_id);
 CREATE INDEX idx_product_attribute_value_id_variant_values ON variant_values (product_attribute_value_id);
--- orders
-CREATE INDEX idx_order_customer_id ON orders (customer_id);
 -- order_items
 CREATE INDEX idx_product_id_order_item ON order_items (product_id);
 CREATE INDEX idx_order_id_order_item ON order_items (order_id);
--- cards
-CREATE INDEX idx_customer_id_card ON cards (customer_id);
 -- slideshows
 CREATE INDEX idx_slideshows_publish ON slideshows (published);
--- product_suppliers
-CREATE INDEX idx_product_supplier ON product_suppliers (product_id, supplier_id);
 -- variant_options
 CREATE INDEX idx_variant_options_product_id ON variant_options (product_id);
 

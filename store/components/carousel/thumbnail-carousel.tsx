@@ -77,16 +77,13 @@ const ThumbnailCarousel: React.FC<Props> = ({
           }}
           {...swiperParams}
         >
-          {gallery?.map(({ id, image, placeholder }) => (
+          {gallery?.map(({ id, image }) => (
             <SwiperSlide
               key={`product-gallery-${id}`}
               className="flex items-center justify-center"
             >
               <ImageComponent
                 src={image ?? siteSettings.product.image}
-                customPlaceholder={
-                  placeholder ?? siteSettings.product.placeholder
-                }
                 width={750}
                 height={690}
                 objectFit="cover"

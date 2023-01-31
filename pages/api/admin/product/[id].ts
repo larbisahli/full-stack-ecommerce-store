@@ -1,5 +1,5 @@
 import PostgresClient from '@lib/database';
-import { categoryQueries } from '@lib/sql';
+import { categoryQueries, productQueries } from '@lib/sql';
 import { Category } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -15,10 +15,10 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           const { rows } = await this.query<Category, string>(
-            categoryQueries.getCategoryForAdmin(),
+            productQueries.getProductForAdmin(),
             [id]
           );
-          return res.status(200).json({ category: rows[0] });
+          return res.status(200).json({ product: rows[0] });
         }
         default:
           res.setHeader('Allow', ['GET']);

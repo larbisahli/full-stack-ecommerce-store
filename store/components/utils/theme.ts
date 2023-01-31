@@ -102,40 +102,6 @@ export const FeatureTitle =
 export const FeatureDetails = 'w-full leading-6 text-14px';
 
 // ----------
-// Item Card .... Height uthay dite hobe image theke
-// ----------
-export const ItemCardBase =
-  'w-full flex flex-col border border-gray-300 rounded p-4 bg-white transition duration-350 ease-in-out';
-
-export const ItemCardBaseContent = 'flex flex-row items-start';
-
-export const ItemCardImage =
-  'flex justify-center items-center w-5/12 xxl:w-4/12 h-auto rounded overflow-hidden bg-gray-200 flex-shrink-0 mr-4';
-
-export const ItemCardContent =
-  'flex flex-col w-full items-start overflow-hidden';
-
-export const ItemCardPrice = 'font-semibold text-gray-900 mb-1 text-16px';
-
-export const ItemCardName = 'text-13px text-gray-700 truncate w-full';
-
-export const ItemCardInformation =
-  'flex items-center my-1 overflow-hidden w-full';
-
-export const ItemCardType = 'text-gray-500 text-11px capitalize';
-
-export const ItemCardRoundedDot =
-  'flex bg-gray-500 w-3px h-3px rounded mx-3 flex-shrink-0';
-
-export const ItemCardQuantity = 'text-gray-500 text-11px truncate';
-
-export const ItemCardDetailsButton =
-  'text-gray-500 text-11px font-semebold text-gray-900 mt-1 focus:outline-none';
-
-export const ItemCardCounterWrapper =
-  'ml-auto mt-2 w-full flex justify-end items-end';
-
-// ----------
 // SearchBox
 // ----------
 export const SearchBase =

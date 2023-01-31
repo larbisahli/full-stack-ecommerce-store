@@ -13,7 +13,7 @@ import TextArea from '@components/ui/text-area';
 import { useErrorLogger, useWarnIfUnsavedChanges } from '@hooks/index';
 import { notify } from '@lib/index';
 import { Nullable } from '@ts-types/custom.types';
-import { HeroCarouselType } from '@ts-types/generated';
+import { HeroCarouselType, ImageType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
@@ -71,7 +71,7 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
   });
 
   const styles = watch('styles');
-  const thumbnail = watch('thumbnail') as string;
+  const thumbnail = watch('thumbnail') as ImageType;
   const btnLabel = watch('btnLabel');
   const title = watch('title');
   const description = watch('description');

@@ -31,6 +31,7 @@ const HeroBannerCard: FC<BannerProps> = ({
         className
       )}
     >
+      <div className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-5"></div>
       <div
         className="absolute h-full w-full overflow-hidden"
         style={{ zIndex: -1 }}
@@ -43,7 +44,7 @@ const HeroBannerCard: FC<BannerProps> = ({
       </div>
       <div
         className={cn(
-          'mx-auto h-full flex flex-col text-center px-6 xl:max-w-[750px] 2xl:max-w-[850px]',
+          'mx-auto z-10 h-full flex flex-col text-center px-6 xl:max-w-[750px] 2xl:max-w-[850px]',
           {
             'max-w-[480px] md:max-w-[550px]': variant === 'default' || 'slider',
             'max-w-[480px] md:max-w-[650px]': variant === 'medium'

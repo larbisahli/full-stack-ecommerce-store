@@ -43,20 +43,30 @@ const Products = React.forwardRef(
     console.log({ searchableItems });
 
     return (
-      <div className="w-full mt-35px xxl:mt-60px px-4 lg:px-35px" ref={ref}>
+      <div
+        className="w-full mt-35px xxl:mt-60px px-4 lg:px-35px mb-26 mb-40"
+        ref={ref}
+      >
         {searchableItems.length ? (
-          <div className="grid grid-cols-1 col-gap-3 row-gap-3 mt-9 md:grid-cols-2 md:col-gap-4 md:row-gap-4 lg:grid-cols-3 xxl:grid-cols-3 xxl:col-gap-4 xxl:row-gap-4 2xxl:grid-cols-4 large:grid-cols-5">
-            {searchableItems.map((item) => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                onClick={() => showDetails(item)}
-                value={getItem(item.id)?.quantity}
-                onIncrement={() => addItem(item)}
-                onDecrement={() => removeItem(item)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols- xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-3 md:gap-4 2xl:gap-5">
+              {searchableItems.map((item) => (
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  onClick={() => showDetails(item)}
+                  value={getItem(item.id)?.quantity}
+                  onIncrement={() => addItem(item)}
+                  onDecrement={() => removeItem(item)}
+                />
+              ))}
+            </div>
+            <div className="mt-20 flex items-center justify-center">
+              <button className="hover:bg-gray-50 border border-solid border-gray-400 rounded py-2 px-5 font-semibold">
+                View more
+              </button>
+            </div>
+          </>
         ) : (
           <div className="pt-10px md:pt-40px lg:pt-20px pb-40px">
             <NotFound width="100%" />
