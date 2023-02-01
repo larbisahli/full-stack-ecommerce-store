@@ -29,9 +29,7 @@ export default function Header({ categories }: Props) {
   } = useContext(StickyContext);
 
   useEffect(() => {
-    if (isLargeScreen) {
-      setRenderCategory(true);
-    }
+    setRenderCategory(isLargeScreen);
   }, [isLargeScreen]);
 
   const { itemsCount } = useCart();

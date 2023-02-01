@@ -15,7 +15,7 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           const { rows: products } = await this.query<ProductType, number>(
-            productQueries.getPopularProducts(),
+            productQueries.getProductsX(),
             [limit]
           );
           return res.status(200).json({ products });
@@ -25,6 +25,7 @@ class Handler extends PostgresClient {
           res.status(405).end(`There was some error!`);
       }
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,

@@ -1,6 +1,7 @@
 import Card from '@components/common/card';
 import { SaveIcon } from '@components/icons/save-icon';
 import Button from '@components/ui/button';
+import Checkbox from '@components/ui/checkbox';
 import Description from '@components/ui/description';
 import FileInput from '@components/ui/file-input';
 import Input from '@components/ui/input';
@@ -62,7 +63,8 @@ const StaffCreateUpdateForm = ({ initialValues }: IProps) => {
       phoneNumber: values.phoneNumber,
       profile: values?.profile,
       password: values.password,
-      email: values.email
+      email: values.email,
+      isAdmin: values.isAdmin
     };
 
     const requestOptions = {
@@ -181,6 +183,11 @@ const StaffCreateUpdateForm = ({ initialValues }: IProps) => {
               />
             </div>
           )}
+          <Checkbox
+            label={t('form:input-label-administrator')}
+            {...register('isAdmin')}
+            className="mt-8"
+          />
         </Card>
       </div>
 

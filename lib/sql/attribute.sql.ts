@@ -43,7 +43,3 @@ export function updateAttributeValues(): string {
 export function deleteAttributeValue(): string {
   return `DELETE FROM attribute_values WHERE id = $1 RETURNING id`;
 }
-
-export function deleteAttributeValues(): string {
-  return `DELETE FROM attribute_values WHERE attribute_id = $1`;
-}

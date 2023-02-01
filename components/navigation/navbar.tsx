@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 
 import NavMenu from './menu';
-import NavNotification from './notification';
 import styles from './scss/index.module.scss';
 
 let cx = classNames.bind(styles);
@@ -54,7 +53,6 @@ const Navbar = () => {
           >
             {t('common:text-create-product')}
           </LinkButton>
-          {/* <NavNotification /> */}
           <Link href={'/'}>
             <a
               target="_blank"

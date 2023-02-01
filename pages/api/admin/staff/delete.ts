@@ -11,7 +11,7 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      await this.authorization(req, res);
+      await this.authorization(req, res, true);
       switch (method) {
         case this.POST: {
           const { id } = body;

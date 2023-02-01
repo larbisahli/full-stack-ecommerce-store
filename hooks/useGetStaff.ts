@@ -2,6 +2,7 @@ import { StaffInfoContext } from '@contexts/staff.context';
 import { useErrorLogger } from '@hooks/index';
 import type { StaffType } from '@ts-types/generated';
 import { fetcher } from '@utils/utils';
+import isEmpty from 'lodash/isEmpty';
 import { useContext, useEffect } from 'react';
 import useSwr from 'swr';
 interface TStaff {
@@ -27,9 +28,10 @@ export function useGetStaff(client?: ClientType) {
   useErrorLogger(error);
 
   useEffect(() => {
-    const { staff = null } = data ?? {};
-    if (staff) {
-      setStaffInfo(staff);
+    console.log({ data });
+    const { staff = {} } = data ?? {};
+    if (!isEmpty(staff)) {
+      setStaffInfo(staff as StaffType);
     }
   }, [data, setStaffInfo]);
 

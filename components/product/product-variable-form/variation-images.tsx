@@ -5,7 +5,7 @@ import ImageComponent from '@components/ImageComponent';
 import Checkbox from '@components/ui/checkbox';
 import Label from '@components/ui/label';
 import { useId } from '@hooks/index';
-import { VariationActions } from '@ts-types/generated';
+import { ImageType, VariationActions } from '@ts-types/generated';
 import cn from 'classnames';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'next-i18next';
@@ -18,7 +18,7 @@ interface VariationImagesProps {
   dispatchVariationState?: React.Dispatch<VariationAction>;
   selectedImage: string | null;
   options: string[];
-  gallery: string[];
+  gallery: ImageType[];
 }
 
 const VariationImages = ({
@@ -54,7 +54,7 @@ const VariationImages = ({
     <div className="mb-5 mt-5">
       <Label>{t('form:input-label-select-image')}</Label>
       <div className="flex items-center">
-        {gallery?.map((image, idx) => {
+        {gallery?.map(({ image }, idx) => {
           return (
             <GalleryShowcase
               HandleInputChange={HandleInputChange}

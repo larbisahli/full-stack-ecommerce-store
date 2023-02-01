@@ -1,16 +1,21 @@
+import ImageComponent from '@components/ImageComponent';
 import ArrowLeft from '@store/assets/icons/arrow-left';
 import Button from '@store/components/button';
+import { SwiperType } from '@store/components/carousel/slider';
+import ThumbnailCarousel from '@store/components/carousel/thumbnail-carousel';
 import Counter from '@store/components/counter';
-import { Scrollbar } from '@store/components/scrollbar';
 import { useCart } from '@store/contexts/cart/cart.provider';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { CURRENCY } from '@store/helpers/constants';
+import isEmpty from 'lodash/isEmpty';
 import React, { useContext, useState } from 'react';
 
 export default function ProductDetails() {
   const [visibility, setVisibility] = useState(false);
   const { addItem, getItem, removeItem } = useCart();
   const { state, dispatch } = useContext(DrawerContext);
+
+  console.log({ state });
 
   const count = getItem(state.item.id)?.quantity;
 
@@ -44,6 +49,11 @@ export default function ProductDetails() {
     });
   };
 
+  const { gallery = [], thumbnail: { image = '' } = {} } = state?.item ?? {};
+
+  const [swiperThumbnailInstance, setSwiperThumbnailInstance] =
+    useState<SwiperType>(null);
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="w-full flex justify-center relative px-30px py-20px">
@@ -58,10 +68,28 @@ export default function ProductDetails() {
         <h2 className="font-bold text-24px m-0">Details</h2>
       </div>
 
-      <Scrollbar className="details-scrollbar flex-grow">
+      <div className="details-scrollbar flex-grow overflow-y-auto">
         <div className="flex flex-col p-30px pt-0">
-          <div className="flex items-center justify-center w-full h-360px overflow-hidden rounded mb-30px">
-            <img src={state.item.image} alt={`${state.item.name}-img`} />
+          <div className="shadow flex items-center justify-center w-full overflow-hidden rounded mb-30px">
+            <div className="lg:mx-0 mx-auto w-[400px]">
+              {!isEmpty(gallery) ? (
+                <ThumbnailCarousel
+                  setSwiperThumbnailInstance={setSwiperThumbnailInstance}
+                  gallery={gallery}
+                  thumbnailClassName=""
+                  galleryClassName="h-full w-full"
+                />
+              ) : (
+                <div className="w-auto flex items-center justify-center">
+                  <ImageComponent
+                    src={image}
+                    width={400}
+                    height={350}
+                    objectFit="cover"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col items-start mb-4">
@@ -71,9 +99,9 @@ export default function ProductDetails() {
             </span>
             <span className="mb-3">{state.item.name}</span>
             <p className="flex items-center mb-5">
-              <span className=" text-gray-500 text-11px capitalize">
-                {state.item.type}
-              </span>
+              {/* <span className=" text-gray-500 text-11px capitalize">
+                {state.item.type?.id}
+              </span> */}
               <span className="flex bg-gray-500 w-3px h-3px rounded mx-3" />
               <span className=" text-gray-500 text-11px">
                 {state.item.quantity}{' '}
@@ -102,14 +130,14 @@ export default function ProductDetails() {
             <div className="flex flex-col justify-start full mt-10 pr-30px even:pr-0">
               <span className="text-gray-500 text-11px mb-2">Dosages Form</span>
               <span className="font-normal text-13px text-gray-900 capitalize">
-                {state.item.type}
+                {/* {state.item.type} */}
               </span>
             </div>
 
             <div className="flex flex-col justify-start full mt-10 pr-30px even:pr-0">
               <span className="text-gray-500 text-11px mb-2">Dosages</span>
               <span className="font-normal text-13px text-gray-900 capitalize">
-                {state.item.dosage}
+                {/* {state.item.dosage} */}
               </span>
             </div>
 
@@ -118,19 +146,19 @@ export default function ProductDetails() {
                 Active Substance
               </span>
               <span className="font-normal text-13px text-gray-900 capitalize">
-                {state.item.substance}
+                {/* {state.item.substance} */}
               </span>
             </div>
 
             <div className="flex flex-col justify-start full mt-10 pr-30px even:pr-0">
               <span className="text-gray-500 text-11px mb-2">Manufacturer</span>
               <span className="font-normal text-13px text-gray-900 capitalize">
-                {state.item.manufacturer}
+                {/* {state.item.manufacturer} */} c
               </span>
             </div>
           </div>
         </div>
-      </Scrollbar>
+      </div>
 
       <div className="flex flex-col p-30px">
         {count > 0 ? (

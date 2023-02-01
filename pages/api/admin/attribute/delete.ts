@@ -22,11 +22,6 @@ class Handler extends PostgresClient {
             await client.query('BEGIN');
             const { id } = body;
 
-            await client.query<any, string[]>(
-              attributeQueries.deleteAttributeValues(),
-              [id]
-            );
-
             const { rows } = await client.query<Attribute, string[]>(
               attributeQueries.deleteAttribute(),
               [id]

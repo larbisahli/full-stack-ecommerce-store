@@ -120,6 +120,7 @@ function ProductVariableForm({
   }, [attributeValuesChanges, attributeValuesChangesState]);
 
   useEffect(() => {
+    console.log('>>>:', variationOptions, initialValues?.variationOptions);
     if (
       isEmpty(variationOptions) &&
       !isEmpty(initialValues?.variationOptions)
@@ -140,12 +141,12 @@ function ProductVariableForm({
           }
         }
       });
-    } else if (isEmpty(initialValues?.variationOptions)) {
-      setInit(true);
     }
+    setInit(true);
   }, []);
 
   useEffect(() => {
+    console.log({ cartesianProduct });
     if (init) {
       dispatchVariationState({
         type: VariationActions.CARTESIAN,
@@ -166,6 +167,8 @@ function ProductVariableForm({
       }
     });
   };
+
+  console.log({ variationOptions });
 
   return (
     <div className="flex flex-wrap pb-8 border-b border-dashed border-border-base my-5 sm:my-8">

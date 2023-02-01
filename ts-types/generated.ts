@@ -107,9 +107,10 @@ export interface StaffType extends CreatedUpdatedByAt {
   confirmPassword?: string;
   firstName: string;
   lastName: string;
-  profile: string;
+  profile: ImageType;
   phoneNumber: Nullable<Scalars['Int']>;
   active: boolean;
+  isAdmin: boolean;
   csrfToken?: string;
   csrfError?: string;
 }

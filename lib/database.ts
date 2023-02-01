@@ -38,7 +38,8 @@ export default class PostgresClient {
 
   public authorization = async (
     req: NextApiRequest,
-    res: NextApiResponse
+    res: NextApiResponse,
+    isAdmin?: boolean
   ): Promise<StaffType> => {
     const jwtToken = req.cookies[this.CookieNames.STAFF_TOKEN_NAME];
     if (!jwtToken) {
@@ -61,6 +62,10 @@ export default class PostgresClient {
     const staff = rows[0];
 
     const PRODUCTION_ENV = process.env.NODE_ENV === 'production';
+
+    if (!staff?.isAdmin && isAdmin) {
+      throw new Error(this.ErrorNames.FORBIDDEN);
+    }
 
     if (isEmpty(staff)) {
       setCookie(res, this.CookieNames.STAFF_TOKEN_NAME, '', {

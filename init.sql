@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS staff_accounts (
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   active BOOLEAN DEFAULT TRUE,
+  is_admin BOOLEAN DEFAULT FALSE,
   image TEXT DEFAULT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -58,14 +59,14 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE TABLE IF NOT EXISTS product_categories (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  product_id UUID REFERENCES products(id) NOT NULL,
-  category_id UUID REFERENCES categories(id) NOT NULL,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
+  category_id UUID REFERENCES categories(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS gallery (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  product_id UUID REFERENCES products(id),
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
   image TEXT NOT NULL,
   is_thumbnail BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (id)
@@ -83,7 +84,7 @@ CREATE TABLE IF NOT EXISTS attributes (
 
 CREATE TABLE IF NOT EXISTS attribute_values (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  attribute_id UUID REFERENCES attributes(id) NOT NULL,
+  attribute_id UUID REFERENCES attributes(id) ON DELETE CASCADE NOT NULL,
   attribute_value VARCHAR(255) NOT NULL,
   color VARCHAR(50) DEFAULT NULL,
   PRIMARY KEY (id)
@@ -91,15 +92,15 @@ CREATE TABLE IF NOT EXISTS attribute_values (
 
 CREATE TABLE IF NOT EXISTS product_attributes (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  product_id UUID REFERENCES products(id) NOT NULL,
-  attribute_id UUID REFERENCES attributes(id) NOT NULL,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
+  attribute_id UUID REFERENCES attributes(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS product_attribute_values (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  product_attribute_id UUID REFERENCES product_attributes(id) NOT NULL,
-  attribute_value_id UUID REFERENCES attribute_values(id) NOT NULL,
+  product_attribute_id UUID REFERENCES product_attributes(id) ON DELETE CASCADE NOT NULL,
+  attribute_value_id UUID REFERENCES attribute_values(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -107,7 +108,7 @@ CREATE TABLE IF NOT EXISTS variant_options (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   title TEXT NOT NULL,
   image_id UUID REFERENCES gallery(id) ON DELETE SET NULL,
-  product_id UUID REFERENCES products(id) NOT NULL,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
   sale_price NUMERIC NOT NULL DEFAULT 0,
   compare_price NUMERIC DEFAULT 0,
   buying_price NUMERIC DEFAULT NULL,
@@ -122,32 +123,44 @@ CREATE TABLE IF NOT EXISTS variant_options (
 CREATE TABLE IF NOT EXISTS variants (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   variant_option TEXT NOT NULL,
-  product_id UUID REFERENCES products(id) NOT NULL,
-  variant_option_id UUID REFERENCES variant_options(id) NOT NULL,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
+  variant_option_id UUID REFERENCES variant_options(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS variant_values (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  variant_id UUID REFERENCES variants(id) NOT NULL,
-  product_attribute_value_id UUID REFERENCES product_attribute_values(id) NOT NULL,
+  variant_id UUID REFERENCES variants(id) ON DELETE CASCADE NOT NULL,
+  product_attribute_value_id UUID REFERENCES product_attribute_values(id) ON DELETE CASCADE NOT NULL,
+  PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS customer (
+  id SERIAL NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  email TEXT,
+  phone_number VARCHAR(255) NOT NULL,
+  address_line1 TEXT NOT NULL,
+  postal_code VARCHAR(255) NOT NULL,
+  country VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS orders (
   id VARCHAR(50) NOT NULL,
-  order_approved_at TIMESTAMPTZ,
-  order_delivered_carrier_date TIMESTAMPTZ,
-  order_delivered_customer_date TIMESTAMPTZ,
+  customer_id INTEGER REFERENCES customer(id) ON DELETE CASCADE NOT NULL,
+  order_status VARCHAR(64) CHECK (order_status IN ('complete', 'pending', 'failed')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
-  PRIMARY KEY (id) -- It's better to use Two-Phase Locking inside your transaction (SELECT ... FOR UPDATE) to prevent double booking problems for this table.
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  product_id UUID REFERENCES products(id),
-  order_id VARCHAR(50) REFERENCES orders(id),
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  order_id VARCHAR(50) REFERENCES orders(id) ON DELETE CASCADE,
   price NUMERIC NOT NULL,
   quantity INTEGER NOT NULL,
   PRIMARY KEY (id)
@@ -155,7 +168,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 
 CREATE TABLE IF NOT EXISTS sells (
   id SERIAL NOT NULL,
-  product_id UUID UNIQUE REFERENCES products(id),
+  product_id UUID UNIQUE REFERENCES products(id) ON DELETE CASCADE NOT NULL,
   price NUMERIC NOT NULL,
   quantity INTEGER NOT NULL,
   PRIMARY KEY (id)
@@ -179,32 +192,6 @@ CREATE TABLE IF NOT EXISTS slideshows (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS notifications (
-  id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  account_id UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
-  title VARCHAR(100),
-  content TEXT,
-  seen BOOLEAN,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  receive_time TIMESTAMPTZ,
-  notification_expiry_date DATE,
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS cards (
-  id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  customer_id UUID REFERENCES customers(id),
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS card_items (
-  id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  card_id UUID REFERENCES cards(id),
-  product_id UUID REFERENCES products(id),
-  quantity INTEGER DEFAULT 1,
-  PRIMARY KEY (id)
-);
-
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION update_at_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();
 RETURN NEW;
@@ -219,8 +206,6 @@ CREATE TRIGGER product_set_update BEFORE UPDATE ON products FOR EACH ROW EXECUTE
 CREATE TRIGGER staff_set_update BEFORE UPDATE ON staff_accounts FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER order_set_update BEFORE UPDATE ON orders FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER slideshow_set_update BEFORE UPDATE ON slideshows FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
-CREATE TRIGGER notification_set_update BEFORE UPDATE ON notifications FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
-CREATE TRIGGER suppliers_set_update BEFORE UPDATE ON suppliers FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 
 -- PARTIOTIONS --
 CREATE TABLE gallery_part1 PARTITION OF gallery FOR VALUES WITH (modulus 3, remainder 0);

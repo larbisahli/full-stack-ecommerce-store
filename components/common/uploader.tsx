@@ -41,7 +41,7 @@ export default function Uploader({ onChange, value = [], multiple }: any) {
         setLoading(true);
         imagesCache.current = [];
 
-        if (!isEmpty(images) && !multiple) {
+        if (!isEmpty((images as ImageType)?.image) && !multiple) {
           notify('You should remove the current image first', 'warning');
           setLoading(false);
           return;
@@ -116,7 +116,8 @@ export default function Uploader({ onChange, value = [], multiple }: any) {
         .then((response) => response.json())
         .then((data) => {
           if (!isEmpty(data?.Deleted)) {
-            const image = data?.Deleted[0].key;
+            const image = data?.Deleted[0].Key;
+
             let images_;
             if (isArray(images) && isMultiple) {
               images_ = images?.filter((file) => file.image !== image);
@@ -141,7 +142,7 @@ export default function Uploader({ onChange, value = [], multiple }: any) {
   };
 
   const thumbs = useMemo(() => {
-    if (isEmpty(images)) {
+    if (isEmpty(images) || (!isArray(images) && !images?.image)) {
       return null;
     }
 

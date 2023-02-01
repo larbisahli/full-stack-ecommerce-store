@@ -37,7 +37,7 @@ class Handler extends PostgresClient {
               thumbnail: A_thumbnail,
               gallery: A_gallery = [],
               categories: A_categories = [],
-              variations: A_variations,
+              variations: A_variations = [],
               variationOptions: A_variation_options = []
             } = additions;
 
@@ -48,6 +48,21 @@ class Handler extends PostgresClient {
               variations: D_variations = [],
               variationOptions: D_variation_options = []
             } = deletions;
+
+            console.log({
+              A_thumbnail,
+              A_gallery,
+              A_categories,
+              A_variations,
+              A_variation_options
+            });
+            console.log({
+              D_thumbnail,
+              D_gallery,
+              D_categories,
+              D_variations,
+              D_variation_options
+            });
 
             // ---------------- Products Main ----------------
             if (!isEmpty(productMain)) {
@@ -131,7 +146,7 @@ class Handler extends PostgresClient {
             }
 
             // ---------------- Additions variations & variation_options ----------------
-            for await (const { attribute, attribute_values } of A_variations) {
+            for await (const { attribute, selectedValues } of A_variations) {
               let productAttributeId;
 
               const { rows: ProductAttribute } = await client.query<
@@ -152,7 +167,7 @@ class Handler extends PostgresClient {
                 productAttributeId = rows[0]?.id;
               }
 
-              for await (const { id: attributeValueId } of attribute_values) {
+              for await (const { id: attributeValueId } of selectedValues) {
                 await client.query<AttributeValue, string[]>(
                   productQueries.insertProductAttributeValue(),
                   [productAttributeId, attributeValueId]
@@ -193,6 +208,7 @@ class Handler extends PostgresClient {
                 >(productQueries.insertVariantOption(), [
                   opt_values?.title,
                   image_id,
+                  productId,
                   opt_values?.salePrice,
                   opt_values?.comparePrice,
                   opt_values?.buyingPrice,
@@ -266,18 +282,18 @@ class Handler extends PostgresClient {
               >(productQueries.deleteVariantValue(), [variantId]);
 
               await client.query<{ id: string }, string[]>(
-                productQueries.deleteVariant(),
-                [variantId]
+                productQueries.deleteVariantOption(),
+                [id]
               );
 
               await client.query<{ id: string }, string[]>(
-                productQueries.deleteVariantOption(),
-                [id]
+                productQueries.deleteVariant(),
+                [variantId]
               );
             }
 
             // Delete variations
-            for await (const { attribute, attribute_values } of D_variations) {
+            for await (const { attribute, attributeValues } of D_variations) {
               const { rows } = await client.query<Attribute, string[]>(
                 productQueries.getProductAttribute(),
                 [productId, attribute?.id]
@@ -285,7 +301,7 @@ class Handler extends PostgresClient {
 
               const productAttributeId = rows[0]?.id;
 
-              if (isEmpty(attribute_values)) {
+              if (isEmpty(attributeValues)) {
                 await client.query<AttributeValue, string[]>(
                   productQueries.deleteProductAttributeValueAll(),
                   [productAttributeId]
@@ -295,7 +311,7 @@ class Handler extends PostgresClient {
                   [productAttributeId]
                 );
               } else {
-                for await (const { id: attributeValueId } of attribute_values) {
+                for await (const { id: attributeValueId } of attributeValues) {
                   await client.query<AttributeValue, string[]>(
                     productQueries.deleteProductAttributeValue(),
                     [productAttributeId, attributeValueId]

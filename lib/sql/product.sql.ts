@@ -27,38 +27,25 @@ export function getProduct(): string {
   FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations" FROM products AS pd WHERE pd.slug = $1`;
 }
 
-export function getProductCart(): string {
-  return `SELECT pd.id, ARRAY(SELECT json_build_object('id', vo.id, 'title', vo.title, 'image', (SELECT img.image FROM gallery img WHERE img.id = vo.image_id), 
-  'salePrice', vo.sale_price, 'comparePrice', vo.compare_price, 'quantity', vo.quantity,
-  'options', ARRAY(SELECT pav.attribute_value_id FROM product_attribute_values pav WHERE pav.id IN (SELECT vv.product_attribute_value_id FROM variant_values vv 
-  WHERE vv.variant_id = (SELECT v.id FROM variants v WHERE v.variant_option_id = vo.id)))) FROM variant_options vo WHERE vo.id IN (SELECT v.variant_option_id FROM variants v WHERE v.product_id = pd.id)) AS "variationOptions",
+export function getProductsX(): string {
+  return `SELECT pd.id, pd.slug, pd.product_name AS "name", pd.sale_price::FLOAT AS "salePrice", 
+  pd.compare_price::FLOAT AS "comparePrice", pd.disable_out_of_stock AS "disableOutOfStock", 
+  pd.quantity, pd.short_description AS "shortDescription", pd.product_description AS "description", jsonb_build_object('id', pd.product_type) AS "type",
+
+  (SELECT json_build_object('image', galt.image) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS "thumbnail",
+  ARRAY(SELECT json_build_object('image', galg.image) FROM gallery galg WHERE galg.product_id = pd.id ORDER BY galg.is_thumbnail DESC) AS "gallery",
+
+  ARRAY(SELECT json_build_object('id', vo.id, 'title', vo.title, 'image', (SELECT img.image FROM gallery img WHERE img.id = vo.image_id), 'salePrice', vo.sale_price::FLOAT, 
+								 'comparePrice', vo.compare_price::FLOAT, 'quantity', vo.quantity,
+                 'options', ARRAY(SELECT pav.attribute_value_id FROM product_attribute_values pav WHERE pav.id IN 
+                 (SELECT vv.product_attribute_value_id FROM variant_values vv WHERE vv.variant_id = (SELECT v.id FROM variants v WHERE v.variant_option_id = vo.id)))) 
+                 FROM variant_options vo WHERE vo.id IN (SELECT v.variant_option_id FROM variants v WHERE v.product_id = pd.id)) AS "variationOptions",
 
   ARRAY(SELECT json_build_object('attribute', json_build_object('id', pa.attribute_id, 'name', (SELECT att.attribute_name FROM attributes att WHERE att.id = pa.attribute_id)), 
   'values', ARRAY(SELECT json_build_object('id', pav.attribute_value_id, 'value', (SELECT att_v.attribute_value FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id), 
   'color', (SELECT att_v.color FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id)) 
   FROM product_attribute_values pav WHERE pav.product_attribute_id = pa.id)) 
-  FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations"
-  FROM products AS pd WHERE pd.id = $1`;
-}
-
-export function getProductsCart(): string {
-  return `SELECT pd.id, pd.slug, pd.product_name AS "name", pd.sale_price AS "salePrice", 
-  pd.compare_price AS "comparePrice", pd.quantity, jsonb_build_object('id', pd.product_type) AS "type",
-  
-  (SELECT json_build_object('id', galt.id, 'image', galt.image, 'placeholder', galt.placeholder) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS "thumbnail",
-  
-  ARRAY(SELECT json_build_object('id', vo.id, 'title', vo.title, 'image', (SELECT img.image FROM gallery img WHERE img.id = vo.image_id), 
-  'salePrice', vo.sale_price, 'comparePrice', vo.compare_price, 'quantity', vo.quantity, 
-  'options', ARRAY(SELECT pav.attribute_value_id FROM product_attribute_values pav WHERE pav.id IN (SELECT vv.product_attribute_value_id FROM variant_values vv 
-  WHERE vv.variant_id = (SELECT v.id FROM variants v WHERE v.variant_option_id = vo.id)))) FROM variant_options vo WHERE vo.id IN (SELECT v.variant_option_id FROM variants v WHERE v.product_id = pd.id)) AS "variationOptions",
-
-  ARRAY(SELECT json_build_object('attribute', json_build_object('id', pa.attribute_id, 'name', (SELECT att.attribute_name FROM attributes att WHERE att.id = pa.attribute_id)), 
-  'values', ARRAY(SELECT json_build_object('id', pav.attribute_value_id, 'value', (SELECT att_v.attribute_value FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id), 
-  'color', (SELECT att_v.color FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id)) 
-  FROM product_attribute_values pav WHERE pav.product_attribute_id = pa.id)) 
-  FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations"
-  
-  FROM products AS pd WHERE pd.id = ANY(string_to_array($1, ',')::UUID[])`;
+  FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations" FROM products AS pd WHERE pd.published IS TRUE LIMIT $1`;
 }
 
 export function getProductForAdmin(): string {

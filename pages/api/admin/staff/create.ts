@@ -11,10 +11,18 @@ class Handler extends PostgresClient {
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
-    const { password, firstName, lastName, email, phoneNumber, profile } = body;
+    const {
+      password,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      profile: { image = null },
+      isAdmin = false
+    } = body;
 
     try {
-      const staff = await this.authorization(req, res);
+      const staff = await this.authorization(req, res, true);
       switch (method) {
         case this.POST: {
           const query = this.query;
@@ -39,7 +47,8 @@ class Handler extends PostgresClient {
                       phoneNumber,
                       email,
                       passwordHash,
-                      profile,
+                      image,
+                      isAdmin,
                       staff.id
                     ]
                   );

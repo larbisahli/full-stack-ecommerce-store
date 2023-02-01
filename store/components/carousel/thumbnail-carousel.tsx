@@ -45,17 +45,15 @@ const ThumbnailCarousel: React.FC<Props> = ({
   const nextRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<{ swiper: SwiperType }>(null);
 
-  const dir = 'ltr';
-
   const [thumbsSwiperInstance, setThumbsSwiperInstance] =
     useState<SwiperType>(null);
 
   return (
-    <div className="max-w-[650px] 2xxl:max-w-[750px ">
+    <div className="">
       <div
         style={{ height: 'fit-content' }}
         className={cn(
-          'w-full xl:ms-5 mb-2.5 md:mb-3 border border-skin-base overflow-hidden rounded-md relative group',
+          'w-full xl:ms-5 mb-2.5 md:mb-3 border border-skin-base rounded-md relative group',
           thumbnailClassName
         )}
       >
@@ -77,15 +75,19 @@ const ThumbnailCarousel: React.FC<Props> = ({
           }}
           {...swiperParams}
         >
-          {gallery?.map(({ id, image }) => (
+          {gallery?.map(({ image }) => (
             <SwiperSlide
-              key={`product-gallery-${id}`}
+              key={`product-gallery-${image}`}
               className="flex items-center justify-center"
             >
               <ImageComponent
-                src={image ?? siteSettings.product.image}
-                width={750}
-                height={690}
+                src={
+                  image
+                    ? `${process.env.S3_ENDPOINT}/${image}`
+                    : siteSettings.product.image
+                }
+                width={400}
+                height={350}
                 objectFit="cover"
               />
             </SwiperSlide>
@@ -94,13 +96,13 @@ const ThumbnailCarousel: React.FC<Props> = ({
         <div className="items-center justify-between w-full absolute top-2/4 z-10 px-2.5 group-hover:flex hidden">
           <div
             ref={prevRef}
-            className="w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl flex items-center cursor-pointer justify-center rounded-full bg-skin-fill transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform -translate-y-1/2 shadow-navigation"
+            className="w-7 h-7 md:w-8 md:h-8 bg-white lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl flex items-center cursor-pointer justify-center rounded-full bg-skin-fill transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform -translate-y-1/2 shadow-navigation"
           >
             <ArrowBack />
           </div>
           <div
             ref={nextRef}
-            className="w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl flex items-center justify-center cursor-pointer rounded-full bg-skin-fill  transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform -translate-y-1/2 shadow-navigation"
+            className="w-7 h-7 md:w-8 md:h-8  bg-white lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl flex items-center justify-center cursor-pointer rounded-full bg-skin-fill  transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform -translate-y-1/2 shadow-navigation"
           >
             <ArrowForward />
           </div>
@@ -120,19 +122,20 @@ const ThumbnailCarousel: React.FC<Props> = ({
           observeParents
           breakpoints={galleryCarouselBreakpoints}
         >
-          {[...gallery]?.map(({ id, image, placeholder }) => (
+          {gallery?.map(({ image }) => (
             <SwiperSlide
-              key={`product-thumb-gallery-${id}`}
+              key={`product-thumb-gallery-${image}`}
               className="flex items-center justify-center cursor-pointer overflow-hidden border border-skin-base transition hover:opacity-75"
             >
               <ImageComponent
-                src={image ?? siteSettings.product.image}
-                customPlaceholder={
-                  placeholder ?? siteSettings.product.placeholder
+                src={
+                  image
+                    ? `${process.env.S3_ENDPOINT}/${image}`
+                    : siteSettings.product.image
                 }
                 width={45}
                 height={45}
-                objectFit="cover"
+                objectFit="contain"
               />
             </SwiperSlide>
           ))}

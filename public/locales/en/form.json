@@ -407,5 +407,6 @@
   "input-label-no-maximum": "No maximum",
   "create-product": "Create Product",
   "edit-product": "Edit Product",
-  "product-type": "Product Type"
+  "product-type": "Product Type",
+  "input-label-administrator": "Administrator"
 }

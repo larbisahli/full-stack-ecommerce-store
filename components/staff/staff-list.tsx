@@ -47,11 +47,11 @@ const StaffList = ({
       key: 'profile',
       align: 'center',
       width: 74,
-      render: (profile: ImageType, record: StaffType) => (
+      render: ({ image }: ImageType, record: StaffType) => (
         <Avatar
           src={
-            profile
-              ? `${process.env.S3_ENDPOINT}/${profile}`
+            image
+              ? `${process.env.S3_ENDPOINT}/${image}`
               : siteSettings.avatar.image
           }
           alt={`${record?.firstName} ${record?.lastName}`}
@@ -70,6 +70,22 @@ const StaffList = ({
           {`${firstName} ${record?.lastName}`}
         </span>
       )
+    },
+    {
+      title: t('table:table-item-role'),
+      dataIndex: 'isAdmin',
+      key: 'isAdmin',
+      align: alignLeft,
+      width: 120,
+      render: (isAdmin: boolean) => {
+        return (
+          <Badge
+            className="!test-sm"
+            text={isAdmin ? 'Administrator' : 'Staff'}
+            color={'bg-gray-200 text-gray-700 font-semibold shadow'}
+          />
+        );
+      }
     },
     {
       title: t('table:table-item-status'),

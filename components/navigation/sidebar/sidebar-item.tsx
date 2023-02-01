@@ -3,6 +3,8 @@
 import * as sidebarIcons from '@components/icons/sidebar';
 import ActiveLink from '@components/ui/activeLink';
 import { useUI } from '@contexts/ui.context';
+import { useGetStaff } from '@hooks/useGetStaff';
+import { ROUTES } from '@utils/routes';
 import cn from 'classnames';
 import { useTranslation } from 'next-i18next';
 import React, { Dispatch, SetStateAction } from 'react';
@@ -38,13 +40,18 @@ const SidebarItem = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  const { staffInfo } = useGetStaff();
+
+  if (!staffInfo?.isAdmin && ROUTES.STAFFS === href) {
+    return <div></div>;
+  }
+
   return (
     <React.Fragment>
-      {line && <div className="w-full h-px bg-sidenav-divider mt-2 mb-2"></div>}
       <ActiveLink
         href={href}
         activeClassName={cn(
-          'relative !bg-green-600 hover:!bg-green-500 !text-white',
+          'relative !bg-gray-700 hover:!bg-gray-500 !text-white',
           {
             'sidebar-triangle': showTriangle
           }

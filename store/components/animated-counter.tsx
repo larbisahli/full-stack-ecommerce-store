@@ -27,13 +27,10 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const width = useSpring({
     width: value ? 110 : 35,
     height: '100%'
-    // boxShadow: value ? '0 5px 10px rgba(0,0,0,0.16)' : 'none',
   });
 
-  const classNames = AnimatedCounterBaseWrapper + ' ' + className;
-
   return (
-    <div className={classNames}>
+    <div className={'bg-black'}>
       <animated.div style={width}>
         <div className={AnimatedCounterBase}>
           <IconButton

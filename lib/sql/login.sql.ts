@@ -3,5 +3,5 @@ export function staffLogin(): string {
 }
 
 export function staff(): string {
-  return `SELECT id, active FROM staff_accounts WHERE id = $1`;
+  return `SELECT id, active, is_admin as "isAdmin" FROM staff_accounts WHERE id = $1`;
 }

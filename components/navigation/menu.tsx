@@ -17,7 +17,11 @@ export default function NavMenu() {
 
   const { staffInfo } = useGetStaff();
 
-  const { profile = '', firstName = '', lastName = '' } = staffInfo ?? {};
+  const {
+    profile: { image = '' } = {},
+    firstName = '',
+    lastName = ''
+  } = staffInfo;
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -29,8 +33,8 @@ export default function NavMenu() {
       >
         <Avatar
           src={
-            profile
-              ? `${process.env.S3_ENDPOINT}/${profile}`
+            image
+              ? `${process.env.S3_ENDPOINT}/${image}`
               : siteSettings.avatar.image
           }
         />
