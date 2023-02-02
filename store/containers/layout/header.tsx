@@ -66,7 +66,7 @@ export default function Header({ categories }: Props) {
   };
 
   const categoryLimit = 5;
-  const selectedCategories = categories.slice(0, categoryLimit);
+  const selectedCategories = categories?.slice(0, categoryLimit);
 
   return (
     <header className="flex items-center justify-between shadow-mobile text-gray-700 body-font fixed bg-white w-full h-60px z-20 lg:shadow-header pr-20px md:pr-30px lg:pr-40px">

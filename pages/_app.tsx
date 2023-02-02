@@ -7,7 +7,6 @@ import '@store/assets/styles/index.css';
 import 'typeface-open-sans';
 
 import ErrorBoundary from '@components/ErrorBoundary';
-import DefaultSeo from '@components/ui/default-seo';
 import LoadingBar from '@components/ui/loading-bar';
 // import ErrorMessage from "@components/ui/error-message";
 import ManagedModal from '@components/ui/modal/managed-modal';
@@ -94,7 +93,6 @@ function App({ Component, pageProps }: AppProps) {
                     <UIProvider>
                       <ModalProvider>
                         <ManagedModal />
-                        <DefaultSeo />
                         <Layout {...pageProps}>
                           <Component {...pageProps} />
                         </Layout>

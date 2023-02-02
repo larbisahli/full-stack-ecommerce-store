@@ -1,4 +1,6 @@
 import { Category } from '@ts-types/generated';
+import isEqual from 'lodash/isEqual';
+import sortBy from 'lodash/sortBy';
 import React from 'react';
 
 export const PRODUCTION_ENV = process.env.NODE_ENV === 'production';
@@ -168,3 +170,18 @@ export const CopyToClipboard = (
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export const limit = 15;
+
+export const selectedVariationOptionFun = ({
+  selectedVariations,
+  variationOptions
+}) => {
+  const selectedAttributesOption = selectedVariations?.map(
+    (selectedVariation) => {
+      return selectedVariation?.value?.id;
+    }
+  );
+
+  return variationOptions?.find((vop) => {
+    return isEqual(sortBy(vop?.options), sortBy(selectedAttributesOption));
+  });
+};

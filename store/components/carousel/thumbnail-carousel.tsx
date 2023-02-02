@@ -38,8 +38,7 @@ const swiperParams: SwiperOptions = {
 const ThumbnailCarousel: React.FC<Props> = ({
   setSwiperThumbnailInstance,
   gallery,
-  thumbnailClassName = 'xl:w-[480px] 2xl:w-[750px]',
-  galleryClassName = 'xl:w-28 2xl:w-[130px]'
+  thumbnailClassName = ''
 }) => {
   const prevRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
@@ -49,16 +48,16 @@ const ThumbnailCarousel: React.FC<Props> = ({
     useState<SwiperType>(null);
 
   return (
-    <div className="">
+    <div className="select-none">
       <div
-        style={{ height: 'fit-content' }}
         className={cn(
-          'w-full xl:ms-5 mb-2.5 md:mb-3 border border-skin-base rounded-md relative group',
+          'w-full mx-auto max-w-[1200px] bg-gray-100 mb-2.5 md:mb-3 border border-skin-base rounded-md relative group',
           thumbnailClassName
         )}
       >
         <Swiper
           // @ts-ignore
+          loop={true}
           ref={swiperRef}
           id="productGallery"
           onSwiper={setSwiperThumbnailInstance}
@@ -86,8 +85,8 @@ const ThumbnailCarousel: React.FC<Props> = ({
                     ? `${process.env.S3_ENDPOINT}/${image}`
                     : siteSettings.product.image
                 }
-                width={400}
-                height={350}
+                width={1200}
+                height={600}
                 objectFit="cover"
               />
             </SwiperSlide>
@@ -110,7 +109,7 @@ const ThumbnailCarousel: React.FC<Props> = ({
       </div>
       {/* End of product main slider */}
 
-      <div className={`flex-shrink-0 ${galleryClassName}`}>
+      <div className="flex-shrink-0">
         <Swiper
           id="productGalleryThumbs"
           modules={[Thumbs]}
@@ -133,8 +132,8 @@ const ThumbnailCarousel: React.FC<Props> = ({
                     ? `${process.env.S3_ENDPOINT}/${image}`
                     : siteSettings.product.image
                 }
-                width={45}
-                height={45}
+                width={75}
+                height={75}
                 objectFit="contain"
               />
             </SwiperSlide>

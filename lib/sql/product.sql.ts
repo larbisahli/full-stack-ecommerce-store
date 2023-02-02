@@ -11,8 +11,6 @@ export function getProduct(): string {
 
   (SELECT json_build_object('id', galt.id, 'image', galt.image) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS "thumbnail",
   ARRAY(SELECT json_build_object('id', galg.id, 'image', galg.image) FROM gallery galg WHERE galg.product_id = pd.id ORDER BY galg.is_thumbnail DESC) AS "gallery",
-  
-  ARRAY(SELECT json_build_object('id', tag.id, 'name', tag.tag_name) FROM tags tag WHERE tag.id IN (SELECT pt.tag_id FROM product_tags pt WHERE pt.product_id = pd.id)) AS "tags",
 
   ARRAY(SELECT json_build_object('id', vo.id, 'title', vo.title, 'image', (SELECT img.image FROM gallery img WHERE img.id = vo.image_id), 'salePrice', vo.sale_price, 
 								 'comparePrice', vo.compare_price, 'quantity', vo.quantity,

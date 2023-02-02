@@ -1,7 +1,7 @@
+import DefaultSeo from '@components/ui/default-seo';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import HeroBlock from '@store/containers/banner/hero-block';
 import HowItWorks from '@store/containers/how-it-works';
-import InstagramReview from '@store/containers/instagram-review';
 import Layout from '@store/containers/layout/layout';
 import Products from '@store/containers/products';
 import { useSearch } from '@store/contexts/search/use-search';
@@ -34,6 +34,7 @@ export default function Home({ categories, banners, products, error }: props) {
 
   return (
     <Layout categories={categories}>
+      <DefaultSeo />
       <Head>
         <meta
           name="viewport"

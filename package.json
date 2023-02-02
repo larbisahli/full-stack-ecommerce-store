@@ -36,6 +36,7 @@
     "draftjs-to-html": "^0.9.1",
     "framer-motion": "^6.5.1",
     "google-spreadsheet": "^3.3.0",
+    "html-react-parser": "^3.0.8",
     "jsonwebtoken": "^8.5.1",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",

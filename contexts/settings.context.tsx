@@ -6,7 +6,9 @@ export interface State {
 const initialState = {
   siteTitle: 'DropGala',
   siteSubtitle: '',
-  currency: '$',
+  currency: {
+    currencyCode: 'usd'
+  },
   logo: {
     id: 1,
     thumbnail: '/logo.svg',

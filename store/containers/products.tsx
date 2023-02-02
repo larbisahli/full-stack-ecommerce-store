@@ -51,14 +51,7 @@ const Products = React.forwardRef(
           <>
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols- xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-3 md:gap-4 2xl:gap-5">
               {searchableItems.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  item={item}
-                  onClick={() => showDetails(item)}
-                  value={getItem(item.id)?.quantity}
-                  onIncrement={() => addItem(item)}
-                  onDecrement={() => removeItem(item)}
-                />
+                <ItemCard key={item.id} item={item} />
               ))}
             </div>
             <div className="mt-20 flex items-center justify-center">
