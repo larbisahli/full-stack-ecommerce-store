@@ -1,9 +1,9 @@
-export function getCategory(): string {
-  return `SELECT id, name, description, FROM categories WHERE id = $1`;
+export function getCategoryByName(): string {
+  return `SELECT cate.id, cate.name, cate.description, cate.image, ARRAY(SELECT json_build_object('id', child_cate.id, 'name', child_cate.name, 'image', child_cate.image) FROM categories AS child_cate WHERE child_cate.parent_id = cate.id) AS "subCategories" FROM categories cate WHERE name = $1`;
 }
 
 export function getCategories(): string {
-  return `SELECT cate.id, cate.name,
+  return `SELECT cate.id, cate.name, cate.image,
   ARRAY(SELECT json_build_object('id', child_cate.id, 'name', child_cate.name) FROM categories AS child_cate WHERE child_cate.parent_id = cate.id) AS "subCategories"
   FROM categories AS cate WHERE parent_id is null`;
 }
@@ -11,8 +11,6 @@ export function getCategories(): string {
 export function getCategoriesCount(): string {
   return `SELECT count(id) FROM categories WHERE parent_id is null`;
 }
-
-// **** ADMIN QUERIES ****
 
 export function getCategoryForAdmin(): string {
   return `SELECT cate.id, cate.parent_id AS "parentId", cate.name, cate.description,

@@ -1,5 +1,6 @@
 import DefaultSeo from '@components/ui/default-seo';
 import { useErrorLogger } from '@hooks/useErrorLogger';
+import CategorySlider from '@store/components/CategorySlider';
 import HeroBlock from '@store/containers/banner/hero-block';
 import HowItWorks from '@store/containers/how-it-works';
 import Layout from '@store/containers/layout/layout';
@@ -46,6 +47,9 @@ export default function Home({ categories, banners, products, error }: props) {
 
       <HeroBlock heroBanners={banners} />
       <HowItWorks />
+      <div className="w-full px-15px lg:px-35px mt-35px xxl:mt-60px">
+        <CategorySlider categories={categories} label="Shop by category" />
+      </div>
       <Products items={products} ref={elRef} />
     </Layout>
   );

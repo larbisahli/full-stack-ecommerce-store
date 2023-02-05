@@ -14,27 +14,7 @@ interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
-  const {
-    thumbnail: { image },
-    name,
-    variationOptions = [],
-    salePrice: P_salePrice,
-    comparePrice: P_comparePrice,
-    type
-  } = item;
-
-  const { comparePrice, salePrice } = useMemo(() => {
-    let salePrice = P_salePrice;
-    let comparePrice = P_comparePrice;
-    if (type?.id === ProductType.Variable) {
-      const option = variationOptions?.reduce(function (prev, curr) {
-        return prev.salePrice < curr.salePrice ? prev : curr;
-      });
-      salePrice = option?.salePrice;
-      comparePrice = option?.comparePrice;
-    }
-    return { comparePrice, salePrice };
-  }, [P_comparePrice, P_salePrice, type?.id, variationOptions]);
+  const { thumbnail: image, name, salePrice, comparePrice } = item ?? {};
 
   const percentDecrease = usePercentDecrease({ comparePrice, salePrice });
 

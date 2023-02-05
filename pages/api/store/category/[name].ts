@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
-import { productQueries } from '@lib/sql';
-import { Category } from '@ts-types/generated';
+import { categoryQueries, productQueries } from '@lib/sql';
+import { Category, Product } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -10,15 +10,21 @@ class Handler extends PostgresClient {
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { query, method } = req;
-    const slug = query.slug as string;
+    const name = query.name as string;
     try {
       switch (method) {
         case this.GET: {
-          const { rows } = await this.query<Category, string>(
-            productQueries.getProduct(),
-            [slug]
+          const { rows } = await this.query<Product, string | number>(
+            productQueries.getCategoryProduct(),
+            [name, this.limit]
           );
-          return res.status(200).json({ product: rows[0] });
+          const { rows: categoryRows } = await this.query<
+            Product,
+            string | number
+          >(categoryQueries.getCategoryByName(), [name]);
+          return res
+            .status(200)
+            .json({ products: rows, category: categoryRows[0] });
         }
         default:
           res.setHeader('Allow', ['GET']);
@@ -29,7 +35,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'categories'
+          from: 'categories->productCategories'
         }
       });
     }

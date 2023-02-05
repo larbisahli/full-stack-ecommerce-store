@@ -304,3 +304,28 @@ export function getPopularProducts(): string {
   (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
   FROM products AS pd WHERE pd.published IS TRUE LIMIT $1`;
 }
+
+export function getCategoryProduct(): string {
+  return `SELECT pd.id, pd.product_name AS name, pd.slug, pd.disable_out_of_stock AS "disableOutOfStock", 
+  jsonb_build_object('id', pd.product_type) AS "type",
+
+  CASE WHEN pd.product_type = 'simple' THEN pd.quantity END AS "quantity",
+
+  CASE 
+    WHEN pd.product_type = 'simple' THEN pd.quantity >= 1
+    WHEN pd.product_type = 'variable' THEN (SELECT SUM(vp.quantity) >= 1
+    FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE) END AS "inStock",
+  
+  CASE 
+    WHEN pd.product_type = 'variable' THEN (SELECT MIN(vp.sale_price) 
+    FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE)
+    WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END AS "salePrice",
+  
+  CASE 
+    WHEN pd.product_type = 'variable' THEN (SELECT DISTINCT ON(vp.compare_price) vp.compare_price 
+    FROM variant_options vp WHERE vp.product_id = pd.id AND vp.active IS TRUE ORDER BY vp.compare_price LIMIT 1)
+    WHEN pd.product_type = 'simple' THEN pd.compare_price::FLOAT END AS "comparePrice",
+  
+  (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
+  FROM products AS pd WHERE pd.published IS TRUE AND pd.id IN (SELECT pc.product_id FROM product_categories pc WHERE pc.category_id = (SELECT cate.id FROM categories cate WHERE cate.name = $1)) LIMIT $2`;
+}

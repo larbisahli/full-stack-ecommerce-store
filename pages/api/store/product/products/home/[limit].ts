@@ -15,7 +15,7 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           const { rows: products } = await this.query<ProductType, number>(
-            productQueries.getProductsX(),
+            productQueries.getPopularProducts(),
             [limit]
           );
           return res.status(200).json({ products });

@@ -1,25 +1,22 @@
 import NotFound from '@store/assets/icons/not-found';
 import ItemCard from '@store/components/item-card';
-import { useSearch } from '@store/contexts/search/use-search';
-import { useSearchable } from '@store/helpers/use-searchable';
+import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 
 const Products = React.forwardRef(
-  ({ items }: any, ref: React.RefObject<HTMLDivElement>) => {
-    const { searchTerm } = useSearch();
-    const searchableItems = useSearchable(items, searchTerm, (item) => [
-      item.name
-    ]);
-
+  ({ items = [] }: any, ref: React.RefObject<HTMLDivElement>) => {
     return (
       <div
         className="w-full mt-35px xxl:mt-60px px-4 lg:px-35px mb-26 mb-40"
         ref={ref}
       >
-        {searchableItems.length ? (
+        {!isEmpty(items) && (
+          <div className="my-8 font-semibold text-xl">Trending now</div>
+        )}
+        {items.length ? (
           <>
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols- xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-3 md:gap-4 2xl:gap-5">
-              {searchableItems.map((item) => (
+              {items.map((item) => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>

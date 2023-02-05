@@ -57,12 +57,17 @@ CREATE TABLE IF NOT EXISTS products (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_product_publish ON products (published);
+
 CREATE TABLE IF NOT EXISTS product_categories (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
   category_id UUID REFERENCES categories(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_product_category ON product_categories (product_id, category_id);
+CREATE INDEX idx_product_category_name ON product_categories (name);
 
 CREATE TABLE IF NOT EXISTS gallery (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -71,6 +76,8 @@ CREATE TABLE IF NOT EXISTS gallery (
   is_thumbnail BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (id)
 ) PARTITION BY HASH(id);
+
+CREATE INDEX idx_image_gallery ON gallery (product_id, is_thumbnail);
 
 CREATE TABLE IF NOT EXISTS attributes (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -90,6 +97,9 @@ CREATE TABLE IF NOT EXISTS attribute_values (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_attribute_values ON attribute_values (attribute_id);
+
+
 CREATE TABLE IF NOT EXISTS product_attributes (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   product_id UUID REFERENCES products(id) ON DELETE CASCADE NOT NULL,
@@ -97,12 +107,18 @@ CREATE TABLE IF NOT EXISTS product_attributes (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_product_attribute_fk ON product_attributes (product_id, attribute_id);
+
+
 CREATE TABLE IF NOT EXISTS product_attribute_values (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   product_attribute_id UUID REFERENCES product_attributes(id) ON DELETE CASCADE NOT NULL,
   attribute_value_id UUID REFERENCES attribute_values(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_product_attribute_values_product_attribute_id ON product_attribute_values (product_attribute_id);
+CREATE INDEX idx_product_attribute_values_attribute_value_id ON product_attribute_values (attribute_value_id);
 
 CREATE TABLE IF NOT EXISTS variant_options (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -119,6 +135,8 @@ CREATE TABLE IF NOT EXISTS variant_options (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_variant_options_product_id ON variant_options (product_id);
+
 -- Means a product has 2 variants black/XL red/XL
 CREATE TABLE IF NOT EXISTS variants (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -128,12 +146,18 @@ CREATE TABLE IF NOT EXISTS variants (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_product_id_variants ON variants (product_id);
+CREATE INDEX idx_variant_option_id_variants ON variants (variant_option_id);
+
 CREATE TABLE IF NOT EXISTS variant_values (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   variant_id UUID REFERENCES variants(id) ON DELETE CASCADE NOT NULL,
   product_attribute_value_id UUID REFERENCES product_attribute_values(id) ON DELETE CASCADE NOT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_variant_id_variant_values ON variant_values (variant_id);
+CREATE INDEX idx_product_attribute_value_id_variant_values ON variant_values (product_attribute_value_id);
 
 CREATE TABLE IF NOT EXISTS orders (
   id VARCHAR(50) NOT NULL,
@@ -156,6 +180,9 @@ CREATE TABLE IF NOT EXISTS order_items (
   -- variation_option_id
   PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_product_id_order_item ON order_items (product_id);
+CREATE INDEX idx_order_id_order_item ON order_items (order_id);
 
 CREATE TABLE IF NOT EXISTS sells (
   id SERIAL NOT NULL,
@@ -183,6 +210,9 @@ CREATE TABLE IF NOT EXISTS slideshows (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_slideshows_publish ON slideshows (published);
+
+
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION update_at_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();
 RETURN NEW;
@@ -202,36 +232,6 @@ CREATE TRIGGER slideshow_set_update BEFORE UPDATE ON slideshows FOR EACH ROW EXE
 CREATE TABLE gallery_part1 PARTITION OF gallery FOR VALUES WITH (modulus 3, remainder 0);
 CREATE TABLE gallery_part2 PARTITION OF gallery FOR VALUES WITH (modulus 3, remainder 1);
 CREATE TABLE gallery_part3 PARTITION OF gallery FOR VALUES WITH (modulus 3, remainder 2);
-
--- INDEXES --
--- Declaration of a foreign key constraint does not automatically create an index on the referencing columns.
-
--- products
-CREATE INDEX idx_product_publish ON products (published);
--- product_categories
-CREATE INDEX idx_product_category ON product_categories (product_id, category_id);
--- gallery
-CREATE INDEX idx_image_gallery ON gallery (product_id, is_thumbnail);
--- attribute_values
-CREATE INDEX idx_attribute_values ON attribute_values (attribute_id);
--- product_attribute_values
-CREATE INDEX idx_product_attribute_values_product_attribute_id ON product_attribute_values (product_attribute_id);
-CREATE INDEX idx_product_attribute_values_attribute_value_id ON product_attribute_values (attribute_value_id);
--- product_attributes
-CREATE INDEX idx_product_attribute_fk ON product_attributes (product_id, attribute_id);
--- variants
-CREATE INDEX idx_product_id_variants ON variants (product_id);
-CREATE INDEX idx_variant_option_id_variants ON variants (variant_option_id);
--- variant_values
-CREATE INDEX idx_variant_id_variant_values ON variant_values (variant_id);
-CREATE INDEX idx_product_attribute_value_id_variant_values ON variant_values (product_attribute_value_id);
--- order_items
-CREATE INDEX idx_product_id_order_item ON order_items (product_id);
-CREATE INDEX idx_order_id_order_item ON order_items (order_id);
--- slideshows
-CREATE INDEX idx_slideshows_publish ON slideshows (published);
--- variant_options
-CREATE INDEX idx_variant_options_product_id ON variant_options (product_id);
 
 -- Permissions
 
