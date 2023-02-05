@@ -13,6 +13,7 @@ export interface Props {
   readOnly?: boolean;
   disabled?: boolean;
   className?: string;
+  type?: string;
   id?: string;
   name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -41,6 +42,7 @@ const Input = React.forwardRef<
     {
       className,
       id,
+      type = 'text',
       value,
       name,
       initialValue,
@@ -93,7 +95,7 @@ const Input = React.forwardRef<
         </label>
         <input
           ref={inputRef}
-          type="text"
+          type={type}
           placeholder={placeholder}
           className={classNames}
           id={name}

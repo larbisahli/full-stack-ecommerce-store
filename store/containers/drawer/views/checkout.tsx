@@ -1,25 +1,23 @@
+import {
+  useAppDispatch,
+  useAppSelector,
+  UseCartItemsTotalPrice
+} from '@hooks/use-store';
+import { clearCart } from '@redux/card/index';
 import ArrowLeft from '@store/assets/icons/arrow-left';
 import Button from '@store/components/button';
 import Input from '@store/components/input';
-import { Scrollbar } from '@store/components/scrollbar';
 import Textarea from '@store/components/textarea';
-import {
-  InputBase,
-  TextBoxCommonBase,
-  TextBoxEnable
-} from '@store/components/utils/theme';
-import { useCart } from '@store/contexts/cart/cart.provider';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { useContext, useState } from 'react';
-import NumberFormat from 'react-number-format';
 
 import OrderSubmit from './order-submit';
+
 const initialState = {
-  phone_number: '',
-  name: '',
+  phoneNumber: '',
+  fullName: '',
   address: '',
-  postal_code: '',
-  suite: ''
+  city: ''
 };
 
 export default function Checkout() {
@@ -28,7 +26,8 @@ export default function Checkout() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { items, calculatePrice, clearCart } = useCart();
+  const cartDispatch = useAppDispatch();
+  const items = useAppSelector((state) => state.cart.items);
 
   const hideCheckout = () => {
     dispatch({
@@ -40,32 +39,29 @@ export default function Checkout() {
   };
 
   const submitOrder = async () => {
-    const { name, address, postal_code, suite, phone_number } = formData;
-    if (!phone_number.trim()) {
+    const { phoneNumber } = formData;
+    if (!phoneNumber.trim()) {
       setError({
-        field: 'phone_number',
+        field: 'phoneNumber',
         message: 'Phone number is required'
       });
       return;
     }
+
+    console.log({ formData });
 
     setLoading(true);
 
     const res = await fetch('/api/order', {
       method: 'POST',
       body: JSON.stringify({
+        shippingInfo: formData,
         items: items
-          .map((item) => `${item.name} - ${item.quantity}`)
-          .toString(),
-        address: `${name} ${address} ${postal_code} ${suite}`,
-        phone_number: phone_number,
-        email: 'email@email.com',
-        bill_amount: calculatePrice()
       })
     });
     if (res.status === 200) {
       setSuccess(true);
-      clearCart();
+      cartDispatch(clearCart());
       setLoading(false);
     } else {
       setError(true);
@@ -79,6 +75,7 @@ export default function Checkout() {
       [name]: value
     });
   };
+
   if (success) {
     return <OrderSubmit />;
   }
@@ -96,71 +93,55 @@ export default function Checkout() {
         <h2 className="font-bold text-24px m-0">Checkout</h2>
       </div>
 
-      <Scrollbar className="checkout-scrollbar flex-grow">
-        <div className="flex flex-col px-30px pt-20px">
+      <div className="flex-grow h-full">
+        <div className="flex flex-col px-30px pt-20px h-full placeholder-gray-400">
           <div className="flex flex-col mb-45px">
             <span className="flex font-semibold text-gray-900 text-18px mb-15px">
               Contact Information
             </span>
-            <NumberFormat
-              format="+1 (###) ###-####"
-              mask="_"
-              placeholder="Mobile Phone Number"
-              className={`${InputBase} ${TextBoxCommonBase} ${TextBoxEnable}`}
-              value={formData.phone_number}
-              onValueChange={({ value }) =>
-                setFormData({
-                  ...formData,
-                  phone_number: value
-                })
-              }
+            <Input
+              placeholder="Full Name"
+              className="mb-10px border border-gray-400"
+              name="fullName"
+              value={formData.fullName}
+              onChange={onChange}
             />
-            {error?.field === 'phone_number' && (
+            <Input
+              placeholder="Phone Number"
+              className="mb-10px border border-gray-400"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={onChange}
+            />
+            {error?.field === 'phoneNumber' && (
               <p className="text-12px font-semibold text-error pt-10px pl-15px">
                 {error.message}
               </p>
             )}
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col h-full">
             <span className="flex font-semibold text-gray-900 text-18px mb-15px">
               Shipping Address
             </span>
-            <Input
-              placeholder="Name"
-              className="mb-10px"
-              name="name"
-              value={formData.name}
-              onChange={onChange}
-            />
-
             <Textarea
-              placeholder="Enter Address"
-              className="mb-10px"
+              placeholder="Address"
+              className="mb-10px border border-gray-400  h-max"
               name="address"
+              rows={2}
               value={formData.address}
               onChange={onChange}
             ></Textarea>
-
-            <div className="flex items-center mb-10px">
-              <Input
-                placeholder="Postal Code"
-                style={{ width: 'calc(50% - 5px)', marginRight: '5px' }}
-                name="postal_code"
-                value={formData.postal_code}
-                onChange={onChange}
-              />
-              <Input
-                placeholder="Apartment, Suite, etc."
-                style={{ width: 'calc(50% - 5px)', marginLeft: '5px' }}
-                name="suite"
-                value={formData.suite}
-                onChange={onChange}
-              />
-            </div>
+            <Input
+              placeholder="City"
+              name="city"
+              value={formData.city}
+              onChange={onChange}
+              className="border border-gray-400"
+            />
           </div>
         </div>
-      </Scrollbar>
+      </div>
 
       <div className="flex flex-col p-30px">
         <Button className="big w-full" onClick={submitOrder} loading={loading}>

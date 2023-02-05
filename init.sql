@@ -135,22 +135,12 @@ CREATE TABLE IF NOT EXISTS variant_values (
   PRIMARY KEY (id)
 );
 
-
-CREATE TABLE IF NOT EXISTS customer (
-  id SERIAL NOT NULL,
-  full_name VARCHAR(255) NOT NULL,
-  email TEXT,
-  phone_number VARCHAR(255) NOT NULL,
-  address_line1 TEXT NOT NULL,
-  postal_code VARCHAR(255) NOT NULL,
-  country VARCHAR(255) NOT NULL,
-  city VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS orders (
   id VARCHAR(50) NOT NULL,
-  customer_id INTEGER REFERENCES customer(id) ON DELETE CASCADE NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(255) NOT NULL,
+  address_line1 TEXT NOT NULL,
+  city VARCHAR(255) NOT NULL,
   order_status VARCHAR(64) CHECK (order_status IN ('complete', 'pending', 'failed')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_by UUID REFERENCES staff_accounts(id) ON DELETE SET NULL,
@@ -163,6 +153,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   order_id VARCHAR(50) REFERENCES orders(id) ON DELETE CASCADE,
   price NUMERIC NOT NULL,
   quantity INTEGER NOT NULL,
+  -- variation_option_id
   PRIMARY KEY (id)
 );
 

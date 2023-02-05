@@ -1,46 +1,15 @@
 import NotFound from '@store/assets/icons/not-found';
 import ItemCard from '@store/components/item-card';
-import { useCart } from '@store/contexts/cart/cart.provider';
-import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { useSearch } from '@store/contexts/search/use-search';
 import { useSearchable } from '@store/helpers/use-searchable';
-import React, { useContext } from 'react';
+import React from 'react';
 
 const Products = React.forwardRef(
   ({ items }: any, ref: React.RefObject<HTMLDivElement>) => {
-    const { dispatch } = useContext(DrawerContext);
-
     const { searchTerm } = useSearch();
     const searchableItems = useSearchable(items, searchTerm, (item) => [
       item.name
     ]);
-
-    const { addItem, removeItem, getItem } = useCart();
-
-    const showDetails = (item) => {
-      dispatch({
-        type: 'STORE_PRODUCT_DETAIL',
-        payload: {
-          item: item
-        }
-      });
-
-      dispatch({
-        type: 'SLIDE_CART',
-        payload: {
-          open: true
-        }
-      });
-
-      dispatch({
-        type: 'TOGGLE_PRODUCT_DETAIL',
-        payload: {
-          showDetails: true
-        }
-      });
-    };
-
-    console.log({ searchableItems });
 
     return (
       <div

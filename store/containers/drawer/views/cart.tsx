@@ -1,18 +1,27 @@
+import { useSettings } from '@contexts/settings.context';
+import { usePrice } from '@hooks/use-price';
+import { useAppSelector, UseCartItemsTotalPrice } from '@hooks/use-store';
 import ArrowLeft from '@store/assets/icons/arrow-left';
 import Button from '@store/components/button';
 import CartItem from '@store/components/cart-item';
-import { Scrollbar } from '@store/components/scrollbar';
-import { useCart } from '@store/contexts/cart/cart.provider';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
-import { CURRENCY } from '@store/helpers/constants';
-import { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
 
 import NoItem from './no-item';
 
 export default function Cart() {
   const { dispatch } = useContext(DrawerContext);
+  const router = useRouter();
+  const { locale } = router;
 
-  const { items, calculatePrice } = useCart();
+  const {
+    currency: { currencyCode }
+  } = useSettings();
+
+  const items = useAppSelector((state) => state.cart.items);
+
+  console.log({ items });
 
   const showCheckout = () => {
     dispatch({
@@ -32,6 +41,12 @@ export default function Cart() {
     });
   };
 
+  const totalPrice = usePrice({
+    amount: UseCartItemsTotalPrice(),
+    locale,
+    currencyCode
+  });
+
   return (
     <div className="flex flex-col w-full h-full">
       {items.length ? (
@@ -48,11 +63,11 @@ export default function Cart() {
             <h2 className="font-bold text-24px m-0">Your Basket</h2>
           </div>
 
-          <Scrollbar className="cart-scrollbar flex-grow">
+          <div className="overflow-y-auto flex-grow">
             {items.map((item) => (
               <CartItem item={item} key={item.id} />
             ))}
-          </Scrollbar>
+          </div>
         </>
       ) : (
         <NoItem />
@@ -68,8 +83,7 @@ export default function Cart() {
           </span>
 
           <span className="font-semibold text-18px text-gray-900">
-            {CURRENCY}
-            {calculatePrice()}
+            {totalPrice}
           </span>
         </div>
 

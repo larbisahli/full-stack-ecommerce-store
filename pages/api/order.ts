@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
-import { productQueries } from '@lib/sql';
-import { Category } from '@ts-types/generated';
+import { orderQueries } from '@lib/sql';
+import { HeroCarouselType } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -9,19 +9,19 @@ class Handler extends PostgresClient {
   }
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { query, method } = req;
-    const id = query.id as string;
+    const { method, body } = req;
     try {
       switch (method) {
-        case this.GET: {
-          const { rows } = await this.query<Category, string>(
-            productQueries.getProductForAdmin(),
-            [id]
+        case this.POST: {
+          const { fullName, address, city, phoneNumber } = body;
+          const { rows } = await this.query<HeroCarouselType, any>(
+            orderQueries.insertOrder(),
+            [fullName, address, city, phoneNumber, 'pending']
           );
-          return res.status(200).json({ product: rows[0] });
+          return res.status(200).json({ order: rows[0] });
         }
         default:
-          res.setHeader('Allow', ['GET']);
+          res.setHeader('Allow', ['POST']);
           res.status(405).end(`There was some error!`);
       }
     } catch (error) {

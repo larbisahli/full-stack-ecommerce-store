@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import { useCartItemsCount } from '@hooks/use-store';
 import CartIcon from '@store/assets/icons/cart-icon';
 import CategoriesSvg from '@store/assets/icons/categories';
 import Logo from '@store/assets/icons/logo';
@@ -32,7 +33,7 @@ export default function Header({ categories }: Props) {
     setRenderCategory(isLargeScreen);
   }, [isLargeScreen]);
 
-  const { itemsCount } = useCart();
+  const itemsCount = useCartItemsCount();
   const searchRef = useRef(null);
 
   useEffect(() => {

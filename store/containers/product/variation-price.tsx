@@ -1,6 +1,6 @@
+import { useSettings } from '@contexts/settings.context';
 import { usePercentDecrease } from '@hooks/use_percent-decrease';
 import { usePrice } from '@hooks/use-price';
-import { siteSettings } from '@settings/site.settings';
 import { VariationOptionsType } from '@ts-types/generated';
 import { useRouter } from 'next/router';
 import { memo, useMemo } from 'react';
@@ -21,6 +21,10 @@ function VariationPrice({
   const router = useRouter();
   const { locale } = router;
 
+  const {
+    currency: { currencyCode }
+  } = useSettings();
+
   const selectedSalePrice = isVariableType
     ? selectedVariationOption?.salePrice
     : salePrice;
@@ -36,7 +40,7 @@ function VariationPrice({
   const price = usePrice({
     amount: selectedSalePrice ?? 0,
     locale,
-    currencyCode: siteSettings?.currencyCode
+    currencyCode
   });
 
   const productPrice = useMemo(
@@ -51,7 +55,7 @@ function VariationPrice({
   const discount = usePrice({
     amount: selectedComparePrice,
     locale,
-    currencyCode: siteSettings?.currencyCode
+    currencyCode
   });
 
   const productDiscount = useMemo(

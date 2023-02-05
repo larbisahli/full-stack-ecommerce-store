@@ -1,8 +1,10 @@
 import ImageComponent from '@components/ImageComponent';
 import Button from '@components/ui/button';
+import { useGetItems } from '@hooks/use-store';
+import { useAppDispatch } from '@hooks/use-store';
+import { addItem, incrementItem } from '@redux/card/index';
 import { SwiperType } from '@store/components/carousel/slider';
 import ThumbnailCarousel from '@store/components/carousel/thumbnail-carousel';
-import { useCart } from '@store/contexts/cart/cart.provider';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import {
   Attribute,
@@ -14,15 +16,12 @@ import { selectedVariationOptionFun } from '@utils/utils';
 import cn from 'classnames';
 import ReactHtmlParser from 'html-react-parser';
 import isEmpty from 'lodash/isEmpty';
-import { useTranslation } from 'next-i18next';
 import { memo, useContext, useEffect, useMemo, useState } from 'react';
 
 import ProductAttributes from './product-attributes';
 import VariationPrice from './variation-price';
 
 const ProductDetails = ({ product }: { product: Product }) => {
-  const { t } = useTranslation('common');
-
   const {
     id,
     name,
@@ -39,10 +38,8 @@ const ProductDetails = ({ product }: { product: Product }) => {
 
   const isVariableType = type?.id === ProductType.Variable;
 
-  const { dispatch } = useContext(DrawerContext);
-  const { addItem, getItem, items } = useCart();
-
-  console.log({ items });
+  const { dispatch: contextDispatch } = useContext(DrawerContext);
+  const dispatch = useAppDispatch();
 
   const [swiperThumbnailInstance, setSwiperThumbnailInstance] =
     useState<SwiperType>(null);
@@ -55,68 +52,43 @@ const ProductDetails = ({ product }: { product: Product }) => {
     return selectedVariationOptionFun({ selectedVariations, variationOptions });
   }, [selectedVariations, variationOptions]);
 
-  function addToCart() {
-    const items = []; //cartItems?.filter((item: ProductType) => item.id === id);
+  const items = useGetItems(id);
 
+  function addToCart() {
     if (isVariableType) {
-      const variationOptionExist = items?.find((item) => {
+      const itemExist = items?.find((item) => {
         return (
           !!item?.orderVariationOption.id &&
           !!selectedVariationOption?.id &&
           item?.orderVariationOption.id === selectedVariationOption?.id
         );
       });
-      addItem({
-        ...product,
-        quantity: 1,
-        orderVariationOption: selectedVariationOption
-      });
-      dispatch({
-        type: 'SLIDE_CART',
-        payload: {
-          open: true
-        }
-      });
-
-      if (isEmpty(variationOptionExist)) {
-        // dispatch(
-        //   addItem({
-        //     ...product,
-        //     orderQuantity,
-        //     orderVariationOption: selectedVariationOption
-        //   })
-        // );
+      if (isEmpty(itemExist)) {
+        dispatch(
+          addItem({
+            ...product,
+            orderQuantity: 1,
+            orderVariationOption: selectedVariationOption
+          })
+        );
       } else {
-        const key = variationOptionExist.key;
-        // dispatch(
-        //   setOrderQuantity({
-        //     id: key,
-        //     type,
-        //     orderQuantity
-        //   })
-        // );
+        dispatch(incrementItem(itemExist));
       }
     } else {
       const item = items[0];
       if (isEmpty(item)) {
-        // dispatch(
-        //   addItem({
-        //     ...product,
-        //     orderQuantity
-        //   })
-        // );
+        dispatch(addItem(product));
       } else {
-        // dispatch(
-        //   setOrderQuantity({
-        //     id,
-        //     type,
-        //     orderQuantity
-        //   })
-        // );
+        dispatch(incrementItem(item));
       }
     }
 
-    // dispatch(slideCart(true));
+    contextDispatch({
+      type: 'SLIDE_CART',
+      payload: {
+        open: true
+      }
+    });
   }
 
   const selectedIndex = useMemo(

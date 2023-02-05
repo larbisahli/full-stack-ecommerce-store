@@ -7,7 +7,7 @@ const initialState = {
   siteTitle: 'DropGala',
   siteSubtitle: '',
   currency: {
-    currencyCode: 'usd'
+    currencyCode: 'USD'
   },
   logo: {
     id: 1,

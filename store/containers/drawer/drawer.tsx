@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 import Cart from './views/cart';
 import Checkout from './views/checkout';
 import DrawerMenu from './views/menus';
-import ProductDetails from './views/product-details';
 
 export const CartDrawer = () => {
   const { state, dispatch } = useContext(DrawerContext);
@@ -17,10 +16,6 @@ export const CartDrawer = () => {
     });
 
   const drawerComponent = (state) => {
-    if (state?.showDetails === true) {
-      return <ProductDetails />;
-    }
-
     if (state?.showCart === true) {
       return <Cart />;
     }

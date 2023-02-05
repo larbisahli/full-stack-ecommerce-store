@@ -25,20 +25,6 @@ export const ButtonSize = {
 export const IconBtnBase =
   'flex items-center justify-center outline-none transition-colors duration-250 ease-in-out';
 
-// --------
-// Counter
-// --------
-export const CounterBase =
-  'group flex items-center justify-between flex-shrink-0 rounded overflow-hidden bg-gray-900 shadow-floatingUp';
-
-export const CounterValue =
-  'font-semibold text-13px text-white flex items-center justify-center h-full w-40px transition-colors duration-250 ease-in-out cursor-default';
-
-export const CounterSize = {
-  big: 'h-12',
-  normal: 'h-35px'
-};
-
 // -----------------
 // Animated Counter
 // -----------------
@@ -66,26 +52,6 @@ export const TextBoxEnable =
 export const InputBase = 'h-12 px-4';
 
 export const TextareaBase = 'h-120px p-4 resize-none';
-
-// ----------
-// Cart Item
-// ----------
-export const CartItemBase =
-  'w-full h-auto flex justify-start items-center bg-white py-6 px-30px border-b border-gray-200 relative last:border-b-0';
-
-export const CartItemImage =
-  'flex w-105px h-105px rounded overflow-hidden bg-gray-200 flex-shrink-0';
-
-export const CartItemContent = 'flex flex-col w-full px-15px';
-
-export const CartItemName = 'text-13px text-gray-900';
-
-export const CartItemSinglePrice = 'text-13px text-gray-500 mt-5px mb-10px';
-
-export const CartItemTotalWrapper = 'flex items-center justify-between';
-
-export const CartItemTotalPrice =
-  'font-semibold text-16px text-gray-900 flex-shrink-0';
 
 // --------
 // Feature

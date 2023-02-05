@@ -15,7 +15,7 @@ import { StaffInfoProvider } from '@contexts/staff.context';
 import { TimeCacheProvider } from '@contexts/time.context';
 // import { SettingsProvider } from "@contexts/settings.context";
 import { UIProvider } from '@contexts/ui.context';
-import { CartProvider } from '@store/contexts/cart/cart.provider';
+import store from '@redux/index';
 // import { ModalProvider } from 'contexts/modal/modal.provider';
 import { DrawerProvider } from '@store/contexts/drawer/drawer.provider';
 import { SearchProvider } from '@store/contexts/search/use-search';
@@ -27,6 +27,7 @@ import Head from 'next/head';
 // import { useRouter } from 'next/router';
 import { appWithTranslation } from 'next-i18next';
 import React, { Fragment } from 'react';
+import { Provider } from 'react-redux';
 import { Slide, ToastContainer } from 'react-toastify';
 
 const Noop: React.FC = ({ children }) => <>{children}</>;
@@ -81,11 +82,11 @@ function App({ Component, pageProps }: AppProps) {
         pauseOnHover
         transition={Slide}
       />
-      <ErrorBoundary>
-        <SearchProvider>
-          <StickyProvider>
-            <DrawerProvider>
-              <CartProvider>
+      <Provider store={store}>
+        <ErrorBoundary>
+          <SearchProvider>
+            <StickyProvider>
+              <DrawerProvider>
                 <TimeCacheProvider>
                   <StaffInfoProvider>
                     <LoadingBar />
@@ -101,11 +102,11 @@ function App({ Component, pageProps }: AppProps) {
                     {/* </AppSettings> */}
                   </StaffInfoProvider>
                 </TimeCacheProvider>
-              </CartProvider>
-            </DrawerProvider>
-          </StickyProvider>
-        </SearchProvider>
-      </ErrorBoundary>
+              </DrawerProvider>
+            </StickyProvider>
+          </SearchProvider>
+        </ErrorBoundary>
+      </Provider>
     </Fragment>
   );
 }

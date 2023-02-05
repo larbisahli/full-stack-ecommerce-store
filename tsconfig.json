@@ -21,6 +21,7 @@
       "@contexts/*": ["contexts/*"],
       "@utils/*": ["utils/*"],
       "@hooks/*": ["hooks/*"],
+      "@redux/*": ["redux/*"],
       "@lib/*": ["lib/*"],
       "@assets/*": ["assets/*"],
       "@containers/*": ["containers/*"],

@@ -10,13 +10,13 @@ class Handler extends PostgresClient {
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { query, method } = req;
-    const id = query.id as string;
+    const slug = query.slug as string;
     try {
       switch (method) {
         case this.GET: {
           const { rows } = await this.query<Category, string>(
-            productQueries.getProductForAdmin(),
-            [id]
+            productQueries.getProduct(),
+            [slug]
           );
           return res.status(200).json({ product: rows[0] });
         }
@@ -25,15 +25,17 @@ class Handler extends PostgresClient {
           res.status(405).end(`There was some error!`);
       }
     } catch (error) {
-      return res.status(500).json({
+      res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'category'
+          from: 'categories'
         }
       });
     }
   };
 }
 
-export default new Handler().execute;
+const { execute } = new Handler();
+
+export default execute;
