@@ -8,6 +8,7 @@ import {
   SwiperSlide
 } from '@store/components/carousel/slider';
 import { Category } from '@ts-types/generated';
+import { isEmpty } from 'lodash';
 
 import ActiveLink from './active-link';
 import CategorySlider from './CategorySlider';
@@ -17,7 +18,7 @@ interface props {
 }
 
 const CategoryHeader = ({ category = {} }: props) => {
-  const { image = null, name, subCategories } = category;
+  const { image = null, name, subCategories, parent } = category;
 
   return (
     <div>
@@ -59,6 +60,16 @@ const CategoryHeader = ({ category = {} }: props) => {
           <div className="px-2 flex items-center text-gray-500">
             <ChevronForward></ChevronForward>
           </div>
+          {!isEmpty(parent) && (
+            <>
+              <ActiveLink href={`/category/${parent?.name}`}>
+                <a className="inline-flex items-center">{parent?.name}</a>
+              </ActiveLink>
+              <div className="px-2 flex items-center text-gray-500">
+                <ChevronForward></ChevronForward>
+              </div>
+            </>
+          )}
           <div className="inline-flex items-center font-semibold">{name}</div>
         </div>
         <div className="my-5">

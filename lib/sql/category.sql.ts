@@ -1,5 +1,7 @@
 export function getCategoryByName(): string {
-  return `SELECT cate.id, cate.name, cate.description, cate.image, ARRAY(SELECT json_build_object('id', child_cate.id, 'name', child_cate.name, 'image', child_cate.image) FROM categories AS child_cate WHERE child_cate.parent_id = cate.id) AS "subCategories" FROM categories cate WHERE name = $1`;
+  return `SELECT cate.id, cate.name, cate.description, cate.image, 
+  ARRAY(SELECT json_build_object('id', child_cate.id, 'name', child_cate.name, 'image', child_cate.image) FROM categories AS child_cate WHERE child_cate.parent_id = cate.id) AS "subCategories",
+  (SELECT json_build_object('id', parent_cate.id, 'name', parent_cate.name) FROM categories AS parent_cate WHERE parent_cate.id = cate.parent_id) AS "parent" FROM categories cate WHERE name = $1`;
 }
 
 export function getCategories(): string {
