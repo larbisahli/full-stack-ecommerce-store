@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
 import { categoryQueries, productQueries } from '@lib/sql';
-import { Category, Product } from '@ts-types/generated';
+import { Product } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {

@@ -113,6 +113,12 @@
 }
 #productGalleryThumbs .swiper-wrapper .swiper-slide-thumb-active {
   border-color: #e34902 !important;
-  /* border-color: #80d8c7 !important; */
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.split-line-thin {
+  background-color: rgb(219, 219, 219);
+  height: 1px;
+  width: 95%;
+  margin: 0 auto;
 }

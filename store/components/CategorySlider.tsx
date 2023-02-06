@@ -6,6 +6,7 @@ import {
   SwiperSlide
 } from '@store/components/carousel/slider';
 import { Category } from '@ts-types/generated';
+import isEmpty from 'lodash/isEmpty';
 
 import ActiveLink from './active-link';
 
@@ -15,10 +16,11 @@ interface props {
 }
 
 const CategorySlider = ({ categories, label }: props) => {
+  console.log({ categories });
   return (
     <div className="w-full">
       <div className="my-5">
-        {categories && (
+        {!isEmpty(categories) && (
           <>
             <div className="my-8 font-semibold text-xl">{label}</div>
             <Swiper
@@ -57,10 +59,11 @@ const CategorySlider = ({ categories, label }: props) => {
                       <a className="relative inline-flex font-bold items-center border border-gray-300 rounded shadow mr-3">
                         <div
                           style={{ background: 'rgba(0,0,0,0.2)' }}
-                          className="absolute top-0 left-0 right-0 bottom-0 z-40"
+                          className="absolute rounded top-0 left-0 right-0 bottom-0 z-40"
                         ></div>
                         <ImageComponent
                           objectFit="cover"
+                          className="rounded"
                           height={132}
                           width={132}
                           src={

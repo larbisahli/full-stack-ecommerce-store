@@ -7711,6 +7711,11 @@ node-forge@^1.3.1:
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.3.1.tgz#be8da2af243b2417d5f646a770663a92b7e9ded3"
   integrity sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==
 
+node-fpe@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/node-fpe/-/node-fpe-2.0.2.tgz#03da52e7403939ba3474496205233463eea70682"
+  integrity sha512-5rd32my+EZ+rp89UHXryaYiviAi+ttvPOzVbe9OSq6MxPRC9eVvVQKE2Cn9B8R0mnl42cwdnU7OnV3uqUMBr/g==
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
@@ -7903,6 +7908,13 @@ optionator@^0.9.1:
     prelude-ls "^1.2.1"
     type-check "^0.4.0"
     word-wrap "^1.2.3"
+
+order-id@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/order-id/-/order-id-2.1.2.tgz#7d45539680f248fd43569ce854aadf4993560f03"
+  integrity sha512-XCeZ1zjUt0khezGcALhWv0WpY/6ZDcaYAudJeu0TneN9FtxeUOsG+J84UHP5l/Lhx35b4frbKbNExpHEy0DQIA==
+  dependencies:
+    node-fpe "^2.0.2"
 
 overlayscrollbars-react@^0.5.0:
   version "0.5.0"

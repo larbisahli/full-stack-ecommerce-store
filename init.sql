@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS categories (
   PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_category_name ON categories (name);
+
 CREATE TABLE IF NOT EXISTS products (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   slug TEXT NOT NULL UNIQUE,
@@ -67,7 +69,6 @@ CREATE TABLE IF NOT EXISTS product_categories (
 );
 
 CREATE INDEX idx_product_category ON product_categories (product_id, category_id);
-CREATE INDEX idx_product_category_name ON product_categories (name);
 
 CREATE TABLE IF NOT EXISTS gallery (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -175,9 +176,9 @@ CREATE TABLE IF NOT EXISTS order_items (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
   product_id UUID REFERENCES products(id) ON DELETE CASCADE,
   order_id VARCHAR(50) REFERENCES orders(id) ON DELETE CASCADE,
-  price NUMERIC NOT NULL,
+  unit_price NUMERIC NOT NULL,
   quantity INTEGER NOT NULL,
-  -- variation_option_id
+  variant_option_id UUID REFERENCES variant_options(id) ON DELETE CASCADE,
   PRIMARY KEY (id)
 );
 
@@ -212,6 +213,21 @@ CREATE TABLE IF NOT EXISTS slideshows (
 
 CREATE INDEX idx_slideshows_publish ON slideshows (published);
 
+CREATE TABLE IF NOT EXISTS settings (
+  id VARCHAR(50) NOT NULL,
+  logo_image_path TEXT,
+  favicon_image_path TEXT,
+  currency JSONB,
+  meta_title VARCHAR(150),
+  meta_description TEXT,
+  meta_tags TEXT,
+  og_title VARCHAR(150),
+  og_description TEXT,
+  og_image_path TEXT,
+  twitter_handle VARCHAR(150),
+  social JSONB,
+  PRIMARY KEY (id)
+);
 
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION update_at_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();

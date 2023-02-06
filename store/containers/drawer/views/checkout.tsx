@@ -1,8 +1,4 @@
-import {
-  useAppDispatch,
-  useAppSelector,
-  UseCartItemsTotalPrice
-} from '@hooks/use-store';
+import { useAppDispatch, useAppSelector } from '@hooks/use-store';
 import { clearCart } from '@redux/card/index';
 import ArrowLeft from '@store/assets/icons/arrow-left';
 import Button from '@store/components/button';
@@ -54,9 +50,17 @@ export default function Checkout() {
 
     const res = await fetch('/api/order', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         shippingInfo: formData,
-        items: items
+        items: items?.map((item) => {
+          return {
+            product_id: item?.id,
+            price: item?.salePrice,
+            quantity: item?.orderQuantity,
+            orderVariationOption: { id: item?.orderVariationOption?.id }
+          };
+        })
       })
     });
     if (res.status === 200) {
@@ -65,6 +69,7 @@ export default function Checkout() {
       setLoading(false);
     } else {
       setError(true);
+      setLoading(false);
     }
   };
 
@@ -101,14 +106,14 @@ export default function Checkout() {
             </span>
             <Input
               placeholder="Full Name"
-              className="mb-10px border border-gray-400"
+              className="mb-10px border border-gray-400 placeholder:text-gray-400"
               name="fullName"
               value={formData.fullName}
               onChange={onChange}
             />
             <Input
               placeholder="Phone Number"
-              className="mb-10px border border-gray-400"
+              className="mb-10px border border-gray-400 placeholder:text-gray-400"
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={onChange}
@@ -126,7 +131,7 @@ export default function Checkout() {
             </span>
             <Textarea
               placeholder="Address"
-              className="mb-10px border border-gray-400  h-max"
+              className="mb-10px border border-gray-400 placeholder:text-gray-400 h-max"
               name="address"
               rows={2}
               value={formData.address}
@@ -137,7 +142,7 @@ export default function Checkout() {
               name="city"
               value={formData.city}
               onChange={onChange}
-              className="border border-gray-400"
+              className="border border-gray-400 placeholder:text-gray-400"
             />
           </div>
         </div>

@@ -1,46 +1,48 @@
 import Card from '@components/common/card';
-import Search from '@components/common/search';
-import SortForm from '@components/common/sort-form';
 import AppLayout from '@components/layouts/app';
 import OrderList from '@components/order/order-list';
 import ErrorMessage from '@components/ui/error-message';
 import Loader from '@components/ui/loader/loader';
-// import { useOrdersQuery } from "@data/order/use-orders.query";
-import { SortOrder } from '@ts-types/generated';
+import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useGetStaff } from '@hooks/useGetStaff';
+import { useTime } from '@hooks/useTime';
+import { SSRProps } from '@ts-types/custom.types';
+import { OrderStatus } from '@ts-types/generated';
+import { fetcher, limit } from '@utils/utils';
+import { isEmpty } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useState } from 'react';
+import useSwr from 'swr';
 
-export default function Orders() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [page, setPage] = useState(1);
+interface TCategory {
+  orders: any[];
+  count: number;
+}
+export default function Orders({ client }: SSRProps) {
   const { t } = useTranslation();
-  const [orderBy, setOrder] = useState('created_at');
-  const [sortedBy, setColumn] = useState<SortOrder>(SortOrder.Desc);
+  const [page, setPage] = useState(1);
 
-  // const {
-  //   data,
-  //   isLoading: loading,
-  //   error,
-  // } = useOrdersQuery({
-  //   limit: 20,
-  //   page,
-  //   text: searchTerm,
-  // });
+  const { current } = useTime();
+  const key = page ? [`/api/admin/order/orders/${page}?time=`, current] : null;
+  const { data, error, isLoading } = useSwr<TCategory>(key, fetcher);
 
-  const data = [];
-  const loading = false;
-  const error = null;
+  const { orders = [], count = 0 } = data ?? {};
 
-  if (loading) return <Loader text={t('common:text-loading')} />;
-  if (error) return <ErrorMessage message={error.message} />;
-  function handleSearch({ searchText }: { searchText: string }) {
-    setSearchTerm(searchText);
-    setPage(1);
-  }
-  function handlePagination(current: any) {
+  useGetStaff(client);
+  useErrorLogger(error);
+
+  const handlePagination = (current: number) => {
     setPage(current);
+  };
+
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
   }
+  if (!isEmpty(error)) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
+
   return (
     <>
       <Card className="flex flex-col md:flex-row items-center justify-between mb-8">
@@ -49,28 +51,15 @@ export default function Orders() {
             {t('form:input-label-orders')}
           </h1>
         </div>
-
-        <div className="w-full md:w-3/4 flex flex-col md:flex-row items-center ms-auto">
-          <Search onSearch={handleSearch} />
-          <SortForm
-            showLabel={false}
-            className="w-full md:w-1/2 md:ms-5 mt-5 md:mt-0 flex-shrink-0"
-            onSortChange={({ value }: { value: SortOrder }) => {
-              setColumn(value);
-            }}
-            onOrderChange={({ value }: { value: string }) => {
-              setOrder(value);
-            }}
-            options={[
-              { value: 'total', label: 'Total' },
-              { value: 'created_at', label: 'Created At' },
-              { value: 'updated_at', label: 'Updated At' }
-            ]}
-          />
-        </div>
       </Card>
 
-      <OrderList orders={data?.orders} onPagination={handlePagination} />
+      <OrderList
+        orders={orders}
+        total={count}
+        onPagination={handlePagination}
+        currentPage={page}
+        perPage={limit}
+      />
     </>
   );
 }

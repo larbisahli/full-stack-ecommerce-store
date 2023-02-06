@@ -97,7 +97,6 @@ const ProductDetails = ({ product }: { product: Product }) => {
     [gallery, selectedVariationOption]
   );
 
-  const productLoading = isEmpty(product);
   const productQuantity = isVariableType
     ? selectedVariationOption?.quantity
     : quantity;
@@ -140,57 +139,58 @@ const ProductDetails = ({ product }: { product: Product }) => {
             <div className="pb-3 lg:pb-5">
               <div className="md:mb-2.5 block">
                 <h2 className="text-skin-base text-lg md:text-xl font-medium transition-colors duration-300 mb-2">
-                  {productLoading ? <></> : name}
+                  {name ?? ''}
                 </h2>
               </div>
-              <div className="split-line-thin"></div>
-              {productLoading ? (
-                <div className="flex items-center mt-5">
-                  {/* <PriceLoader /> */}
-                </div>
-              ) : (
-                <VariationPrice
-                  {...{
-                    selectedVariationOption,
-                    isVariableType,
-                    salePrice,
-                    comparePrice
-                  }}
-                />
-              )}
+              <div className="w-full">
+                <div className="split-line-thin"></div>
+              </div>
+              <VariationPrice
+                {...{
+                  selectedVariationOption,
+                  isVariableType,
+                  salePrice,
+                  comparePrice
+                }}
+              />
             </div>
-            <div className="split-line-thin"></div>
-
+            <div className="w-full">
+              <div className="split-line-thin"></div>
+            </div>
             {/* VARIATIONS */}
             <div className="my-3">
-              {productLoading ? (
-                <div>{' <VariantsLoader />'}</div>
-              ) : (
-                variations?.map((variation) => {
-                  return (
-                    <ProductAttributes
-                      key={variation?.attribute?.id}
-                      {...{
-                        variation,
-                        variations,
-                        variationOptions,
-                        selectedVariations,
-                        setSelectedVariations
-                      }}
-                    />
-                  );
-                })
+              {!isEmpty(variationOptions) && (
+                <div>
+                  {variations?.map((variation) => {
+                    return (
+                      <ProductAttributes
+                        key={variation?.attribute?.id}
+                        {...{
+                          variation,
+                          variations,
+                          variationOptions,
+                          selectedVariations,
+                          setSelectedVariations
+                        }}
+                      />
+                    );
+                  })}
+                  <div className="w-full">
+                    <div className="split-line-thin"></div>
+                  </div>
+                </div>
               )}
             </div>
 
             {/* DESCRIPTION */}
             <div className="text-sm sm:text-15px text-skin-muted leading-[2em] space-y-4 lg:space-y-5 xl:space-y-7">
+              <div className="font-bold text-xl">Description</div>
               {ReactHtmlParser(description ?? '')}
             </div>
           </div>
 
           {/* BUTTONS */}
-          <div className="min-w-[350px]">
+          <div className="min-w-[350px] ml-5">
             <div className="pt-1.5 lg:pt-3 xl:pt-4 space-y-2.5 md:space-y-3.5 mt-5">
               <div className="flex items-center">
                 <Button

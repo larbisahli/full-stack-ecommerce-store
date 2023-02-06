@@ -1,5 +1,4 @@
 import ActionButtons from '@components/common/action-buttons';
-import * as categoriesIcon from '@components/icons/category';
 import Pagination from '@components/ui/pagination';
 import { Table } from '@components/ui/table';
 import { Nullable } from '@ts-types/custom.types';

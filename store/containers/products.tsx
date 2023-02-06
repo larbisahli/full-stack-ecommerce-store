@@ -14,18 +14,18 @@ const Products = React.forwardRef(
           <div className="my-8 font-semibold text-xl">Trending now</div>
         )}
         {items.length ? (
-          <>
+          <div className=" shadow-md border border-gray-100 py-4 rounded">
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols- xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-3 md:gap-4 2xl:gap-5">
               {items.map((item) => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>
-            <div className="mt-20 flex items-center justify-center">
-              <button className="hover:bg-gray-50 border border-solid border-gray-400 rounded py-2 px-5 font-semibold">
-                View more
+            <div className="mt-8 mb-4 flex items-center justify-center">
+              <button className="hover:bg-gray-50 border border-solid w-[402px] border-gray-400 rounded py-2 px-5 font-semibold">
+                Show more results
               </button>
             </div>
-          </>
+          </div>
         ) : (
           <div className="pt-10px md:pt-40px lg:pt-20px pb-40px">
             <NotFound width="100%" />
