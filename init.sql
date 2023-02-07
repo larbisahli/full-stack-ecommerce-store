@@ -241,7 +241,6 @@ CREATE TRIGGER gallery_set_update BEFORE UPDATE ON gallery FOR EACH ROW EXECUTE 
 CREATE TRIGGER attribute_set_update BEFORE UPDATE ON attributes FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER product_set_update BEFORE UPDATE ON products FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER staff_set_update BEFORE UPDATE ON staff_accounts FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
-CREATE TRIGGER order_set_update BEFORE UPDATE ON orders FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 CREATE TRIGGER slideshow_set_update BEFORE UPDATE ON slideshows FOR EACH ROW EXECUTE PROCEDURE update_at_timestamp();
 
 -- PARTIOTIONS --
@@ -271,3 +270,7 @@ INSERT INTO attribute_values (attribute_id, attribute_value, color) VALUES
   (( SELECT id FROM att_id WHERE attribute_name = 'Size'),'3XL', null),
   (( SELECT id FROM att_id WHERE attribute_name = 'Size'),'4XL', null),
   (( SELECT id FROM att_id WHERE attribute_name = 'Size'), '5XL', null);
+
+-- passowrd: admin
+INSERT INTO staff_accounts (first_name, last_name, email, password_hash, active, is_admin)
+  VALUES ('John', 'Doe', 'admin@gmail.com', '$2a$12$ZfUtPiuzFXNKhgeT6mOZ/.Hy6DOtNc1K4VIjcyIl6AaiUFGQaIKZK', true, true);

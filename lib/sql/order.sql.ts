@@ -11,8 +11,14 @@ export function insertOrderItem(): string {
 export function getOrders(): string {
   return `SELECT o.id, o.full_name AS "fullName", o.phone_number as "phoneNumber", o.address_line1 as "addressLine1", o.city, o.order_status as "orderStatus", o.created_at as "createdAt",
   (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) FROM staff_accounts AS stu WHERE stu.id = o.updated_by) AS "updatedBy",
-  (SELECT SUM("unit_price"*"quantity") FROM order_items WHERE order_id = o.id) AS total
-  FROM orders AS o LIMIT $1 OFFSET $2`;
+  (SELECT SUM("unit_price"*"quantity") FROM order_items WHERE order_id = o.id)::FLOAT AS total,
+  (SELECT SUM(quantity) FROM order_items WHERE order_id = o.id)::INTEGER AS "totalQuantity",
+  (SELECT COUNT(id) FROM order_items WHERE order_id = o.id)::INTEGER AS "productQuantity",
+  ARRAY(SELECT (SELECT json_build_object('id', pd.id, 'name', pd.product_name, 'quantity', otpd.quantity,
+  'unitPrice', (CASE WHEN pd.product_type = 'variable' THEN (SELECT vp.sale_price FROM variant_options vp WHERE vp.id = otpd.variant_option_id)
+  WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END)
+  ) FROM products AS pd WHERE pd.id = otpd.product_id) as co FROM order_items otpd WHERE otpd.order_id = o.id) AS products
+  FROM orders AS o order by o.created_at DESC LIMIT $1 OFFSET $2`;
 }
 
 export function getOrdersCount(): string {

@@ -5,6 +5,7 @@ import Button from '@store/components/button';
 import Input from '@store/components/input';
 import Textarea from '@store/components/textarea';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
+import { ProductType } from '@ts-types/generated';
 import { useContext, useState } from 'react';
 
 import OrderSubmit from './order-submit';
@@ -54,9 +55,13 @@ export default function Checkout() {
       body: JSON.stringify({
         shippingInfo: formData,
         items: items?.map((item) => {
+          const price =
+            item?.type?.id === ProductType.Simple
+              ? item?.salePrice
+              : item?.orderVariationOption?.salePrice;
           return {
             product_id: item?.id,
-            price: item?.salePrice,
+            price,
             quantity: item?.orderQuantity,
             orderVariationOption: { id: item?.orderVariationOption?.id }
           };

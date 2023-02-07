@@ -1,3 +1,5 @@
+import { useSettings } from '@contexts/settings.context';
+import { usePrice } from '@hooks/use-price';
 import {
   Document,
   Font,
@@ -6,37 +8,50 @@ import {
   Text,
   View
 } from '@react-pdf/renderer';
-import { Order, UserAddress } from '@ts-types/generated';
 import { formatAddress } from '@utils/format-address';
-import usePrice from '@utils/use-price';
 import dayjs from 'dayjs';
 
-export default function InvoicePdf({ order }: { order: Order }) {
-  const { price: subtotal } = usePrice(
-    order && {
-      amount: order?.amount!
-    }
+const ProductItem = ({ product, index }) => {
+  const {
+    currency: { currencyCode }
+  } = useSettings();
+
+  const price = usePrice({
+    amount: Number(product?.unitPrice),
+    locale: 'us',
+    currencyCode
+  });
+
+  return (
+    <View style={styles.tbody}>
+      <View style={styles.tr}>
+        <Text style={[styles.td, { width: 15, textAlign: 'center' }]}>
+          {index + 1}
+        </Text>
+        <Text style={[styles.td, { width: '100%', flex: 2 }]}>
+          {product.name}
+        </Text>
+        <Text style={[styles.td, { width: 100, flex: 1, textAlign: 'right' }]}>
+          {price}
+        </Text>
+        <Text
+          style={[styles.td, { flex: 1 }]}
+        >{`Quantity: ${product.quantity}`}</Text>
+      </View>
+    </View>
   );
-  const { price: total } = usePrice(
-    order && {
-      amount: order?.paid_total!
-    }
-  );
-  const { price: discount } = usePrice(
-    order && {
-      amount: order?.discount!
-    }
-  );
-  const { price: delivery_fee } = usePrice(
-    order && {
-      amount: order?.delivery_fee!
-    }
-  );
-  const { price: sales_tax } = usePrice(
-    order && {
-      amount: order?.sales_tax!
-    }
-  );
+};
+
+export default function InvoicePdf({ order }) {
+  const {
+    currency: { currencyCode }
+  } = useSettings();
+
+  const total = usePrice({
+    amount: Number(order?.total),
+    locale: 'us',
+    currencyCode
+  });
 
   return (
     <Document>
@@ -46,9 +61,9 @@ export default function InvoicePdf({ order }: { order: Order }) {
           <View style={styles.addressWrapper}>
             <View style={styles.section}>
               <Text style={[styles.addressText, { marginBottom: 20 }]}>
-                Invoice No:
+                Order No:{' '}
                 <Text style={{ color: '#374151', fontFamily: 'Lato Bold' }}>
-                  {order.tracking_number}
+                  {order.id}
                 </Text>
               </Text>
               <Text
@@ -57,12 +72,11 @@ export default function InvoicePdf({ order }: { order: Order }) {
                   { color: '#374151', fontFamily: 'Lato Bold', fontSize: 12 }
                 ]}
               >
-                {order?.customer?.name}
+                {order?.fullName}
               </Text>
-              <Text style={styles.addressText}>{order?.customer?.email}</Text>
-              <Text style={styles.addressText}>{order?.customer_contact}</Text>
+              <Text style={styles.addressText}>{order?.phoneNumber}</Text>
               <Text style={styles.addressText}>
-                {formatAddress(order?.shipping_address as UserAddress)}
+                {formatAddress(order?.addressLine1)}
               </Text>
             </View>
 
@@ -88,30 +102,9 @@ export default function InvoicePdf({ order }: { order: Order }) {
 
           {/* Table */}
           <View style={styles.orderTable}>
-            {order.products.map((product, index) => {
-              // const { price } = usePrice({
-              //   // @ts-ignore
-              //   amount: parseFloat(product.pivot.subtotal)
-              // });
-              return (
-                <View style={styles.tbody} key={index}>
-                  <View style={styles.tr}>
-                    <Text
-                      style={[styles.td, { width: 50, textAlign: 'center' }]}
-                    >
-                      {index + 1}
-                    </Text>
-                    <Text style={[styles.td, { flex: 1 }]}>{product.name}</Text>
-                    <Text
-                      style={[styles.td, { width: 100, textAlign: 'right' }]}
-                    >
-                      {/* {price} */}
-                      {25}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
+            {(order?.products ?? [])?.map((product, index) => (
+              <ProductItem key={product.id} product={product} index={index} />
+            ))}
           </View>
 
           {/* Border */}
@@ -119,22 +112,6 @@ export default function InvoicePdf({ order }: { order: Order }) {
 
           {/* Total */}
           <View style={styles.totalCountWrapper}>
-            <View style={styles.totalCountRow}>
-              <Text style={styles.totalCountCell}>Sub Total</Text>
-              <Text style={styles.totalCountCell}>{subtotal}</Text>
-            </View>
-            <View style={styles.totalCountRow}>
-              <Text style={styles.totalCountCell}>Discount</Text>
-              <Text style={styles.totalCountCell}>{discount}</Text>
-            </View>
-            <View style={styles.totalCountRow}>
-              <Text style={styles.totalCountCell}>Tax</Text>
-              <Text style={styles.totalCountCell}>{sales_tax}</Text>
-            </View>
-            <View style={styles.totalCountRow}>
-              <Text style={styles.totalCountCell}>Delivery Fee</Text>
-              <Text style={styles.totalCountCell}>{delivery_fee}</Text>
-            </View>
             <View style={styles.totalCountRow}>
               <Text
                 style={[

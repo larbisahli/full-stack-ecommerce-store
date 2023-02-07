@@ -15,7 +15,7 @@ export function getAttributesForAdmin(): string {
   (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name) FROM staff_accounts AS stc WHERE stc.id = att.created_by) AS "createdBy",
   (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) FROM staff_accounts AS stu WHERE stu.id = att.updated_by) AS "updatedBy",
   ARRAY((SELECT json_build_object('id', att_v.id, 'value', att_v.attribute_value) FROM attribute_values AS att_v WHERE att_v.attribute_id = att.id)) AS values
-  FROM attributes AS att LIMIT $1 OFFSET $2`;
+  FROM attributes AS att order by att.created_at DESC LIMIT $1 OFFSET $2`;
 }
 
 export function insertAttribute(): string {

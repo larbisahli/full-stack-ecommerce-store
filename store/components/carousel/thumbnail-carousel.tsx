@@ -61,6 +61,7 @@ const ThumbnailCarousel: React.FC<Props> = ({
           ref={swiperRef}
           id="productGallery"
           onSwiper={setSwiperThumbnailInstance}
+          initialSlide={1}
           thumbs={{
             swiper:
               thumbsSwiperInstance && !thumbsSwiperInstance.destroyed

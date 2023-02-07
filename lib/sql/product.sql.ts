@@ -25,27 +25,6 @@ export function getProduct(): string {
   FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations" FROM products AS pd WHERE pd.slug = $1`;
 }
 
-export function getProductsX(): string {
-  return `SELECT pd.id, pd.slug, pd.product_name AS "name", pd.sale_price::FLOAT AS "salePrice", 
-  pd.compare_price::FLOAT AS "comparePrice", pd.disable_out_of_stock AS "disableOutOfStock", 
-  pd.quantity, pd.short_description AS "shortDescription", pd.product_description AS "description", jsonb_build_object('id', pd.product_type) AS "type",
-
-  (SELECT json_build_object('image', galt.image) FROM gallery galt WHERE galt.product_id = pd.id AND galt.is_thumbnail = true) AS "thumbnail",
-  ARRAY(SELECT json_build_object('image', galg.image) FROM gallery galg WHERE galg.product_id = pd.id ORDER BY galg.is_thumbnail DESC) AS "gallery",
-
-  ARRAY(SELECT json_build_object('id', vo.id, 'title', vo.title, 'image', (SELECT img.image FROM gallery img WHERE img.id = vo.image_id), 'salePrice', vo.sale_price::FLOAT, 
-								 'comparePrice', vo.compare_price::FLOAT, 'quantity', vo.quantity,
-                 'options', ARRAY(SELECT pav.attribute_value_id FROM product_attribute_values pav WHERE pav.id IN 
-                 (SELECT vv.product_attribute_value_id FROM variant_values vv WHERE vv.variant_id = (SELECT v.id FROM variants v WHERE v.variant_option_id = vo.id)))) 
-                 FROM variant_options vo WHERE vo.id IN (SELECT v.variant_option_id FROM variants v WHERE v.product_id = pd.id)) AS "variationOptions",
-
-  ARRAY(SELECT json_build_object('attribute', json_build_object('id', pa.attribute_id, 'name', (SELECT att.attribute_name FROM attributes att WHERE att.id = pa.attribute_id)), 
-  'values', ARRAY(SELECT json_build_object('id', pav.attribute_value_id, 'value', (SELECT att_v.attribute_value FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id), 
-  'color', (SELECT att_v.color FROM attribute_values att_v WHERE att_v.id = pav.attribute_value_id)) 
-  FROM product_attribute_values pav WHERE pav.product_attribute_id = pa.id)) 
-  FROM product_attributes pa WHERE pa.product_id = pd.id) AS "variations" FROM products AS pd WHERE pd.published IS TRUE LIMIT $1`;
-}
-
 export function getProductForAdmin(): string {
   return `SELECT pd.id, pd.product_name AS "name", pd.sale_price AS "salePrice", pd.buying_price AS buyingPrice, pd.compare_price AS "comparePrice", 
   pd.disable_out_of_stock AS "disableOutOfStock", pd.quantity, pd.published, pd.created_at AS "createdAt", pd.updated_at AS "updatedAt", pd.note, 
@@ -87,7 +66,7 @@ export function getProductsForAdmin(): string {
 
   (SELECT json_build_object('id', stc.id, 'firstName', stc.first_name, 'lastName', stc.last_name) FROM staff_accounts AS stc WHERE stc.id = pd.created_by) AS "createdBy",
   (SELECT json_build_object('id', stu.id, 'firstName', stu.first_name, 'lastName', stu.last_name) FROM staff_accounts AS stu WHERE stu.id = pd.updated_by) AS "updatedBy"
-  FROM products AS pd LIMIT $1 OFFSET $2`;
+  FROM products AS pd order by pd.created_at DESC LIMIT $1 OFFSET $2`;
 }
 
 export function getProductsCount(): string {

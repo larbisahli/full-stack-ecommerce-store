@@ -6,10 +6,12 @@ import Loader from '@components/ui/loader/loader';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import { useGetStaff } from '@hooks/useGetStaff';
 import { useTime } from '@hooks/useTime';
+import { verifyAuth } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
-import { OrderStatus } from '@ts-types/generated';
+import { ROUTES } from '@utils/routes';
 import { fetcher, limit } from '@utils/utils';
 import { isEmpty } from 'lodash';
+import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useState } from 'react';
@@ -66,8 +68,28 @@ export default function Orders({ client }: SSRProps) {
 
 Orders.Layout = AppLayout;
 
-export const getStaticProps = async ({ locale }: any) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['table', 'common', 'form']))
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { locale } = context;
+  const { client } = verifyAuth(context);
+
+  if (!client) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: ROUTES.LOGIN
+      }
+    };
   }
-});
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, [
+        'form',
+        'common',
+        'table',
+        'error'
+      ])),
+      client
+    }
+  };
+};

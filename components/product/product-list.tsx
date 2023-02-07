@@ -33,7 +33,7 @@ const ProductList = ({
   perPage
 }: IProps) => {
   const { t } = useTranslation();
-  const { alignLeft, alignRight } = useIsRTL();
+  const { alignLeft } = useIsRTL();
 
   let columns = [
     {
@@ -92,7 +92,7 @@ const ProductList = ({
       dataIndex: 'salePrice',
       key: 'salePrice',
       align: 'center',
-      width: 100,
+      width: 150,
       render: (salePrice: number, record: Product) => {
         if (record?.maxPrice > 0 && record?.minPrice > 0) {
           return (

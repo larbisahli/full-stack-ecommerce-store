@@ -1,6 +1,5 @@
 import PostgresClient from '@lib/database';
-import { categoryQueries, orderQueries } from '@lib/sql';
-import { Category } from '@ts-types/generated';
+import { orderQueries } from '@lib/sql';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -39,7 +38,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'categories'
+          from: 'Orders'
         }
       });
     }

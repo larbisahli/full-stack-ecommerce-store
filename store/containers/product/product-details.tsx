@@ -103,11 +103,17 @@ const ProductDetails = ({ product }: { product: Product }) => {
 
   useEffect(() => {
     if (
+      selectedIndex === -1 &&
+      !isEmpty(swiperThumbnailInstance) &&
+      !swiperThumbnailInstance?.destroyed
+    ) {
+      swiperThumbnailInstance.slideTo(1);
+    } else if (
       !isNaN(selectedIndex) &&
       !isEmpty(swiperThumbnailInstance) &&
       !swiperThumbnailInstance?.destroyed
     ) {
-      swiperThumbnailInstance.slideTo(selectedIndex);
+      swiperThumbnailInstance.slideTo(selectedIndex + 1);
     }
   }, [selectedIndex, swiperThumbnailInstance]);
 

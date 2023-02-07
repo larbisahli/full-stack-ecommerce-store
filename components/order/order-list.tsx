@@ -1,17 +1,13 @@
 import ActionButtons from '@components/common/action-buttons';
 import Pagination from '@components/ui/pagination';
 import { Table } from '@components/ui/table';
+import { useSettings } from '@contexts/settings.context';
+import { usePrice } from '@hooks/use-price';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Nullable } from '@ts-types/custom.types';
-import { OrderStatus } from '@ts-types/generated';
-import { formatAddress } from '@utils/format-address';
 import { useIsRTL } from '@utils/locals';
-import usePrice from '@utils/use-price';
 import cn from 'classnames';
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 
@@ -26,6 +22,23 @@ export type IProps = {
   perPage: Nullable<number>;
 };
 
+const Price = ({ total }) => {
+  const router = useRouter();
+  const { locale } = router;
+  const {
+    currency: { currencyCode }
+  } = useSettings();
+
+  const price = usePrice({
+    amount: Number(total),
+    locale,
+    currencyCode
+  });
+  return (
+    <span className="text-black font-semibold whitespace-nowrap">{price}</span>
+  );
+};
+
 const OrderList = ({
   orders,
   onPagination,
@@ -34,8 +47,8 @@ const OrderList = ({
   perPage
 }: IProps) => {
   const { t } = useTranslation();
-  const rowExpandable = (record: any) => record.children?.length;
   const router = useRouter();
+
   const { alignLeft } = useIsRTL();
 
   const columns = [
@@ -44,30 +57,21 @@ const OrderList = ({
       dataIndex: 'id',
       key: 'id',
       align: 'center',
-      width: 150
-    },
-    {
-      title: 'Total',
-      dataIndex: 'total',
-      key: 'total',
-      align: 'center',
-      width: 120,
-      render: (value: any) => {
-        // const { price } = usePrice({
-        //   amount: value
-        // });
-        return <span className="whitespace-nowrap">{0}</span>;
-      }
+      width: 190,
+      render: (id: string) => (
+        <div className="whitespace-nowrap font-semibold">{id}</div>
+      )
     },
     {
       title: 'Status',
       dataIndex: 'orderStatus',
       key: 'orderStatus',
       align: alignLeft,
+      width: 100,
       render: (orderStatus: string) => (
         <span
           className={cn(
-            'whitespace-nowrap px-3 py-2 rounded-sm font-semibold',
+            'whitespace-nowrap px-3 py-2 rounded-sm font-semibold capitalize',
             {
               'bg-yellow-500 text-white': orderStatus === 'pending',
               'bg-green text-white': orderStatus === 'complete',
@@ -80,54 +84,95 @@ const OrderList = ({
       )
     },
     {
-      title: 'Address',
-      dataIndex: 'addressLine1',
-      key: 'addressLine1',
+      title: 'Total',
+      dataIndex: 'total',
+      key: 'total',
+      align: 'center',
+      width: 120,
+      render: (total) => <Price total={total} />
+    },
+    {
+      title: 'full name',
+      dataIndex: 'fullName',
+      key: 'fullName',
       align: alignLeft,
-      render: (addressLine1: string) => <div>{addressLine1}</div>
+      width: 120,
+      render: (fullName: string) => (
+        <div className="whitespace-nowrap font-semibold">{fullName}</div>
+      )
+    },
+    {
+      title: 'Phone number',
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
+      align: alignLeft,
+      width: 120,
+      render: (phoneNumber: string) => (
+        <div className="whitespace-nowrap font-semibold">{phoneNumber}</div>
+      )
     },
     {
       title: 'City',
       dataIndex: 'city',
       key: 'city',
       align: alignLeft,
-      render: (addressLine1: string) => <div>{addressLine1}</div>
+      width: 100,
+      render: (city: string) => (
+        <div className="whitespace-nowrap capitalize font-semibold">{city}</div>
+      )
+    },
+    {
+      title: 'Products',
+      dataIndex: 'productQuantity',
+      key: 'productQuantity',
+      align: 'center',
+      width: 80,
+      render: (productQuantity: string) => (
+        <div className="font-semibold">{productQuantity}</div>
+      )
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'totalQuantity',
+      key: 'totalQuantity',
+      align: 'center',
+      width: 80,
+      render: (totalQuantity: string) => (
+        <div className="font-semibold">{totalQuantity}</div>
+      )
     },
     {
       title: 'Order Date',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       align: 'center',
-      render: (date: string) => {
-        dayjs.extend(relativeTime);
-        dayjs.extend(utc);
-        dayjs.extend(timezone);
+      render: (createdAt: string) => {
         return (
-          <span className="whitespace-nowrap">
-            {dayjs.utc(date).tz(dayjs.tz.guess()).fromNow()}
+          <span className="whitespace-nowrap font-semibold">
+            {dayjs(createdAt).format('DD/MM/YYYY')} at{' '}
+            {dayjs(createdAt).format('h:mm A')}
           </span>
         );
       }
     },
-    // {
-    //   // title: "Download",
-    //   title: t('common:text-download'),
-    //   dataIndex: 'id',
-    //   key: 'download',
-    //   align: 'center',
-    //   render: (_id: string, order: Order) => (
-    //     <div>
-    //       <PDFDownloadLink
-    //         document={<InvoicePdf order={order} />}
-    //         fileName="invoice.pdf"
-    //       >
-    //         {({ loading }: any) =>
-    //           loading ? t('common:text-loading') : t('common:text-download')
-    //         }
-    //       </PDFDownloadLink>
-    //     </div>
-    //   )
-    // },
+    {
+      title: 'Download',
+      dataIndex: 'id',
+      key: 'download',
+      align: 'center',
+      render: (_id: string, order) => (
+        <div>
+          <PDFDownloadLink
+            document={<InvoicePdf order={order} />}
+            fileName="invoice.pdf"
+          >
+            {({ loading }: any) =>
+              loading ? t('common:text-loading') : t('common:text-download')
+            }
+          </PDFDownloadLink>
+        </div>
+      )
+    },
     {
       title: t('table:table-item-actions'),
       dataIndex: 'id',
@@ -150,10 +195,6 @@ const OrderList = ({
           data={orders}
           rowKey="id"
           scroll={{ x: 1000 }}
-          expandable={{
-            expandedRowRender: () => '',
-            rowExpandable: rowExpandable
-          }}
         />
       </div>
 

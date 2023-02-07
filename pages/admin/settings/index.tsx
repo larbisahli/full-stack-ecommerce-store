@@ -1,29 +1,39 @@
 import AppLayout from '@components/layouts/app';
 import SettingsForm from '@components/settings/settings-form';
 import ErrorMessage from '@components/ui/error-message';
-// import Loader from "@components/ui/loader/loader";
-// import { useSettingsQuery } from "@data/settings/use-settings.query";
-// import { useShippingClassesQuery } from "@data/shipping/use-shippingClasses.query";
-// import { useTaxesQuery } from "@data/tax/use-taxes.query";
+import Loader from '@components/ui/loader/loader';
+import { useErrorLogger } from '@hooks/useErrorLogger';
+import { useGetStaff } from '@hooks/useGetStaff';
+import { verifyAuth } from '@middleware/utils';
+import { SSRProps } from '@ts-types/custom.types';
+import { ROUTES } from '@utils/routes';
+import { fetcher } from '@utils/utils';
+import { isEmpty } from 'lodash';
+import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import useSwr from 'swr';
 
-export default function AccountInformation() {
+export default function AccountInformation({ client }: SSRProps) {
   const { t } = useTranslation();
-  // const { data: taxData, isLoading: taxLoading } = useTaxesQuery();
 
-  // const { data: ShippingData, isLoading: shippingLoading } =
-  //   useShippingClassesQuery();
+  const { data, error, isLoading } = useSwr<any>(
+    '/api/admin/settings',
+    fetcher
+  );
 
-  // const { data, isLoading: loading, error } = useSettingsQuery();
+  const { settings = {} } = data ?? {};
 
-  const data = {};
-  //   const loading = false;
-  const error = null;
+  useGetStaff(client);
+  useErrorLogger(error);
 
-  // if (loading || shippingLoading || taxLoading)
-  //   return <Loader text={t("common:text-loading")} />;
-  if (error) return <ErrorMessage message={error.message} />;
+  if (isLoading) {
+    return <Loader text={t('common:text-loading')} />;
+  }
+  if (!isEmpty(error)) {
+    return <ErrorMessage message={t('common:MESSAGE_SOMETHING_WENT_WRONG')} />;
+  }
+
   return (
     <>
       <div className="py-5 sm:py-8 flex border-b border-dashed border-border-base">
@@ -31,15 +41,35 @@ export default function AccountInformation() {
           {t('form:form-title-settings')}
         </h1>
       </div>
-      <SettingsForm settings={data} />
+      <SettingsForm settings={settings} />
     </>
   );
 }
 
 AccountInformation.Layout = AppLayout;
 
-export const getStaticProps = async ({ locale }: any) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['form', 'common']))
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { locale } = context;
+  const { client } = verifyAuth(context);
+
+  if (!client) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: ROUTES.LOGIN
+      }
+    };
   }
-});
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, [
+        'form',
+        'common',
+        'table',
+        'error'
+      ])),
+      client
+    }
+  };
+};

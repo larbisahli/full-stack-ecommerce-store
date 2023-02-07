@@ -33,7 +33,7 @@ export function getCategoriesForAdmin(): string {
   'updatedBy', ((SELECT json_build_object('id', child_stu.id, 'firstName', child_stu.first_name, 'lastName', child_stu.last_name) 
   FROM staff_accounts AS child_stu WHERE child_stu.id = child_cate.updated_by))) 
   FROM categories AS child_cate WHERE child_cate.parent_id = cate.id)) AS children
-  FROM categories AS cate WHERE cate.parent_id IS NULL LIMIT $1 OFFSET $2`;
+  FROM categories AS cate WHERE cate.parent_id IS NULL order by cate.created_at DESC LIMIT $1 OFFSET $2`;
 }
 
 export function getCategoriesParentsSelectForAdmin(): string {
