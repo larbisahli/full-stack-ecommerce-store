@@ -215,19 +215,51 @@ CREATE INDEX idx_slideshows_publish ON slideshows (published);
 
 CREATE TABLE IF NOT EXISTS settings (
   id VARCHAR(50) NOT NULL,
-  logo_image_path TEXT,
-  favicon_image_path TEXT,
+  logo_image_path TEXT DEFAULT NULL,
+  favicon_image_path TEXT DEFAULT NULL,
+  store_name VARCHAR(255) DEFAULT NULL,
+  store_email VARCHAR(255) DEFAULT NULL,
+  store_number VARCHAR(255) DEFAULT NULL,
+  max_checkout_quantity INTEGER DEFAULT NULL,
   currency JSONB,
-  meta_title VARCHAR(150),
-  meta_description TEXT,
-  meta_tags TEXT,
-  og_title VARCHAR(150),
-  og_description TEXT,
-  og_image_path TEXT,
-  twitter_handle VARCHAR(150),
-  social JSONB,
+  meta_title VARCHAR(150) DEFAULT NULL,
+  meta_description TEXT DEFAULT NULL,
+  meta_tags TEXT DEFAULT NULL,
+  og_title VARCHAR(150) DEFAULT NULL,
+  og_description TEXT DEFAULT NULL,
+  og_image_path TEXT DEFAULT NULL,
+  twitter_handle VARCHAR(150) DEFAULT NULL,
+  socials JSONB DEFAULT NULL,
+  google JSONB DEFAULT NULL,
+  facebook JSONB DEFAULT NULL,
   PRIMARY KEY (id)
 );
+
+-- Default settings
+INSERT INTO settings (id, store_number, store_email, store_name, max_checkout_quantity, currency, socials)
+  VALUES ('store', '+212619080914', 'store@demo.com', 'My store', 10, '{
+    "symbol": "$",
+    "name": "US Dollar",
+    "symbol_native": "$",
+    "decimal_digits": 2,
+    "rounding": 0,
+    "code": "USD",
+    "name_plural": "US dollars"
+  }', '
+  [
+    {
+      "url": "https://www.facebook.com/",
+      "icon": {"value": "FacebookIcon"}
+    },
+    {
+      "url": "https://twitter.com/home",
+      "icon": {"value": "TwitterIcon"}
+    },
+    {
+      "url": "https://www.instagram.com/",
+      "icon": {"value": "InstagramIcon"}
+    }
+  ]');
 
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION update_at_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();

@@ -6,6 +6,7 @@ export * as loginQueries from './login.sql';
 export * as orderQueries from './order.sql';
 export * as orderStatusQueries from './orderStatus.sql';
 export * as productQueries from './product.sql';
+export * as settingsQueries from './settings.sql';
 export * as shippingQueries from './shipping.sql';
 export * as staffQueries from './staff.sql';
 export * as supplierQueries from './supplier.sql';

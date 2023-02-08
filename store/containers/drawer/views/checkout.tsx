@@ -1,3 +1,5 @@
+import 'react-phone-input-2/lib/style.css';
+
 import { useAppDispatch, useAppSelector } from '@hooks/use-store';
 import { clearCart } from '@redux/card/index';
 import ArrowLeft from '@store/assets/icons/arrow-left';
@@ -7,11 +9,12 @@ import Textarea from '@store/components/textarea';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { ProductType } from '@ts-types/generated';
 import { useContext, useState } from 'react';
+import PhoneInput from 'react-phone-input-2';
 
 import OrderSubmit from './order-submit';
 
 const initialState = {
-  phoneNumber: '',
+  phoneNumber: '+212',
   fullName: '',
   address: '',
   city: ''
@@ -79,7 +82,9 @@ export default function Checkout() {
   };
 
   const onChange = (e) => {
+    console.log({ e });
     const { value, name } = e.currentTarget;
+    if (!value && name === 'phoneNumber') return;
     setFormData({
       ...formData,
       [name]: value
@@ -116,13 +121,15 @@ export default function Checkout() {
               value={formData.fullName}
               onChange={onChange}
             />
-            <Input
-              placeholder="Phone Number"
-              className="mb-10px border border-gray-400 placeholder:text-gray-400"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={onChange}
-            />
+            <div className="border border-gray-400 rounded">
+              <PhoneInput
+                country={'MA'}
+                value={formData.phoneNumber}
+                onChange={(value) =>
+                  onChange({ currentTarget: { value, name: 'phoneNumber' } })
+                }
+              />
+            </div>
             {error?.field === 'phoneNumber' && (
               <p className="text-12px font-semibold text-error pt-10px pl-15px">
                 {error.message}

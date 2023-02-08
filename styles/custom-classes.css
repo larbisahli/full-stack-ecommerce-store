@@ -122,3 +122,8 @@
   width: 95%;
   margin: 0 auto;
 }
+
+.react-tel-input .form-control {
+  width: 100% !important;
+  padding: inherit 5px !important;
+}

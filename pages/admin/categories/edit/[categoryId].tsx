@@ -5,7 +5,6 @@ import Loader from '@components/ui/loader/loader';
 import { useErrorLogger, useGetStaff } from '@hooks/index';
 import { verifyAuth, XSRFHandler } from '@middleware/utils';
 import { SSRProps } from '@ts-types/custom.types';
-import { Category } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
 import { fetcher } from '@utils/utils';
 import type { GetServerSideProps } from 'next';
@@ -15,9 +14,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React from 'react';
 import useSwr from 'swr';
 
-interface TCategory {
-  category: Category;
-}
 export default function UpdateCategoriesPage({ client }: SSRProps) {
   const { query } = useRouter();
   const { t } = useTranslation();

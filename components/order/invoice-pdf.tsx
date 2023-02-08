@@ -74,7 +74,7 @@ export default function InvoicePdf({ order }) {
               >
                 {order?.fullName}
               </Text>
-              <Text style={styles.addressText}>{order?.phoneNumber}</Text>
+              <Text style={styles.addressText}>{`+${order?.phoneNumber}`}</Text>
               <Text style={styles.addressText}>
                 {formatAddress(order?.addressLine1)}
               </Text>

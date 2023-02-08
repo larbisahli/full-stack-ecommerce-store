@@ -108,7 +108,7 @@ const OrderList = ({
       align: alignLeft,
       width: 120,
       render: (phoneNumber: string) => (
-        <div className="whitespace-nowrap font-semibold">{phoneNumber}</div>
+        <div className="whitespace-nowrap font-semibold">{`+${phoneNumber}`}</div>
       )
     },
     {

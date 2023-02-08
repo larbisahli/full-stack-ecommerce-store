@@ -24,7 +24,12 @@ import {
 
 import { settingsValidationSchema } from './settings-validation-schema';
 
-type ContactDetailsInput = {
+type FormValues = {
+  currency: any;
+  logo: any;
+  storeName: string;
+  storeEmail: string;
+  storeNumber: string;
   socials: {
     url: string;
     icon: {
@@ -32,23 +37,7 @@ type ContactDetailsInput = {
       label: string;
     };
   }[];
-};
-
-type FormValues = {
-  siteTitle: string;
-  siteSubtitle: string;
-  currency: any;
-  minimumOrderAmount: number;
-  logo: any;
-  store_name: string;
-  store_email: string;
-  store_number: string;
-  contactDetails: ContactDetailsInput;
-  max_checkout_quantity: number;
-  deliveryTime: {
-    title: string;
-    description: string;
-  };
+  maxCheckoutQuantity: number;
   seo: {
     metaTitle: string;
     metaDescription: string;
@@ -121,19 +110,14 @@ export default function SettingsForm({ settings = {} }: IProps) {
     resolver: yupResolver(settingsValidationSchema),
     defaultValues: {
       ...settings,
-      contactDetails: {
-        ...settings?.contactDetails,
-        socials: settings?.contactDetails?.socials
-          ? settings?.contactDetails?.socials.map((social: any) => ({
-              icon: updatedIcons?.find((icon) => icon?.value === social?.icon),
-              url: social?.url
-            }))
-          : []
-      },
-      logo: settings?.logo ?? '',
-      currency: settings?.currency
-        ? CURRENCY.find((item) => item.code == settings?.currency)
-        : ''
+      socials: settings?.socials
+        ? settings?.socials.map((social: any) => ({
+            icon: updatedIcons?.find(
+              (icon) => icon?.value === social?.icon?.value
+            ),
+            url: social?.url
+          }))
+        : []
     }
   });
 
@@ -143,7 +127,7 @@ export default function SettingsForm({ settings = {} }: IProps) {
     remove: socialRemove
   } = useFieldArray({
     control,
-    name: 'contactDetails.socials'
+    name: 'socials'
   });
 
   async function onSubmit(values: FormValues) {
@@ -195,24 +179,24 @@ export default function SettingsForm({ settings = {} }: IProps) {
         <Card className="w-full sm:w-8/12 md:w-2/3">
           <Input
             label={t('form:input-label-store-name')}
-            {...register('store_name')}
-            error={t(errors.store_name?.message!)}
+            {...register('storeName')}
+            error={t(errors.storeName?.message!)}
             variant="outline"
             className="mb-5"
           />
           <Input
             label={t('form:input-label-store-contact-email')}
-            {...register('store_email')}
-            error={t(errors.store_email?.message!)}
+            {...register('storeEmail')}
+            error={t(errors.storeEmail?.message!)}
             variant="outline"
             className="mb-5"
           />
           <Input
             label={t('form:input-label-store-contact-number')}
-            {...register('store_number')}
+            {...register('storeNumber')}
             variant="outline"
             className="mb-5"
-            error={t(errors.store_number?.message!)}
+            error={t(errors.storeNumber?.message!)}
           />
           <div className="mb-5">
             <Label>{t('form:input-label-currency')}</Label>
@@ -228,9 +212,9 @@ export default function SettingsForm({ settings = {} }: IProps) {
 
           <Input
             label={`${t('form:input-label-max-checkout-quantity')}`}
-            {...register('max_checkout_quantity')}
+            {...register('maxCheckoutQuantity')}
             type="number"
-            error={t(errors.max_checkout_quantity?.message!)}
+            error={t(errors.maxCheckoutQuantity?.message!)}
             variant="outline"
             className="mb-5"
           />
@@ -309,7 +293,7 @@ export default function SettingsForm({ settings = {} }: IProps) {
                       {t('form:input-label-select-platform')}
                     </Label>
                     <SelectInput
-                      name={`contactDetails.socials.${index}.icon` as const}
+                      name={`socials.${index}.icon` as const}
                       control={control}
                       options={updatedIcons}
                       isClearable={true}
@@ -320,9 +304,7 @@ export default function SettingsForm({ settings = {} }: IProps) {
                     className="sm:col-span-2"
                     label={t('form:input-label-social-url')}
                     variant="outline"
-                    {...register(
-                      `contactDetails.socials.${index}.url` as const
-                    )}
+                    {...register(`socials.${index}.url` as const)}
                     defaultValue={item.url!} // make sure to set up defaultValue
                   />
                   <button
