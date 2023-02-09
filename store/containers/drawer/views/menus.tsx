@@ -2,10 +2,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { PhoneIcon } from '@components/icons/phone';
+import ImageComponent from '@components/ImageComponent';
+import { useSettings } from '@contexts/settings.context';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import ChevronDown from '@store/assets/icons/chevron-down';
 import CloseIcon from '@store/assets/icons/close';
-import Logo from '@store/assets/icons/logo';
 import {
   Facebook,
   Github,
@@ -43,46 +44,28 @@ const menus = [
 
 const social = [
   {
-    id: 0,
-    link: '/',
+    id: 'FacebookIcon',
     icon: <Facebook />,
     className: 'facebook',
     title: 'facebook'
   },
   {
-    id: 1,
-    link: '/',
+    id: 'TwitterIcon',
     icon: <Twitter />,
     className: 'twitter',
     title: 'twitter'
   },
   {
-    id: 2,
-    link: '/',
+    id: 'YouTubeIcon',
     icon: <Youtube />,
     className: 'youtube',
     title: 'youtube'
   },
   {
-    id: 3,
-    link: '/',
-    icon: <Github />,
-    className: 'github',
-    title: 'github'
-  },
-  {
-    id: 4,
-    link: '/',
+    id: 'InstagramIcon',
     icon: <Instagram />,
     className: 'instagram',
     title: 'instagram'
-  },
-  {
-    id: 5,
-    link: '/',
-    icon: <Linkedin />,
-    className: 'linkedin',
-    title: 'linkedin'
   }
 ];
 
@@ -107,21 +90,29 @@ export default function DrawerMenu() {
     });
   };
 
+  const { storeName, logo, storeNumber, socials } = useSettings();
+
+  console.log({ socials });
+
   return (
     <>
       <div className="flex flex-col w-full h-full overflow-auto">
         <div className="w-full h-90px bg-gray-100 flex justify-start items-center relative px-30px flex-shrink-0">
           <Link href="/">
             <a className="flex" onClick={hideMenu}>
-              <span className="sr-only">Medsy</span>
-              <Logo width="100px" id="medsy-menu-logo" />
+              <span className="sr-only">{storeName}</span>
+              <ImageComponent
+                src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
+                height={31}
+                width={31}
+              />
             </a>
           </Link>
 
           <div className="flex items-center justify-end ml-auto pl-30px pr-50px text-gray-700 flex-shrink-0 lg:hidden">
             <PhoneIcon width="15px" height="15px" />
             <span className="font-semibold text-base text-14px ml-3">
-              +1 855-766-5885
+              {storeNumber}
             </span>
           </div>
 
@@ -163,7 +154,10 @@ export default function DrawerMenu() {
         <div className="flex items-center justify-start border-t border-gray-300 bg-gray-100 h-12 px-30px flex-shrink-0 lg:hidden">
           {social.map((item, index) => (
             <a
-              href={item.link}
+              href={
+                (socials?.items ?? [])?.find((x) => x?.icon?.value === item.id)
+                  ?.url
+              }
               className={`social ${item.className}`}
               target="_blank"
               key={index}

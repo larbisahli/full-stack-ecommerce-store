@@ -2,32 +2,43 @@ import { useSettings } from '@contexts/settings.context';
 import { DefaultSeo as NextDefaultSeo } from 'next-seo';
 
 const DefaultSeo = () => {
-  const settings = useSettings();
+  const {
+    seo: {
+      metaTitle,
+      metaDescription,
+      ogDescription,
+      ogTitle,
+      ogImage,
+      twitterHandle
+    },
+    canonicalUrl,
+    storeName
+  } = useSettings();
+
   return (
     <NextDefaultSeo
-      title={settings.siteTitle ?? 'Store'}
-      titleTemplate={`%s | ${settings?.seo?.metaTitle ?? 'E-Commerce'}`}
-      description={settings?.seo?.metaDescription || settings?.siteSubtitle}
-      canonical={settings?.seo?.canonicalUrl}
+      title={metaTitle ?? 'Store'}
+      titleTemplate={metaTitle ?? 'E-Commerce'}
+      description={metaDescription || ''}
+      canonical={canonicalUrl ?? ''}
       openGraph={{
-        title: settings?.seo?.ogTitle,
-        description: settings?.seo?.ogDescription,
+        title: ogTitle,
+        description: ogDescription,
         type: 'website',
         locale: 'en_US',
-        site_name: settings?.siteTitle,
+        site_name: storeName,
         images: [
           {
-            url: settings?.seo?.ogImage?.original,
+            url: `${process.env.S3_ENDPOINT}/${ogImage?.image}`,
             width: 800,
             height: 600,
-            alt: settings?.seo?.ogTitle
+            alt: ogTitle
           }
         ]
       }}
       twitter={{
-        handle: settings?.seo?.twitterHandle,
-        site: settings?.siteTitle,
-        cardType: settings?.seo?.twitterCardType
+        handle: twitterHandle,
+        site: storeName
       }}
       additionalMetaTags={[
         {

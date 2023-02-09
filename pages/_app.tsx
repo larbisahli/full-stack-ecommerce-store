@@ -11,9 +11,9 @@ import LoadingBar from '@components/ui/loading-bar';
 // import ErrorMessage from "@components/ui/error-message";
 import ManagedModal from '@components/ui/modal/managed-modal';
 import { ModalProvider } from '@components/ui/modal/modal.context';
+import { SettingsProvider } from '@contexts/settings.context';
 import { StaffInfoProvider } from '@contexts/staff.context';
 import { TimeCacheProvider } from '@contexts/time.context';
-// import { SettingsProvider } from "@contexts/settings.context";
 import { UIProvider } from '@contexts/ui.context';
 import store from '@redux/index';
 // import { ModalProvider } from 'contexts/modal/modal.provider';
@@ -83,29 +83,31 @@ function App({ Component, pageProps }: AppProps) {
         transition={Slide}
       />
       <Provider store={store}>
-        <ErrorBoundary>
-          <SearchProvider>
-            <StickyProvider>
-              <DrawerProvider>
-                <TimeCacheProvider>
-                  <StaffInfoProvider>
-                    <LoadingBar />
-                    {/* <AppSettings> */}
-                    <UIProvider>
-                      <ModalProvider>
-                        <ManagedModal />
-                        <Layout {...pageProps}>
-                          <Component {...pageProps} />
-                        </Layout>
-                      </ModalProvider>
-                    </UIProvider>
-                    {/* </AppSettings> */}
-                  </StaffInfoProvider>
-                </TimeCacheProvider>
-              </DrawerProvider>
-            </StickyProvider>
-          </SearchProvider>
-        </ErrorBoundary>
+        <SettingsProvider>
+          <ErrorBoundary>
+            <SearchProvider>
+              <StickyProvider>
+                <DrawerProvider>
+                  <TimeCacheProvider>
+                    <StaffInfoProvider>
+                      <LoadingBar />
+                      {/* <AppSettings> */}
+                      <UIProvider>
+                        <ModalProvider>
+                          <ManagedModal />
+                          <Layout {...pageProps}>
+                            <Component {...pageProps} />
+                          </Layout>
+                        </ModalProvider>
+                      </UIProvider>
+                      {/* </AppSettings> */}
+                    </StaffInfoProvider>
+                  </TimeCacheProvider>
+                </DrawerProvider>
+              </StickyProvider>
+            </SearchProvider>
+          </ErrorBoundary>
+        </SettingsProvider>
       </Provider>
     </Fragment>
   );

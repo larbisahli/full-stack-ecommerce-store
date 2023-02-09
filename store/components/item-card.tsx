@@ -19,13 +19,13 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   const percentDecrease = usePercentDecrease({ comparePrice, salePrice });
 
   const {
-    currency: { currencyCode = 'usd' }
+    currency: { code = 'usd' }
   } = useSettings();
 
   const price = usePrice({
     amount: salePrice,
     locale: 'en',
-    currencyCode
+    currencyCode: code
   });
 
   const productPrice = useMemo(
@@ -40,7 +40,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   const discount = usePrice({
     amount: comparePrice,
     locale: 'en',
-    currencyCode
+    currencyCode: code
   });
 
   const productDiscount = useMemo(

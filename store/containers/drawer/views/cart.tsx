@@ -16,7 +16,7 @@ export default function Cart() {
   const { locale } = router;
 
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const items = useAppSelector((state) => state.cart.items);
@@ -44,7 +44,7 @@ export default function Cart() {
   const totalPrice = usePrice({
     amount: UseCartItemsTotalPrice(),
     locale,
-    currencyCode
+    currencyCode: code
   });
 
   return (

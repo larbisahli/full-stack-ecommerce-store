@@ -27,7 +27,7 @@ export const siteSettings = {
       labelTransKey: 'authorized-nav-item-logout'
     }
   ],
-  currencyCode: 'USD',
+  code: 'USD',
   sidebarLinks: {
     admin: [
       {

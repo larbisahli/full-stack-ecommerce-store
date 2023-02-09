@@ -13,13 +13,13 @@ import dayjs from 'dayjs';
 
 const ProductItem = ({ product, index }) => {
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const price = usePrice({
     amount: Number(product?.unitPrice),
     locale: 'us',
-    currencyCode
+    currencyCode: code
   });
 
   return (
@@ -44,13 +44,13 @@ const ProductItem = ({ product, index }) => {
 
 export default function InvoicePdf({ order }) {
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const total = usePrice({
     amount: Number(order?.total),
     locale: 'us',
-    currencyCode
+    currencyCode: code
   });
 
   return (

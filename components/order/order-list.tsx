@@ -26,13 +26,13 @@ const Price = ({ total }) => {
   const router = useRouter();
   const { locale } = router;
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const price = usePrice({
     amount: Number(total),
     locale,
-    currencyCode
+    currencyCode: code
   });
   return (
     <span className="text-black font-semibold whitespace-nowrap">{price}</span>

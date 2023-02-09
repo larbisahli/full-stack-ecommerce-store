@@ -149,13 +149,13 @@ export default function OrderDetailsPage({ client }: SSRProps) {
   ];
 
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const total = usePrice({
     amount: order?.total,
     locale: 'us',
-    currencyCode
+    currencyCode: code
   });
 
   if (isLoading) return <Loader text={t('common:text-loading')} />;
@@ -247,13 +247,13 @@ export default function OrderDetailsPage({ client }: SSRProps) {
 
 const UnitPrice = ({ amount }) => {
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const price = usePrice({
     amount,
     locale: 'us',
-    currencyCode
+    currencyCode: code
   });
   return <span>{price}</span>;
 };

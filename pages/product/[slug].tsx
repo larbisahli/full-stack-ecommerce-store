@@ -1,16 +1,32 @@
+import { useSettings } from '@contexts/settings.context';
 import Breadcrumb from '@store/components/breadcrumb';
 import Layout from '@store/containers/layout/layout';
 import ProductDetails from '@store/containers/product/product-details';
-import { Category, Product } from '@ts-types/generated';
+import { Category, Product, Settings } from '@ts-types/generated';
+import isEmpty from 'lodash/isEmpty';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { useEffect } from 'react';
 
 interface ProductProps {
   product: Product;
   categories: Category[];
+  settings: Settings;
 }
 
-export default function ProductPage({ product, categories }: ProductProps) {
+export default function ProductPage({
+  product,
+  categories,
+  settings
+}: ProductProps) {
+  const { updateSettings } = useSettings();
+
+  useEffect(() => {
+    if (!isEmpty(settings)) {
+      updateSettings(settings);
+    }
+  }, [settings]);
+
   return (
     <Layout style={{ height: 'auto' }} categories={categories}>
       <Head>
@@ -65,9 +81,10 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  let product = {};
-  let categories = [];
-  let error = null;
+  let product = {},
+    categories = [],
+    settings = {},
+    error = null;
   try {
     categories = await fetch(`${process.env.URL}/api/store/category/categories`)
       .then((data) => data.json())
@@ -78,6 +95,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     )
       .then((data) => data.json())
       .then(({ product }) => product ?? {});
+
+    settings = await fetch(`${process.env.URL}/api/store/settings`)
+      .then((data) => data.json())
+      .then(({ settings }) => settings ?? {});
   } catch (err) {
     console.log('error :::>', err);
     error = err?.message ?? null;
@@ -87,6 +108,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       product,
       categories,
+      settings,
       error
     },
     revalidate: 60 // Every minute,

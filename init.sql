@@ -246,7 +246,8 @@ INSERT INTO settings (id, store_number, store_email, store_name, max_checkout_qu
     "code": "USD",
     "name_plural": "US dollars"
   }', '
-  [
+  {
+    "items": [
     {
       "url": "https://www.facebook.com/",
       "icon": {"value": "FacebookIcon"}
@@ -259,7 +260,8 @@ INSERT INTO settings (id, store_number, store_email, store_name, max_checkout_qu
       "url": "https://www.instagram.com/",
       "icon": {"value": "InstagramIcon"}
     }
-  ]');
+  ]
+  }');
 
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION update_at_timestamp() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();

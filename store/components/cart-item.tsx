@@ -19,7 +19,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 
   const dispatch = useAppDispatch();
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const {
@@ -39,13 +39,13 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const unitPrice = usePrice({
     amount: price,
     locale,
-    currencyCode
+    currencyCode: code
   });
 
   const finalPrice = usePrice({
     amount: price * item.orderQuantity,
     locale,
-    currencyCode
+    currencyCode: code
   });
 
   const thumbnail =

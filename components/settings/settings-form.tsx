@@ -10,8 +10,10 @@ import Label from '@components/ui/label';
 import SelectInput from '@components/ui/select-input';
 import TextArea from '@components/ui/text-area';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { notify } from '@lib/notify';
 import { siteSettings } from '@settings/site.settings';
 import { CURRENCY } from '@utils/currency';
+import isEmpty from 'lodash/isEmpty';
 // import { getFormattedImage } from '@utils/get-formatted-image';
 // import omit from 'lodash/omit';
 import { useTranslation } from 'next-i18next';
@@ -24,19 +26,20 @@ import {
 
 import { settingsValidationSchema } from './settings-validation-schema';
 
+type Socials = {
+  url: string;
+  icon: {
+    value: string;
+    label: string;
+  };
+};
 type FormValues = {
   currency: any;
   logo: any;
   storeName: string;
   storeEmail: string;
   storeNumber: string;
-  socials: {
-    url: string;
-    icon: {
-      value: string;
-      label: string;
-    };
-  }[];
+  socials: Socials[];
   maxCheckoutQuantity: number;
   seo: {
     metaTitle: string;
@@ -110,13 +113,15 @@ export default function SettingsForm({ settings = {} }: IProps) {
     resolver: yupResolver(settingsValidationSchema),
     defaultValues: {
       ...settings,
-      socials: settings?.socials
-        ? settings?.socials.map((social: any) => ({
-            icon: updatedIcons?.find(
-              (icon) => icon?.value === social?.icon?.value
-            ),
-            url: social?.url
-          }))
+      socials: !isEmpty(settings?.socials)
+        ? (settings?.socials as unknown as { items: Socials[] })?.items?.map(
+            (social: any) => ({
+              icon: updatedIcons?.find(
+                (icon) => icon?.value === social?.icon?.value
+              ),
+              url: social?.url
+            })
+          )
         : []
     }
   });
@@ -131,7 +136,36 @@ export default function SettingsForm({ settings = {} }: IProps) {
   });
 
   async function onSubmit(values: FormValues) {
-    console.log('values', values);
+    const variable = {
+      ...values,
+      socials: {
+        items: values?.socials?.map((social) => {
+          return {
+            url: social?.url,
+            icon: { value: social?.icon.value }
+          };
+        })
+      }
+    };
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(variable)
+    };
+
+    console.log('variable', variable);
+    fetch('/api/admin/settings/update', requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.settings?.id) {
+          notify(t('common:successfully-updated'), 'success');
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
   }
 
   const logoInformation = (

@@ -22,7 +22,7 @@ function VariationPrice({
   const { locale } = router;
 
   const {
-    currency: { currencyCode }
+    currency: { code }
   } = useSettings();
 
   const selectedSalePrice = isVariableType
@@ -40,7 +40,7 @@ function VariationPrice({
   const price = usePrice({
     amount: selectedSalePrice ?? 0,
     locale,
-    currencyCode
+    currencyCode: code
   });
 
   const productPrice = useMemo(
@@ -55,7 +55,7 @@ function VariationPrice({
   const discount = usePrice({
     amount: selectedComparePrice,
     locale,
-    currencyCode
+    currencyCode: code
   });
 
   const productDiscount = useMemo(

@@ -1,30 +1,24 @@
-import React, { useMemo } from 'react';
-export interface State {
-  settings: any;
+import { Settings } from '@ts-types/generated';
+import React, { Dispatch, SetStateAction, useMemo } from 'react';
+export interface State extends Settings {
+  updateSettings: Dispatch<SetStateAction<Settings>>;
 }
 
 const initialState = {
-  siteTitle: 'DropGala',
-  siteSubtitle: '',
   currency: {
-    currencyCode: 'USD'
+    code: 'USD'
   },
-  logo: {
-    id: 1,
-    thumbnail: '/logo.svg',
-    original: '/logo.svg'
-  }
+  seo: {},
+  socials: {},
+  updateSettings: () => undefined
 };
 
-export const SettingsContext = React.createContext<State | any>(initialState);
+export const SettingsContext = React.createContext<State>(initialState);
 
 SettingsContext.displayName = 'SettingsContext';
 
-export const SettingsProvider: React.FC<{ initialValue: any }> = ({
-  initialValue,
-  ...props
-}) => {
-  const [state, updateSettings] = React.useState(initialValue ?? initialState);
+export const SettingsProvider: React.FC = ({ ...props }) => {
+  const [state, updateSettings] = React.useState(initialState);
   const value = useMemo(
     () => ({
       ...state,

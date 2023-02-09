@@ -5,12 +5,13 @@ export function getSettings(): string {
          (SELECT json_build_object(
          'metaTitle', meta_title, 'metaDescription', meta_description, 
          'metaTags', meta_tags, 'ogTitle', og_title, 
-         'ogDescription', og_description, 'ogImage', og_image_path, 
+         'ogDescription', og_description, 'ogImage', (SELECT json_build_object('image', og_image_path)), 
          'twitterHandle', twitter_handle)) AS "seo" FROM settings WHERE id = 'store'`;
 }
 
 export function updateSettings(): string {
   return `UPDATE settings SET logo_image_path = $1, favicon_image_path = $2, currency = $3,
           meta_title = $4, meta_description = $5, meta_tags = $6, og_title = $7,
-          og_description = $8, og_image_path = $9, twitter_handle = $10, social = $11 WHERE id = 'store' RETURNING id`;
+          og_description = $8, og_image_path = $9, twitter_handle = $10, socials = $11, max_checkout_quantity = $12,
+          store_email = $13, store_name = $14, store_number = $15 WHERE id = 'store' RETURNING id`;
 }

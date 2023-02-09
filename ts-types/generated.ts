@@ -339,6 +339,45 @@ export interface HeroBannerType {
   displayOrder?: Scalars['Int'];
 }
 
+export interface Settings {
+  currency?: any;
+  logo?: any;
+  storeName?: string;
+  storeEmail?: string;
+  storeNumber?: string;
+  canonicalUrl?: string;
+  socials?: {
+    items?: {
+      url: string;
+      icon: {
+        value: string;
+        label: string;
+      };
+    }[];
+  };
+  maxCheckoutQuantity?: number;
+  seo?: {
+    metaTitle: string;
+    metaDescription: string;
+    ogTitle: string;
+    ogDescription: string;
+    ogImage: any;
+    twitterHandle: string;
+    twitterCardType: string;
+    metaTags: string;
+    canonicalUrl: string;
+  };
+  google?: {
+    isEnable: boolean;
+    tagManagerId: string;
+  };
+  facebook?: {
+    isEnable: boolean;
+    appId: string;
+    pageId: string;
+  };
+}
+
 export interface HeroCarouselType extends CreatedUpdatedByAt {
   id?: Scalars['ID'];
   destinationUrl?: Nullable<Scalars['String']>;

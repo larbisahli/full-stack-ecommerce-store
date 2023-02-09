@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import ImageComponent from '@components/ImageComponent';
+import { useSettings } from '@contexts/settings.context';
 import { useCartItemsCount } from '@hooks/use-store';
 import CartIcon from '@store/assets/icons/cart-icon';
 import CategoriesSvg from '@store/assets/icons/categories';
-import Logo from '@store/assets/icons/logo';
 import PhoneIcon from '@store/assets/icons/phone';
-import { useCart } from '@store/contexts/cart/cart.provider';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { StickyContext } from '@store/contexts/sticky/sticky.provider';
 import { useMedia } from '@store/helpers/use-media';
@@ -69,6 +69,8 @@ export default function Header({ categories }: Props) {
   const categoryLimit = 5;
   const selectedCategories = categories?.slice(0, categoryLimit);
 
+  const { storeName, logo, storeNumber } = useSettings();
+
   return (
     <header className="flex items-center justify-between shadow-mobile text-gray-700 body-font fixed bg-white w-full h-60px z-20 lg:shadow-header pr-20px md:pr-30px lg:pr-40px">
       {/* MENU SECTION */}
@@ -87,8 +89,12 @@ export default function Header({ categories }: Props) {
 
         <Link href="/">
           <a className="hidden mx-auto lg:mr-10 lg:flex">
-            <span className="sr-only">Logo</span>
-            <Logo width="110px" id="header-logo" />
+            <span className="sr-only">{storeName}</span>
+            <ImageComponent
+              src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
+              height={31}
+              width={31}
+            />
           </a>
         </Link>
       </div>
@@ -120,7 +126,7 @@ export default function Header({ categories }: Props) {
         <div className="hidden items-center text-gray-900 mr-10 flex-shrink-0 lg:flex">
           <PhoneIcon />
           <span className="font-semibold text-base text-14px ml-3">
-            +1 855-766-5885
+            {storeNumber}
           </span>
         </div>
 

@@ -1,4 +1,5 @@
 import DefaultSeo from '@components/ui/default-seo';
+import { useSettings } from '@contexts/settings.context';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import CategorySlider from '@store/components/CategorySlider';
 import HeroBlock from '@store/containers/banner/hero-block';
@@ -7,19 +8,31 @@ import Layout from '@store/containers/layout/layout';
 import Products from '@store/containers/products';
 import { useSearch } from '@store/contexts/search/use-search';
 import { useRefScroll } from '@store/helpers/use-ref-scroll';
-import { HeroBannerType, Product } from '@ts-types/generated';
+import {
+  Category,
+  HeroBannerType,
+  Product,
+  Settings
+} from '@ts-types/generated';
+import isEmpty from 'lodash/isEmpty';
 import Head from 'next/head';
 import { useEffect } from 'react';
-import Category from 'repositories/category';
 
 interface props {
   categories: Category[];
   banners: HeroBannerType[];
   products: Product[];
   error: any;
+  settings: Settings;
 }
 
-export default function Home({ categories, banners, products, error }: props) {
+export default function Home({
+  categories,
+  banners,
+  products,
+  settings,
+  error
+}: props) {
   useErrorLogger(error);
   const { elRef, scroll } = useRefScroll({
     percentOfElement: 0,
@@ -31,7 +44,16 @@ export default function Home({ categories, banners, products, error }: props) {
     if (searchTerm) return scroll();
   }, [searchTerm]);
 
-  console.log('index :>', { categories, banners, products });
+  const {
+    updateSettings,
+    seo: { metaTags }
+  } = useSettings();
+
+  useEffect(() => {
+    if (!isEmpty(settings)) {
+      updateSettings(settings);
+    }
+  }, [settings]);
 
   return (
     <Layout categories={categories}>
@@ -41,10 +63,8 @@ export default function Home({ categories, banners, products, error }: props) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
-        <meta name="Description" content="Put your description here." />
-        <title>Store</title>
+        <meta name="keywords" content={metaTags}></meta>
       </Head>
-
       <HeroBlock heroBanners={banners} />
       <HowItWorks />
       <div className="w-full px-15px lg:px-35px mt-35px xxl:mt-60px">
@@ -56,28 +76,41 @@ export default function Home({ categories, banners, products, error }: props) {
 }
 
 export async function getStaticProps() {
-  const categories = await fetch(
-    `${process.env.URL}/api/store/category/categories`
-  )
-    .then((data) => data.json())
-    .then(({ categories }) => categories ?? []);
+  let categories = [],
+    banners = [],
+    products = [],
+    settings = {},
+    error = null;
+  try {
+    categories = await fetch(`${process.env.URL}/api/store/category/categories`)
+      .then((data) => data.json())
+      .then(({ categories }) => categories ?? []);
 
-  const banners = await fetch(`${process.env.URL}/api/store/banner/banners`)
-    .then((data) => data.json())
-    .then(({ banners }) => banners ?? []);
+    banners = await fetch(`${process.env.URL}/api/store/banner/banners`)
+      .then((data) => data.json())
+      .then(({ banners }) => banners ?? []);
 
-  const products = await fetch(
-    `${process.env.URL}/api/store/product/products/home/10`
-  )
-    .then((data) => data.json())
-    .then(({ products }) => products ?? []);
+    products = await fetch(
+      `${process.env.URL}/api/store/product/products/home/10`
+    )
+      .then((data) => data.json())
+      .then(({ products }) => products ?? []);
+
+    settings = await fetch(`${process.env.URL}/api/store/settings`)
+      .then((data) => data.json())
+      .then(({ settings }) => settings ?? {});
+  } catch (err) {
+    console.log('error :::>', err);
+    error = err?.message ?? null;
+  }
 
   return {
     props: {
       categories,
       banners,
       products,
-      error: null
+      settings,
+      error
     },
     revalidate: 60 // Every minute
   };
