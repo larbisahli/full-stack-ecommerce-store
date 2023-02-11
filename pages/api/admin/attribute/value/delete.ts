@@ -16,7 +16,6 @@ class Handler extends PostgresClient {
     try {
       await this.authorization(req, res);
 
-      // **** TRANSACTION ****
       switch (method) {
         case this.POST: {
           const { rows } = await this.query<AttributeValue, string>(
@@ -35,7 +34,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'createCategory'
+          from: 'deleteAttributeValue'
         }
       });
     }

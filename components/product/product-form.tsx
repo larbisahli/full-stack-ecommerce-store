@@ -278,7 +278,7 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
               />
               <div style={{ fontSize: '.75rem' }} className="mb-5">
                 {shortDescription <= 160 ? (
-                  <span className="text-green-600 ">
+                  <span className="text-green ">
                     {`(${shortDescription}/160 characters max)`}
                   </span>
                 ) : (

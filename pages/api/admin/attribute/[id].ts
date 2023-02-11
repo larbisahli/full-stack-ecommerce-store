@@ -1,5 +1,5 @@
 import PostgresClient from '@lib/database';
-import { attributeQueries, categoryQueries } from '@lib/sql';
+import { attributeQueries } from '@lib/sql';
 import { Category } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -12,6 +12,8 @@ class Handler extends PostgresClient {
     const { query, method } = req;
     const id = query.id as string;
     try {
+      await this.authorization(req, res);
+
       switch (method) {
         case this.GET: {
           const { rows } = await this.query<Category, string>(
@@ -29,7 +31,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'category'
+          from: 'attribute'
         }
       });
     }

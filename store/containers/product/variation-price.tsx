@@ -64,17 +64,17 @@ function VariationPrice({
   );
 
   return (
-    <div className="flex items-center mt-5">
-      <div className="text-skin-base font-bold text-base md:text-2xl xl:text-[22px]">
+    <div className="flex flex-col mt-5">
+      <div className="text-skin-base font-bold text-3xl">
         {!!selectedSalePrice && productPrice}
       </div>
       {selectedComparePrice && (
-        <>
-          <del className="text-sm pl-3 text-skin-base text-opacity-50">
-            {productDiscount}
-          </del>
-          <div className="text-red-600 mx-1">{percentDecrease}</div>
-        </>
+        <div className="flex items-center mt-1">
+          <del className="text-base text-red-700">{productDiscount}</del>
+          <div className="text-white mx-1 px-2 font-semibold bg-red-600">
+            {percentDecrease}
+          </div>
+        </div>
       )}
     </div>
   );

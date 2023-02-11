@@ -14,6 +14,7 @@ class Handler extends PostgresClient {
     const { query, method } = req;
     const id = query.id as string;
     try {
+      await this.authorization(req, res);
       switch (method) {
         case this.GET: {
           await this.authorization(req, res);

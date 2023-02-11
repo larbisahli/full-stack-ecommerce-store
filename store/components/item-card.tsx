@@ -68,6 +68,9 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
               height={290}
               className="rounded m-0 p-0"
             />
+            <div className="rounded-tl bg-red-600 text-lg font-semibold text-white px-4 py-1 absolute top-0 left-0">
+              {percentDecrease}
+            </div>
           </div>
         </div>
         {/* Product info */}
@@ -78,24 +81,18 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
           >
             {name}
           </h2>
-          <div className="mb-1 lg:mb-1.5">
+          <div className="flex items-center">
             <div className="leading-none">
-              <span className="inline-block font-bold text-[16px] lg:text-[19px] text-skin-base">
+              <span className="inline-block font-bold text-red-700  text-[16px] lg:text-[19px] text-skin-base">
                 {productPrice}
               </span>
             </div>
-          </div>
-          {comparePrice && (
-            <div className="flex items-center">
-              <del className="text-[15px] text-opacity-80 text-gray-600">
+            {comparePrice && (
+              <del className="text-[15px] lg:text-[16px] ml-2 text-gray-700 font-semibold">
                 {productDiscount}
               </del>
-              <div className="bg-gray-400 h-[10px] w-[1px] mx-1"></div>
-              <span className="text-[13px] text-red-600">
-                {percentDecrease}
-              </span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </a>
     </Link>

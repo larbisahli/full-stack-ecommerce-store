@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
-import { categoryQueries, settingsQueries } from '@lib/sql';
-import { Category as CategoryType } from '@ts-types/generated';
+import { settingsQueries } from '@lib/sql';
+import { Settings } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -36,7 +36,7 @@ class Handler extends PostgresClient {
 
           console.log(socials);
 
-          const { rows } = await this.query<CategoryType, string>(
+          const { rows } = await this.query<Settings, string>(
             settingsQueries.updateSettings(),
             [
               favicon?.image,

@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
 import { settingsQueries } from '@lib/sql';
-import { Category } from '@ts-types/generated';
+import { Settings } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -13,7 +13,7 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.GET: {
-          const { rows } = await this.query<Category, string>(
+          const { rows } = await this.query<Settings, string>(
             settingsQueries.getSettings(),
             []
           );

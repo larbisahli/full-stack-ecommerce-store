@@ -308,3 +308,7 @@ export function getCategoryProduct(): string {
   (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
   FROM products AS pd WHERE pd.published IS TRUE AND pd.id IN (SELECT pc.product_id FROM product_categories pc WHERE pc.category_id = (SELECT cate.id FROM categories cate WHERE cate.name = $1)) LIMIT $2`;
 }
+
+export function deleteProduct(): string {
+  return `DELETE FROM products WHERE id = $1 RETURNING id`;
+}

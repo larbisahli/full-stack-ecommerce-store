@@ -1,9 +1,6 @@
 import PostgresClient from '@lib/database';
-import { carouselQueries, categoryQueries } from '@lib/sql';
-import {
-  Category as CategoryType,
-  HeroCarouselType
-} from '@ts-types/generated';
+import { carouselQueries } from '@lib/sql';
+import { HeroCarouselType } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -20,7 +17,7 @@ class Handler extends PostgresClient {
           const {
             title,
             destinationUrl,
-            thumbnail: { image = null },
+            thumbnail,
             description,
             btnLabel,
             displayOrder,
@@ -33,7 +30,7 @@ class Handler extends PostgresClient {
           >(carouselQueries.insertSlide(), [
             title,
             destinationUrl,
-            image,
+            thumbnail?.image,
             description,
             btnLabel,
             displayOrder,

@@ -50,7 +50,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'updateCategory'
+          from: 'updateStaff'
         }
       });
     }

@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
 import { productQueries } from '@lib/sql';
-import { ProductType } from 'aws-sdk/clients/servicecatalog';
+import { Product } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -14,7 +14,7 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.GET: {
-          const { rows: products } = await this.query<ProductType, number>(
+          const { rows: products } = await this.query<Product, number>(
             productQueries.getPopularProducts(),
             [limit]
           );

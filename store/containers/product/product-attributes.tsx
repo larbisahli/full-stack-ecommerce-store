@@ -86,10 +86,10 @@ const ProductAttributes: React.FC<Props> = ({
 
   return (
     <div className={cn(className)}>
-      <div className="text-14px font-normal mb-3 capitalize">
-        <span className="text-skin-base font-medium">{attribute?.name}</span>
+      <div className="font-normal mb-3 capitalize">
+        <span className="font-semibold text-base">{attribute?.name}</span>
         <span className="mr-1 font-medium">:</span>
-        <span className="text-13px text-skin-extraMuted">
+        <span className="text-14px text-skin-extraMuted">
           {selectedVariation?.value?.value ?? ''}
         </span>
       </div>

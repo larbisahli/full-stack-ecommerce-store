@@ -341,7 +341,8 @@ export interface HeroBannerType {
 
 export interface Settings {
   currency?: any;
-  logo?: any;
+  logo?: { image: string };
+  favicon?: { image: string };
   storeName?: string;
   storeEmail?: string;
   storeNumber?: string;

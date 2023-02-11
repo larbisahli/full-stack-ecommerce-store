@@ -11,6 +11,8 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
     try {
+      await this.authorization(req, res);
+
       switch (method) {
         case this.GET: {
           const { rows: banners } = await this.query<HeroCarouselType, unknown>(

@@ -1,6 +1,5 @@
 import PostgresClient from '@lib/database';
 import { orderQueries } from '@lib/sql';
-import { Category } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -12,10 +11,10 @@ class Handler extends PostgresClient {
     const { query, method } = req;
     const id = query.id as string;
     try {
+      await this.authorization(req, res);
       switch (method) {
         case this.GET: {
-          this.authorization(req, res);
-          const { rows } = await this.query<Category, string>(
+          const { rows } = await this.query<any, string>(
             orderQueries.getOrder(),
             [id]
           );
@@ -30,7 +29,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'category'
+          from: 'order'
         }
       });
     }

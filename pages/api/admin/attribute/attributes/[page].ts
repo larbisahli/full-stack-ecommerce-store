@@ -13,6 +13,8 @@ class Handler extends PostgresClient {
     const page = parseInt(query.page as string, 10);
     const offset = page === 0 ? 0 : (page - 1) * this.limit;
     try {
+      await this.authorization(req, res);
+
       switch (method) {
         case this.GET: {
           const { rows: attributes } = await this.query<Attribute, number>(
@@ -36,7 +38,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'categories'
+          from: 'attributes'
         }
       });
     }

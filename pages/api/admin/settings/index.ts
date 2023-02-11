@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
 import { settingsQueries } from '@lib/sql';
-import { Category } from '@ts-types/generated';
+import { Settings } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -11,10 +11,10 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
     try {
+      await this.authorization(req, res);
       switch (method) {
         case this.GET: {
-          this.authorization(req, res);
-          const { rows } = await this.query<Category, string>(
+          const { rows } = await this.query<Settings, string>(
             settingsQueries.getSettings(),
             []
           );

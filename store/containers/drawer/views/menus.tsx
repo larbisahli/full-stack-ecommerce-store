@@ -111,9 +111,12 @@ export default function DrawerMenu() {
 
           <div className="flex items-center justify-end ml-auto pl-30px pr-50px text-gray-700 flex-shrink-0 lg:hidden">
             <PhoneIcon width="15px" height="15px" />
-            <span className="font-semibold text-base text-14px ml-3">
+            <a
+              href={`tel:${storeNumber}`}
+              className="font-semibold text-base text-14px ml-3"
+            >
               {storeNumber}
-            </span>
+            </a>
           </div>
 
           <button

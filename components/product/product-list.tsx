@@ -3,6 +3,8 @@ import ImageComponent from '@components/ImageComponent';
 import Badge from '@components/ui/badge/badge';
 import Pagination from '@components/ui/pagination';
 import { Table } from '@components/ui/table';
+import { useSettings } from '@contexts/settings.context';
+import { usePrice } from '@hooks/use-price';
 import { siteSettings } from '@settings/site.settings';
 import type { Nullable } from '@ts-types/custom.types';
 import type {
@@ -15,6 +17,44 @@ import { useIsRTL } from '@utils/locals';
 import { ROUTES } from '@utils/routes';
 import dayjs from 'dayjs';
 import { useTranslation } from 'next-i18next';
+
+const RenderPrice = ({ salePrice, record }) => {
+  const {
+    currency: { code }
+  } = useSettings();
+
+  const minPrice = usePrice({
+    amount: record?.minPrice,
+    locale: 'us',
+    currencyCode: code
+  });
+
+  const maxPrice = usePrice({
+    amount: record?.maxPrice,
+    locale: 'us',
+    currencyCode: code
+  });
+
+  const price = usePrice({
+    amount: salePrice,
+    locale: 'us',
+    currencyCode: code
+  });
+  if (record?.maxPrice > 0 && record?.minPrice > 0) {
+    return (
+      <span
+        className="whitespace-nowrap"
+        title={`${minPrice} - ${maxPrice}`}
+      >{`${minPrice} - ${maxPrice}`}</span>
+    );
+  } else {
+    return (
+      <span className="whitespace-nowrap" title={`$${price}`}>
+        {`$${price}`}
+      </span>
+    );
+  }
+};
 
 type IProps = {
   products: Nullable<Product[]>;
@@ -92,23 +132,10 @@ const ProductList = ({
       dataIndex: 'salePrice',
       key: 'salePrice',
       align: 'center',
-      width: 150,
-      render: (salePrice: number, record: Product) => {
-        if (record?.maxPrice > 0 && record?.minPrice > 0) {
-          return (
-            <span
-              className="whitespace-nowrap"
-              title={`$${record?.minPrice} - $${record?.maxPrice}`}
-            >{`$${record?.minPrice} - $${record?.maxPrice}`}</span>
-          );
-        } else {
-          return (
-            <span className="whitespace-nowrap" title={`$${salePrice}`}>
-              {`$${salePrice}`}
-            </span>
-          );
-        }
-      }
+      width: 200,
+      render: (salePrice: number, record: Product) => (
+        <RenderPrice salePrice={salePrice} record={record} />
+      )
     },
     {
       title: t('table:table-item-quantity'),

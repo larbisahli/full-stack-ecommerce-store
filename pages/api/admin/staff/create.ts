@@ -17,7 +17,7 @@ class Handler extends PostgresClient {
       lastName,
       email,
       phoneNumber,
-      profile: { image = null },
+      profile,
       isAdmin = false
     } = body;
 
@@ -47,7 +47,7 @@ class Handler extends PostgresClient {
                       phoneNumber,
                       email,
                       passwordHash,
-                      image,
+                      profile?.image,
                       isAdmin,
                       staff.id
                     ]

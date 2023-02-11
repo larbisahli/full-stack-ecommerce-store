@@ -7,7 +7,7 @@ import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-const AdminDashboard = dynamic(() => import('@components/dashboard/admin'));
+const AdminDashboard = dynamic(() => import('@components/dashboard'));
 
 export default function Dashboard({ client }: SSRProps) {
   useGetStaff(client);

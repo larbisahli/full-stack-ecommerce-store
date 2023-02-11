@@ -10,6 +10,7 @@ import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { StickyContext } from '@store/contexts/sticky/sticky.provider';
 import { useMedia } from '@store/helpers/use-media';
 import { Category } from '@ts-types/generated';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useContext, useEffect, useRef, useState } from 'react';
 
@@ -125,9 +126,12 @@ export default function Header({ categories }: Props) {
       <div className="flex justify-center items-center">
         <div className="hidden items-center text-gray-900 mr-10 flex-shrink-0 lg:flex">
           <PhoneIcon />
-          <span className="font-semibold text-base text-14px ml-3">
+          <a
+            href={`tel:${storeNumber}`}
+            className="font-semibold text-base text-14px ml-3"
+          >
             {storeNumber}
-          </span>
+          </a>
         </div>
 
         <button

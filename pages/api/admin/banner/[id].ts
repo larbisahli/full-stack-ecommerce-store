@@ -12,6 +12,8 @@ class Handler extends PostgresClient {
     const { query, method } = req;
     const id = query.id as string;
     try {
+      await this.authorization(req, res);
+
       switch (method) {
         case this.GET: {
           const { rows } = await this.query<HeroCarouselType, string>(

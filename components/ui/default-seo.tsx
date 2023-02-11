@@ -3,6 +3,7 @@ import { DefaultSeo as NextDefaultSeo } from 'next-seo';
 
 const DefaultSeo = () => {
   const {
+    favicon,
     seo: {
       metaTitle,
       metaDescription,
@@ -55,6 +56,15 @@ const DefaultSeo = () => {
         }
       ]}
       additionalLinkTags={[
+        {
+          rel: 'icon',
+          href: `${process.env.S3_ENDPOINT}/${favicon?.image}`
+        },
+        {
+          rel: 'apple-touch-icon',
+          href: `${process.env.S3_ENDPOINT}/${favicon?.image}`,
+          sizes: '76x76'
+        },
         {
           rel: 'apple-touch-icon',
           href: 'icons/apple-icon-180.png'

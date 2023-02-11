@@ -1,6 +1,8 @@
 import { ShopIcon } from '@components/icons/sidebar';
+import ImageComponent from '@components/ImageComponent';
 import LinkButton from '@components/ui/link-button';
 import Logo from '@components/ui/logo';
+import { useSettings } from '@contexts/settings.context';
 import { useUI } from '@contexts/ui.context';
 import { ROUTES } from '@utils/routes';
 import classNames from 'classnames/bind';
@@ -24,6 +26,8 @@ const Navbar = () => {
     'span--close': !menuIsOpen
   });
 
+  const { logo } = useSettings();
+
   return (
     <header style={{ zIndex: 100 }} className="bg-white shadow fixed w-full">
       <nav
@@ -43,7 +47,11 @@ const Navbar = () => {
           </div>
         </motion.button>
         <div className="hidden md:flex me-auto">
-          <Logo />
+          <ImageComponent
+            src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
+            height={31}
+            width={31}
+          />
         </div>
         <div className="flex items-center space-s-8">
           <LinkButton

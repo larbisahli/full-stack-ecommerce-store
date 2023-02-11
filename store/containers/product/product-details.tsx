@@ -144,7 +144,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
           <div className="flex-1 mt-8">
             <div className="pb-3 lg:pb-5">
               <div className="md:mb-2.5 block">
-                <h2 className="text-skin-base text-lg md:text-xl font-medium transition-colors duration-300 mb-2">
+                <h2 className="text-xl font-semibold text-black md:text-2xl transition-colors duration-300 mb-2">
                   {name ?? ''}
                 </h2>
               </div>
@@ -189,8 +189,8 @@ const ProductDetails = ({ product }: { product: Product }) => {
             </div>
 
             {/* DESCRIPTION */}
-            <div className="text-sm sm:text-15px text-skin-muted leading-[2em] space-y-4 lg:space-y-5 xl:space-y-7">
-              <div className="font-bold text-xl">Description</div>
+            <div className="mt-8 text-sm sm:text-15px text-skin-muted leading-[2em] space-y-4 lg:space-y-5 xl:space-y-7">
+              <div className="font-bold text-2xl">Description</div>
               {ReactHtmlParser(description ?? '')}
             </div>
           </div>

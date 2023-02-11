@@ -1,6 +1,5 @@
 import PostgresClient from '@lib/database';
-import { carouselQueries } from '@lib/sql';
-import { HeroCarouselType } from '@ts-types/generated';
+import { productQueries } from '@lib/sql';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -16,12 +15,12 @@ class Handler extends PostgresClient {
         case this.POST: {
           const { id } = body;
 
-          const { rows } = await this.query<HeroCarouselType, string>(
-            carouselQueries.deleteSlide(),
+          const { rows } = await this.query<any, string>(
+            productQueries.deleteProduct(),
             [id]
           );
 
-          return res.status(200).json({ banner: rows[0] });
+          return res.status(200).json({ product: rows[0] });
         }
         default:
           res.setHeader('Allow', ['POST']);
@@ -32,7 +31,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'updateCategory'
+          from: 'deleteProduct'
         }
       });
     }

@@ -1,3 +1,4 @@
+import { useSettings } from '@contexts/settings.context';
 import { StaffInfoContext } from '@contexts/staff.context';
 import { useErrorLogger } from '@hooks/index';
 import type { StaffType } from '@ts-types/generated';
@@ -25,7 +26,15 @@ export function useGetStaff(client?: ClientType) {
     fetcher
   );
 
+  const { data: settingsData, error: settingsError } = useSwr(
+    '/api/admin/settings',
+    fetcher
+  );
+
+  const { updateSettings } = useSettings();
+
   useErrorLogger(error);
+  useErrorLogger(settingsError);
 
   useEffect(() => {
     console.log({ data });
@@ -34,6 +43,13 @@ export function useGetStaff(client?: ClientType) {
       setStaffInfo(staff as StaffType);
     }
   }, [data, setStaffInfo]);
+
+  useEffect(() => {
+    const { settings } = settingsData ?? {};
+    if (!isEmpty(settings)) {
+      updateSettings(settings);
+    }
+  }, [settingsData]);
 
   return { staffInfo, setStaffInfo };
 }

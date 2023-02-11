@@ -1,7 +1,7 @@
+import { ArrowDown } from '@components/icons/arrow-down';
+import { ArrowUp } from '@components/icons/arrow-up';
 import Chart from '@components/ui/chart';
 import cn from 'classnames';
-import { ArrowUp } from '@components/icons/arrow-up';
-import { ArrowDown } from '@components/icons/arrow-down';
 
 const BarChart = ({
   widgetTitle,
@@ -48,15 +48,15 @@ const BarChart = ({
           show: true,
           style: {
             colors: '#161F6A',
-            fontSize: '14px',
+            fontSize: '11px',
             fontFamily: "'Lato', sans-serif"
           }
         },
         axisBorder: {
-          show: false
+          show: true
         },
         axisTicks: {
-          show: false
+          show: true
         },
         categories: categories
       },
@@ -93,7 +93,7 @@ const BarChart = ({
 
           <div className="flex items-center">
             {position === 'up' && (
-              <span className="text-green-500">
+              <span className="text-green">
                 <ArrowUp />
               </span>
             )}

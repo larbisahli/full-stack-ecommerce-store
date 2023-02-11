@@ -2,6 +2,7 @@ export * as attributeQueries from './attribute.sql';
 export * as carouselQueries from './carousel.sql';
 export * as categoryQueries from './category.sql';
 export * as couponQueries from './coupon.sql';
+export * as dashboardQueries from './dashboard.sql';
 export * as loginQueries from './login.sql';
 export * as orderQueries from './order.sql';
 export * as orderStatusQueries from './orderStatus.sql';
