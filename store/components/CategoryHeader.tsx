@@ -1,12 +1,6 @@
 import ImageComponent from '@components/ImageComponent';
-import Pagination from '@components/ui/pagination';
 import ChevronForward from '@store/assets/icons/chevron-right';
 import HomeOutline from '@store/assets/icons/home';
-import {
-  Navigation,
-  Swiper,
-  SwiperSlide
-} from '@store/components/carousel/slider';
 import { Category } from '@ts-types/generated';
 import { isEmpty } from 'lodash';
 
@@ -18,20 +12,30 @@ interface props {
 }
 
 const CategoryHeader = ({ category = {} }: props) => {
-  const { image = null, name, subCategories, parent } = category;
+  const { image = null, name, description, subCategories, parent } = category;
+
+  console.log({ category });
 
   return (
     <div>
       {image && (
-        <div className="relative h-[350px]">
+        <div className="relative h-[600px] mt-10 cateResponsive rounded">
           <div
             className={
-              'w-full h-full bg-no-repeat bg-cover bg-center flex items-center z-0'
+              'w-full relative h-full bg-no-repeat bg-cover bg-center flex items-center z-0'
             }
           >
             <div className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-5"></div>
+            <div className="absolute z-50 bottom-8 pl-2 2xl:pl-16 xl:pl-8">
+              <h2 className="text-6xl italic text-white text-skin-secondary xl:text-7xl 2xl:text-8xl font-manrope font-extrabold leading-snug md:leading-tight xl:leading-[1.3em] mb-3 md:mb-4 xl:mb-3 -mt-2 xl:-mt-3 2xl:-mt-4">
+                {name}
+              </h2>
+              <p className="text-white md:text-[17px] w-[85%] xl:w-[75%] md:w-[95%] font-semibold xl:text-lg leading-7 md:leading-8 xl:leading-[1.92em]">
+                {description}
+              </p>
+            </div>
             <div
-              className="absolute h-full w-full overflow-hidden"
+              className="absolute h-full w-full overflow-hidden cateResponsive rounded"
               style={{ zIndex: -1 }}
             >
               <ImageComponent

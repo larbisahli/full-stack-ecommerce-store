@@ -52,7 +52,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
     <Link href={`/product/${item?.slug}`}>
       <a
         role={'button'}
-        className="mx-auto flex flex-col max-w-[305px] group overflow-hidden rounded-md cursor-pointer transition-all duration-300 hover:shadow-lg relative h-full"
+        className="cardHover mx-auto flex flex-col max-w-[305px] group overflow-hidden rounded-md cursor-pointer transition-all duration-300 relative h-full"
       >
         {/* Thumbnail */}
         <div className="relative flex items-center justify-center">

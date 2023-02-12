@@ -4,18 +4,18 @@ import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 
 const Products = React.forwardRef(
-  ({ items = [] }: any, ref: React.RefObject<HTMLDivElement>) => {
+  (
+    { items = [], label = 'Recommended Products' }: any,
+    ref: React.RefObject<HTMLDivElement>
+  ) => {
     return (
-      <div
-        className="w-full mt-35px xxl:mt-60px px-4 lg:px-35px mb-26 mb-40"
-        ref={ref}
-      >
+      <div className="w-full mt-35px xxl:mt-60px px-4 mb-26 mb-40" ref={ref}>
         {!isEmpty(items) && (
-          <div className="my-8 font-semibold text-xl">Trending now</div>
+          <div className="my-8 text-3xl font-bold">{label}</div>
         )}
         {items.length ? (
           <div className=" shadow-md border border-gray-100 py-4 rounded">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4 md:gap-5 2xl:gap-5">
+            <div className="p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4 md:gap-5 2xl:gap-5">
               {items.map((item) => (
                 <ItemCard key={item.id} item={item} />
               ))}

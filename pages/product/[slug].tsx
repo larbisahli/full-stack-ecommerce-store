@@ -53,7 +53,7 @@ export default function ProductPage({
         ></link>
         <title>{product?.name}</title>
       </Head>
-      <div className="relative py-35px px-4 md:px-50px max-w-[1200px] mx-auto overflow-hidden">
+      <div className="relative py-35px px-4 md:px-50px max-w-[1300px] mx-auto overflow-hidden">
         <div className="pt-6 lg:pt-7">
           <div className="mx-auto max-w-[1920px]">
             <Breadcrumb />

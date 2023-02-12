@@ -99,13 +99,15 @@ export default function DrawerMenu() {
       <div className="flex flex-col w-full h-full overflow-auto">
         <div className="w-full h-90px bg-gray-100 flex justify-start items-center relative px-30px flex-shrink-0">
           <Link href="/">
-            <a className="flex" onClick={hideMenu}>
+            <a className="relative flex" onClick={hideMenu}>
               <span className="sr-only">{storeName}</span>
-              <ImageComponent
-                src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
-                height={31}
-                width={31}
-              />
+              <div className="w-[31px] h-[31px]">
+                <ImageComponent
+                  src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
             </a>
           </Link>
 

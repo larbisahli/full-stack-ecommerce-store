@@ -127,3 +127,15 @@
   width: 100% !important;
   padding: inherit 5px !important;
 }
+
+.cardHover:hover {
+  outline: none 1px #f2f2f2;
+  box-shadow: 0 0 25px 0 rgb(0 0 0 / 15%);
+}
+
+@media (max-width: 1380px) {
+  .cateResponsive {
+    border-radius: 0 !important;
+    margin-top: 0 !important;
+  }
+}

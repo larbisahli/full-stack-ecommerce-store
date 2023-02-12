@@ -89,13 +89,15 @@ export default function Header({ categories }: Props) {
         </button>
 
         <Link href="/">
-          <a className="hidden mx-auto lg:mr-10 lg:flex">
+          <a className="relative hidden mx-auto lg:mr-10 lg:flex">
             <span className="sr-only">{storeName}</span>
-            <ImageComponent
-              src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
-              height={31}
-              width={31}
-            />
+            <div className="w-[31px] h-[31px]">
+              <ImageComponent
+                src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
           </a>
         </Link>
       </div>

@@ -58,8 +58,10 @@ export default function Home({
         <meta name="Description" content={category?.description} />
         <title>{category?.name}</title>
       </Head>
-      <CategoryHeader category={category} />
-      <Products items={products} ref={elRef} />
+      <div className="w-full max-w-[1380px] mx-auto">
+        <CategoryHeader category={category} />
+        <Products items={products} ref={elRef} label={category?.name} />
+      </div>
     </Layout>
   );
 }

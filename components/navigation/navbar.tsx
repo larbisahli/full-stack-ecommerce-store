@@ -46,12 +46,14 @@ const Navbar = () => {
             <span className={menuSpanClass}></span>
           </div>
         </motion.button>
-        <div className="hidden md:flex me-auto">
-          <ImageComponent
-            src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
-            height={31}
-            width={31}
-          />
+        <div className="relative hidden md:flex me-auto">
+          <div className="w-[31px] h-[31px]">
+            <ImageComponent
+              src={`${process.env.S3_ENDPOINT}/${logo?.image}`}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
         </div>
         <div className="flex items-center space-s-8">
           <LinkButton

@@ -25,7 +25,7 @@ const HeroBannerCard: FC<BannerProps> = ({
       className={cn(
         'w-full bg-no-repeat bg-cover bg-center flex items-center z-0',
         {
-          'min-h-[420px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[550px]':
+          'min-h-[420px] md:min-h-[460px] lg:min-h-[600px] xl:min-h-[700px]':
             variant === 'slider'
         },
         className

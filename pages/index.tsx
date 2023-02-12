@@ -5,6 +5,7 @@ import CategorySlider from '@store/components/CategorySlider';
 import HeroBlock from '@store/containers/banner/hero-block';
 import HowItWorks from '@store/containers/how-it-works';
 import Layout from '@store/containers/layout/layout';
+import ProductTopSells from '@store/containers/product/ProductTopSells';
 import Products from '@store/containers/products';
 import { useSearch } from '@store/contexts/search/use-search';
 import { useRefScroll } from '@store/helpers/use-ref-scroll';
@@ -67,10 +68,12 @@ export default function Home({
       </Head>
       <HeroBlock heroBanners={banners} />
       <HowItWorks />
-      <div className="w-full px-15px lg:px-35px mt-35px xxl:mt-60px">
+      <div className="w-full max-w-[1380px] mx-auto">
+        <ProductTopSells items={products} />
+        px-15px lg:px-35px mt-35px xxl:mt-60px
         <CategorySlider categories={categories} label="Shop by category" />
+        <Products items={products} ref={elRef} />
       </div>
-      <Products items={products} ref={elRef} />
     </Layout>
   );
 }
