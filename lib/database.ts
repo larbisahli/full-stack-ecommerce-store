@@ -7,6 +7,7 @@ import fs from 'fs'
 import jwt, { Algorithm } from 'jsonwebtoken';
 import { isEmpty } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import path from 'path'
 import { Pool, PoolClient, QueryResult } from 'pg';
 
 import { loginQueries } from './sql';
@@ -20,9 +21,11 @@ const CRUDPool: PoolClient = new Pool({
   max: 22,
   ssl: {
     rejectUnauthorized: false,
-    ca: fs.readFileSync('./ca-certificate.crt').toString(),
+    ca: fs.readFileSync('./lib/ca-certificate.crt').toString(),
   },
 });
+
+console.log('--------------->', fs.readFileSync('./lib/ca-certificate.crt').toString())
 
 export default class PostgresClient {
   protected readonly ErrorNames: typeof ErrorNames;
