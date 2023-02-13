@@ -36,6 +36,9 @@ const ProductItem = ({ product, index }) => {
         </Text>
         <Text
           style={[styles.td, { flex: 1 }]}
+        >{product.option}</Text>
+        <Text
+          style={[styles.td, {  width: 100,flex: 1 }]}
         >{`Quantity: ${product.quantity}`}</Text>
       </View>
     </View>

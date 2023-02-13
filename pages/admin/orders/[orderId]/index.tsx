@@ -123,12 +123,19 @@ export default function OrderDetailsPage({ client }: SSRProps) {
       key: 'name',
       align: alignLeft,
       render: (name: string, item: any) => (
-        <div title={name}>
+        <div title={name} className='text-black'>
           <span>{name}</span>
-          <span className="mx-2">x</span>
-          <span className="font-semibold text-heading">{item.quantity}</span>
+          <span className="mx-2">X</span>
+          <span className="font-bold text-heading">{item.quantity}</span>
         </div>
       )
+    },
+    {
+      title: 'Option',
+      dataIndex: 'option',
+      key: 'option',
+      align: 'center',
+      render: (option)=> <span className='font-semibold text-black'>{option}</span>
     },
     {
       title: 'Unit price',
@@ -201,18 +208,18 @@ export default function OrderDetailsPage({ client }: SSRProps) {
             emptyText={t('table:empty-table-data')}
             data={order?.products}
             rowKey="id"
-            scroll={{ x: 300 }}
+            scroll={{ x: 400 }}
           />
         ) : (
           <span>{t('common:no-order-found')}</span>
         )}
 
         <div className="border-t-4 border-double border-border-200 flex flex-col w-full sm:w-1/2 md:w-1/3 ms-auto px-4 py-4 space-y-2">
-          <div className="flex items-center justify-between text-sm text-body">
+          <div className="flex items-center font-semibold justify-between text-sm text-gray-600">
             <span>Quantity</span>
             <span>{order?.totalQuantity}</span>
           </div>
-          <div className="flex items-center justify-between text-base text-heading font-semibold">
+          <div className="flex items-center justify-between text-lg text-heading font-bold">
             <span>{t('common:order-total')}</span>
             <span>{total}</span>
           </div>
@@ -224,10 +231,19 @@ export default function OrderDetailsPage({ client }: SSRProps) {
           <h3 className="text-heading font-semibold mb-3 pb-2 border-b border-border-200">
             {t('common:shipping-address')}
           </h3>
-          <div className="text-sm text-body flex flex-col items-start space-y-1">
-            <span>{order?.fullName}</span>
-            {order?.addressLine1 && <span>{order?.addressLine1}</span>}
-            {order?.phoneNumber && <span>{`+${order?.phoneNumber}`}</span>}
+          <div className="text-base flex flex-col items-start space-y-1">
+            <div className='flex items-center'>
+              <div className='mr-2 underline'>Full name:</div>
+              <span className='text-black font-semibold'>{order?.fullName}</span>
+            </div>
+            <div className='flex items-center'>
+              <div className='mr-2 underline'>Address:</div>
+              <span className='text-black font-semibold'>{order?.addressLine1}</span>
+            </div>
+            <div className='flex items-center'>
+              <div className='mr-2 underline'>Phone number:</div>
+              <span className='text-black font-semibold'>{`+${order?.phoneNumber}`}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -255,7 +271,7 @@ const UnitPrice = ({ amount }) => {
     locale: 'us',
     currencyCode: code
   });
-  return <span>{price}</span>;
+  return <span className='text-black font-semibold'>{price}</span>;
 };
 
 OrderDetailsPage.Layout = AppLayout;

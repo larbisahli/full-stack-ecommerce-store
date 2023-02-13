@@ -1,25 +1,44 @@
 import ConfirmationCard from '@components/common/confirmation-card';
-// import {
-//   useModalAction,
-//   useModalState
-// } from '@components/ui/modal/modal.context';
-// import { useDeleteProductMutation } from '@data/product/product-delete.mutation';
+import { useModalAction, useModalState } from '@components/ui/modal/modal.context';
+import { useTime } from '@hooks/useTime';
+import { notify } from '@lib/notify';
+import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
 
 const ProductDeleteView = () => {
-  // const { mutate: deleteProduct, isLoading: loading } =
-  //   useDeleteProductMutation();
+  const { t } = useTranslation();
 
-  // const { data } = useModalState();
-  // const { closeModal } = useModalAction();
+  const { id } = useModalState();
+  const { closeModal } = useModalAction();
+  const [loading, setLoading] = useState(false);
+  const { revalidate } = useTime();
+
   async function handleDelete() {
-    // deleteProduct(data);
-    // closeModal();
+    setLoading(true);
+    fetch('/api/admin/product/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.product?.id) {
+          notify(t('common:successfully-deleted'), 'success');
+          revalidate();
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+    closeModal();
   }
   return (
     <ConfirmationCard
-      onCancel={() => {}} //{closeModal}
+      onCancel={closeModal}
       onDelete={handleDelete}
-      // deleteBtnLoading={loading}
+      deleteBtnLoading={loading}
     />
   );
 };

@@ -16,7 +16,8 @@ export function getOrders(): string {
   (SELECT COUNT(id) FROM order_items WHERE order_id = o.id)::INTEGER AS "productQuantity",
   ARRAY(SELECT (SELECT json_build_object('id', pd.id, 'name', pd.product_name, 'quantity', otpd.quantity,
   'unitPrice', (CASE WHEN pd.product_type = 'variable' THEN (SELECT vp.sale_price FROM variant_options vp WHERE vp.id = otpd.variant_option_id)
-  WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END)
+  WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END),
+  'option', (SELECT variant_option FROM variants WHERE variant_option_id = otpd.variant_option_id)
   ) FROM products AS pd WHERE pd.id = otpd.product_id) as co FROM order_items otpd WHERE otpd.order_id = o.id) AS products
   FROM orders AS o order by o.created_at DESC LIMIT $1 OFFSET $2`;
 }
@@ -30,7 +31,8 @@ export function getOrder(): string {
   ARRAY(SELECT (SELECT json_build_object('id', pd.id, 'name', pd.product_name, 'sku', pd.sku,'quantity', otpd.quantity,
   'thumbnail', (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true),
   'unitPrice', (CASE WHEN pd.product_type = 'variable' THEN (SELECT vp.sale_price FROM variant_options vp WHERE vp.id = otpd.variant_option_id)
-  WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END)
+  WHEN pd.product_type = 'simple' THEN pd.sale_price::FLOAT END),
+  'option', (SELECT variant_option FROM variants WHERE variant_option_id = otpd.variant_option_id)
   ) FROM products AS pd WHERE pd.id = otpd.product_id) as co FROM order_items otpd WHERE otpd.order_id = o.id) AS products
   FROM orders AS o WHERE o.id = $1`;
 }
