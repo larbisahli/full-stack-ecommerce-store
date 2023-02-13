@@ -40,7 +40,7 @@ const moduleExports = {
     loader: 'default'
   },
   env: {
-    URL: 'http://127.0.0.1:3001',
+    URL: 'https://ecom-website-vw8k.vercel.app',
     GTAG_MEASUREMENT_ID: '',
     FB_APPID: '',
     // DATABASE
