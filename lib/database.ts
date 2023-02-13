@@ -11,12 +11,12 @@ import { Pool, PoolClient, QueryResult } from 'pg';
 import { loginQueries } from './sql';
 
 const CRUDPool: PoolClient = new Pool({
-  host: process.env.END_POINT,
+  host: process.env.DATABASE_END_POINT,
   port: process.env.PORT,
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  max: 10
+  max: 22
 });
 
 export default class PostgresClient {

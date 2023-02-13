@@ -5,7 +5,6 @@
 // const withPWA = require('next-pwa');
 // const runtimeCaching = require('next-pwa/cache');
 const { i18n } = require('./next-i18next.config');
-const { withSentryConfig } = require('@sentry/nextjs');
 
 const moduleExports = {
   api: {
@@ -36,25 +35,21 @@ const moduleExports = {
   reactStrictMode: true,
   images: {
     deviceSizes: [320, 420, 768, 1024, 1200],
-    // iconSizes: [],
     domains: ['127.0.0.1', 'ecom-bucket.fra1.digitaloceanspaces.com'],
     path: '/_next/image',
     loader: 'default'
   },
   env: {
     URL: 'http://127.0.0.1:3001',
-    MEDIA_URL: 'https://media.dropgala.com',
-    GTAG_MEASUREMENT_ID: 'G-TQMWTHM2FF',
-    // NEXT_PUBLIC_GOOGLE_MAP_API_KEY: 'AIzaSyDB2j-G5LJM0yPNG0AqziJjgh1UOW10W7I',
+    GTAG_MEASUREMENT_ID: '',
     FB_APPID: '',
-    // SENTRY_DSN: '',
-    // NEXT_PUBLIC_SENTRY_DSN: '',
-    // SENTRY_AUTH_TOKEN: ''
-    POSTGRES_USER: 'crud_user',
-    POSTGRES_PASSWORD: 'crud_password',
-    POSTGRES_DB: 'development',
-    PORT: 5432,
-    END_POINT: '127.0.0.1',
+    // DATABASE
+    POSTGRES_USER: 'doadmin',
+    POSTGRES_PASSWORD: 'AVNS_b_bPDDFxhgU4mPl21qW',
+    POSTGRES_DB: 'production',
+    PORT: 25060,
+    DATABASE_END_POINT: 'db-postgresql-lon1-37795-do-user-9047386-0.b.db.ondigitalocean.com',
+    // S3 BUCKET
     S3_BUCKET_NAME: 'ecom-bucket',
     S3_REGION: 'fra1',
     S3_ACCESS_KEY_ID: 'DO00H9TH8LTB7GVXQD2X',
@@ -69,9 +64,7 @@ const moduleExports = {
   }
 };
 
-const SentryWebpackPluginOptions = { silent: true };
-
-module.exports = withSentryConfig(moduleExports, SentryWebpackPluginOptions);
+module.exports = moduleExports
 
 // module.exports = withSentryConfig(
 //   withPWA(moduleExports),

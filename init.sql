@@ -282,14 +282,6 @@ CREATE TABLE gallery_part1 PARTITION OF gallery FOR VALUES WITH (modulus 3, rema
 CREATE TABLE gallery_part2 PARTITION OF gallery FOR VALUES WITH (modulus 3, remainder 1);
 CREATE TABLE gallery_part3 PARTITION OF gallery FOR VALUES WITH (modulus 3, remainder 2);
 
--- Permissions
-
-CREATE USER crud_user WITH PASSWORD 'crud_password';
-GRANT CONNECT ON DATABASE development TO crud_user;
-GRANT USAGE ON SCHEMA public TO crud_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO crud_user;
-GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO crud_user;
-
 -- DEFAULT DATA --
 WITH att_id AS ( INSERT INTO attributes (attribute_name) VALUES ('Color'), ('Size') RETURNING * )
 INSERT INTO attribute_values (attribute_id, attribute_value, color) VALUES

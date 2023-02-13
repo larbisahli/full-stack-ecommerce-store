@@ -23,7 +23,6 @@
     "@reach/portal": "^0.17.0",
     "@react-pdf/renderer": "^2.3.0",
     "@reduxjs/toolkit": "^1.9.2",
-    "@sentry/nextjs": "^7.11.1",
     "apexcharts": "^3.35.4",
     "aws-sdk": "^2.1304.0",
     "bcryptjs": "^2.4.3",
