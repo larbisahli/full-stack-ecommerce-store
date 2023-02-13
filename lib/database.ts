@@ -21,11 +21,11 @@ const CRUDPool: PoolClient = new Pool({
   max: 22,
   ssl: {
     rejectUnauthorized: false,
-    ca: fs.readFileSync('./lib/ca-certificate.crt').toString(),
+    ca: fs.readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt')).toString(),
   },
 });
 
-console.log('--------------->', fs.readFileSync('./lib/ca-certificate.crt').toString())
+console.log('--------------->', path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
 
 export default class PostgresClient {
   protected readonly ErrorNames: typeof ErrorNames;
