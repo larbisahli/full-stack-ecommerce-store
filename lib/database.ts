@@ -3,6 +3,7 @@ import { CookieNames, ErrorNames } from '@ts-types/enums';
 import { StaffType } from '@ts-types/generated';
 import { setCookie } from '@utils/cookies';
 import { limit } from '@utils/utils';
+import fs from 'fs'
 import jwt, { Algorithm } from 'jsonwebtoken';
 import { isEmpty } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -16,7 +17,11 @@ const CRUDPool: PoolClient = new Pool({
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  max: 22
+  max: 22,
+  ssl: {
+    rejectUnauthorized: false,
+    ca: fs.readFileSync('./ca-certificate.crt').toString(),
+  },
 });
 
 export default class PostgresClient {
