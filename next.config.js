@@ -41,7 +41,7 @@ const moduleExports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'digitaloceanspaces.com',
+        hostname: '*.digitaloceanspaces.com',
         port: '',
         pathname: '/**',
       },
