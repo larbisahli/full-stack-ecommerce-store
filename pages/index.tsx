@@ -70,7 +70,6 @@ export default function Home({
       <HowItWorks />
       <div className="w-full max-w-[1380px] mx-auto">
         <ProductTopSells items={products} />
-        px-15px lg:px-35px mt-35px xxl:mt-60px
         <CategorySlider categories={categories} label="Shop by category" />
         <Products items={products} ref={elRef} />
       </div>
@@ -115,6 +114,6 @@ export async function getStaticProps() {
       settings,
       error
     },
-    revalidate: 60 // Every minute
+    revalidate: 60*5
   };
 }

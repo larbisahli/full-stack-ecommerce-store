@@ -35,9 +35,17 @@ const moduleExports = {
   reactStrictMode: true,
   images: {
     deviceSizes: [320, 420, 768, 1024, 1200],
-    domains: ['127.0.0.1', 'ecom-bucket.fra1.digitaloceanspaces.com'],
+    // domains: ['127.0.0.1', 'digitaloceanspaces.com'],
     path: '/_next/image',
-    loader: 'default'
+    loader: 'default',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'digitaloceanspaces.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   env: {
     URL: 'https://ecom-website-vw8k.vercel.app',
@@ -49,6 +57,12 @@ const moduleExports = {
     POSTGRES_DB: 'production',
     PORT: 25060,
     DATABASE_END_POINT: 'db-postgresql-lon1-37795-do-user-9047386-0.b.db.ondigitalocean.com',
+    // URL: 'http://localhost:3001',
+    // POSTGRES_USER: 'crud_user',
+    // POSTGRES_PASSWORD: 'crud_password',
+    // POSTGRES_DB: 'development',
+    // PORT: 5432,
+    // DATABASE_END_POINT: '127.0.0.1',
     // S3 BUCKET
     S3_BUCKET_NAME: 'ecom-bucket',
     S3_REGION: 'fra1',

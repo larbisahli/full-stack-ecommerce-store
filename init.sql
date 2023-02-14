@@ -195,11 +195,11 @@ CREATE TABLE IF NOT EXISTS sells (
 
 CREATE TABLE IF NOT EXISTS slideshows (
   id UUID NOT NULL DEFAULT uuid_generate_v4(),
-  title VARCHAR(80),
+  title VARCHAR(150),
   destination_url TEXT,
   image TEXT NOT NULL,
-  description VARCHAR(160),
-  btn_label VARCHAR(50),
+  description TEXT,
+  btn_label VARCHAR(80),
   display_order INTEGER NOT NULL,
   published BOOLEAN DEFAULT FALSE,
   clicks INTEGER NOT NULL DEFAULT 0,

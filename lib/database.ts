@@ -12,7 +12,17 @@ import { Pool, PoolClient, QueryResult } from 'pg';
 
 import { loginQueries } from './sql';
 
-const CRUDPool: PoolClient = new Pool({
+const registerService = (name, initFn) => {
+  if (process.env.NODE_ENV === 'development') {
+    if (!(name in global)) {
+      global[name] = initFn();
+    }
+    return global[name];
+  }
+  return initFn();
+};
+
+const CRUDPool: PoolClient = registerService('db', () => new Pool({
   host: process.env.DATABASE_END_POINT,
   port: process.env.PORT,
   database: process.env.POSTGRES_DB,
@@ -23,9 +33,7 @@ const CRUDPool: PoolClient = new Pool({
     rejectUnauthorized: false,
     ca: fs.readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt')).toString(),
   },
-});
-
-console.log('--------------->', path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
+}))
 
 export default class PostgresClient {
   protected readonly ErrorNames: typeof ErrorNames;
