@@ -48,7 +48,7 @@ const moduleExports = {
     ]
   },
   env: {
-    URL: 'https://myecom.vercel.app',
+    URL: 'https://myecomwebsite.vercel.app',
     GTAG_MEASUREMENT_ID: '',
     FB_APPID: '',
     // DATABASE
