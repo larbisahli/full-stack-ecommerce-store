@@ -48,6 +48,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
     [discount]
   );
 
+  console.log(comparePrice);
+
   return (
     <Link href={`/${item?.slug}`}>
       <a
@@ -68,16 +70,18 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
               height={290}
               className="rounded m-0 p-0"
             />
-            <div className="rounded-tl bg-red-600 text-lg font-semibold text-white px-4 py-1 absolute top-0 left-0">
-              {percentDecrease}
-            </div>
+            {!!comparePrice && comparePrice !== 0 && (
+              <div className="rounded-tl bg-red-600 text-lg font-semibold text-white px-4 py-1 absolute top-0 left-0">
+                {percentDecrease}
+              </div>
+            )}
           </div>
         </div>
         {/* Product info */}
         <div className="flex flex-col px-3 md:px-4 lg:px-[18px] pb-5 lg:pb-6 lg:pt-1.5 h-full">
           <h2
             title={name}
-            className="cut-line-2 text-skin-base !text-[14px] sm:text-sm lg:text-[15px] leading-5 sm:leading-6 mb-1.5"
+            className="h-[55px] cut-line-2 text-skin-base !text-[14px] sm:text-sm lg:text-[15px] leading-5 sm:leading-6 mb-1.5"
           >
             {name}
           </h2>
@@ -87,7 +91,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
                 {productPrice}
               </span>
             </div>
-            {comparePrice && (
+            {!!comparePrice && comparePrice !== 0 && (
               <del className="text-[15px] lg:text-[16px] ml-2 text-gray-700 font-semibold">
                 {productDiscount}
               </del>

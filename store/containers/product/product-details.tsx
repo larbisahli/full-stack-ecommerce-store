@@ -134,6 +134,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
                   src={`${process.env.S3_ENDPOINT}/${thumbnail?.image}`}
                   width={1200}
                   height={600}
+                  objectFit="contain"
                 />
               </div>
             )}

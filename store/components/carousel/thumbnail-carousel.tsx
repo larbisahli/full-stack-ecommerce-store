@@ -88,7 +88,7 @@ const ThumbnailCarousel: React.FC<Props> = ({
                 }
                 width={1200}
                 height={600}
-                objectFit="cover"
+                objectFit="contain"
               />
             </SwiperSlide>
           ))}

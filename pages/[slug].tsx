@@ -55,7 +55,9 @@ export default function ProductPage({
       </Head>
       <div className="relative py-35px px-4 md:px-50px max-w-[1300px] mx-auto overflow-hidden">
         {isEmpty(product) ? (
-          <div className="pt-10px h-[500px] md:pt-40px lg:pt-20px pb-40px"></div>
+          <div className="pt-10px h-[500px] md:pt-40px flex items-center justify-center lg:pt-20px pb-40px">
+            <div className="animate-spin w-10 h-10 bg-gray-300 rounded"></div>
+          </div>
         ) : (
           <>
             <div className="pt-6 lg:pt-7">
