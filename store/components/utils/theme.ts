@@ -58,7 +58,7 @@ export const TextareaBase = 'h-120px p-4 resize-none';
 // --------
 export const FeatureBase = 'feature-block flex w-full items-start flex-row';
 export const FeatureCounter =
-  'flex items-center justify-center w-70px h-70px rounded-full mr-20px bg-gray-300 flex-shrink-0 text-24px font-semibold';
+  'flex items-center justify-center w-11  h-11 mr-2 rounded-full mr-20px bg-gray-300 flex-shrink-0 text-24px font-semibold';
 
 export const FeatureContent = 'flex flex-col items-start';
 

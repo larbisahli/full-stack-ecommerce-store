@@ -33,7 +33,7 @@ const PrevButton: React.FC<NavButtonProps> = ({ onClick, children }) => {
         onClick();
       }}
       aria-label="prev-button"
-      className="w-40px h-40px rounded-full	flex items-center justify-center bg-white shadow-cart text-gray-900 absolute left-0 -ml-20px focus:outline-none"
+      className="w-40px h-40px ml-1 rounded-full	flex items-center justify-center bg-white shadow-cart text-gray-900 absolute left-0 focus:outline-none"
     >
       {children}
     </button>
@@ -47,7 +47,7 @@ const NextButton: React.FC<NavButtonProps> = ({ onClick, children }) => {
         onClick();
       }}
       aria-label="next-button"
-      className="w-40px h-40px rounded-full	flex items-center justify-center bg-white shadow-cart text-gray-900 absolute right-0 -mr-20px focus:outline-none"
+      className="w-40px h-40px rounded-full	mr-1 flex items-center justify-center bg-white shadow-cart text-gray-900 absolute right-0 focus:outline-none"
     >
       {children}
     </button>
@@ -87,34 +87,34 @@ const CategorySlider = ({ categories, label }: props) => {
 
   const responsive = {
     desktopExtraLarge: {
-      breakpoint: { max: 3000, min: 1601 },
+      breakpoint: { max: 3000, min: 2000 },
       items: 10
     },
     desktopLarge: {
-      breakpoint: { max: 1600, min: 1281 },
-      items: 8
+      breakpoint: { max: 2000, min: 1281 },
+      items: 7
     },
     desktop: {
       breakpoint: { max: 1280, min: 1101 },
-      items: 7
+      items: 6
     },
     tablet: {
       breakpoint: { max: 1100, min: 861 },
       items: 5
     },
     tabletSmall: {
-      breakpoint: { max: 860, min: 465 },
-      items: 3
+      breakpoint: { max: 860, min: 600 },
+      items: 4
     },
     mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 2
+      breakpoint: { max: 600, min: 0 },
+      items: 3
     }
   };
 
   return (
     <div className="w-full">
-      <div className="my-5">
+      <div className="my-5 overflow-hidden">
         {!isEmpty(categories) && (
           <>
             <div className="flex items-center justify-between">
@@ -142,16 +142,18 @@ const CategorySlider = ({ categories, label }: props) => {
                 {categories?.map((cate, index) => {
                   return (
                     <ActiveLink key={index} href={`/category/${cate?.name}`}>
-                      <a className="relative inline-flex font-bold items-center border border-gray-300 rounded shadow mr-3">
+                      <a className="h-[135px] w-[135px] sm:w-[125px] sm:h-[125px] md:h-[140px] md:w-[140px] lg:h-[150px] lg:w-[150px] 2xl:h-[180px] 2xl:w-[180px] relative inline-flex font-bold items-center border border-gray-300 rounded shadow mr-3">
                         <div
                           style={{ background: 'rgba(0,0,0,0.2)' }}
                           className="absolute rounded top-0 left-0 right-0 bottom-0 z-40"
                         ></div>
                         <ImageComponent
-                          objectFit="cover"
+                          // objectFit="cover"
                           className="rounded"
-                          height={200}
-                          width={200}
+                          layout="fill"
+                          objectFit="cover"
+                          // height={200}
+                          // width={200}
                           src={
                             cate?.image
                               ? `${process.env.S3_ENDPOINT}/${cate?.image}`

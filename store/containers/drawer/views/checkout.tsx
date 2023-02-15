@@ -39,11 +39,40 @@ export default function Checkout() {
   };
 
   const submitOrder = async () => {
-    const { phoneNumber } = formData;
+    const { phoneNumber, fullName, address, city } = formData;
     if (!phoneNumber.trim()) {
       setError({
         field: 'phoneNumber',
         message: 'Phone number is required'
+      });
+      return;
+    }
+
+    if (!fullName) {
+      setError({
+        field: 'fullName',
+        message: 'fullName is required'
+      });
+      return;
+    }
+
+    if (!address) {
+      setError({
+        field: 'address',
+        message: 'Address is required'
+      });
+      return;
+    }
+
+    setError({
+      field: null,
+      message: null
+    });
+
+    if (!city) {
+      setError({
+        field: 'city',
+        message: 'City is required'
       });
       return;
     }
@@ -121,6 +150,11 @@ export default function Checkout() {
               value={formData.fullName}
               onChange={onChange}
             />
+            {error?.field === 'fullName' && (
+              <p className="text-12px font-semibold text-error">
+                {error.message}
+              </p>
+            )}
             <div className="border border-gray-400 rounded">
               <PhoneInput
                 country={'MA'}
@@ -131,7 +165,7 @@ export default function Checkout() {
               />
             </div>
             {error?.field === 'phoneNumber' && (
-              <p className="text-12px font-semibold text-error pt-10px pl-15px">
+              <p className="text-12px font-semibold text-error">
                 {error.message}
               </p>
             )}
@@ -149,6 +183,11 @@ export default function Checkout() {
               value={formData.address}
               onChange={onChange}
             ></Textarea>
+            {error?.field === 'address' && (
+              <p className="text-12px font-semibold text-error">
+                {error.message}
+              </p>
+            )}
             <Input
               placeholder="City"
               name="city"
@@ -156,6 +195,11 @@ export default function Checkout() {
               onChange={onChange}
               className="border border-gray-400 placeholder:text-gray-400"
             />
+            {error?.field === 'city' && (
+              <p className="text-12px font-semibold text-error">
+                {error.message}
+              </p>
+            )}
           </div>
         </div>
       </div>

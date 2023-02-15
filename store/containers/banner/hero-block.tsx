@@ -13,11 +13,14 @@ interface Props {
 
 const HeroSliderBlock: React.FC<Props> = ({
   heroBanners,
-  className = 'mb-7',
   contentClassName = 'py-20'
 }) => {
   return (
-    <div className={className}>
+    <div
+      className={
+        'min-h-[300px] md:min-h-[320px] lg:min-h-[500px] 3xl:min-h-[650px] 2xl:min-h-[530px]'
+      }
+    >
       <Carousel
         pagination={{
           clickable: true

@@ -14,7 +14,15 @@ const Menu = ({ category }: Props) => {
       key={category.id}
       className="flex justify-center items-center mx-1 p-1 px-2 cursor-pointer hover:bg-gray-100"
     >
-      {isEmpty(category?.subCategories) ? (
+      <ActiveLink
+        href={`/category/${category.name}`}
+        activeClassName="text-green-500 bg-gray-100"
+      >
+        <a>
+          <div className="font-semibold text-gray-800">{category.name}</div>
+        </a>
+      </ActiveLink>
+      {/* {isEmpty(category?.subCategories) ? (
         <ActiveLink
           href={`/category/${category.name}`}
           activeClassName="text-green-500 bg-gray-100"
@@ -64,7 +72,7 @@ const Menu = ({ category }: Props) => {
             </Transition>
           </div>
         </HeadlessMenu>
-      )}
+      )} */}
     </div>
   );
 };

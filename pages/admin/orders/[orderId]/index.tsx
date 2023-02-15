@@ -123,7 +123,7 @@ export default function OrderDetailsPage({ client }: SSRProps) {
       key: 'name',
       align: alignLeft,
       render: (name: string, item: any) => (
-        <div title={name} className='text-black'>
+        <div title={name} className="text-black">
           <span>{name}</span>
           <span className="mx-2">X</span>
           <span className="font-bold text-heading">{item.quantity}</span>
@@ -135,7 +135,9 @@ export default function OrderDetailsPage({ client }: SSRProps) {
       dataIndex: 'option',
       key: 'option',
       align: 'center',
-      render: (option)=> <span className='font-semibold text-black'>{option}</span>
+      render: (option) => (
+        <span className="font-semibold text-black">{option}</span>
+      )
     },
     {
       title: 'Unit price',
@@ -232,17 +234,21 @@ export default function OrderDetailsPage({ client }: SSRProps) {
             {t('common:shipping-address')}
           </h3>
           <div className="text-base flex flex-col items-start space-y-1">
-            <div className='flex items-center'>
-              <div className='mr-2 underline'>Full name:</div>
-              <span className='text-black font-semibold'>{order?.fullName}</span>
+            <div className="flex items-center">
+              <div className="mr-2 underline">Full name:</div>
+              <span className="text-black font-semibold">
+                {order?.fullName}
+              </span>
             </div>
-            <div className='flex items-center'>
-              <div className='mr-2 underline'>Address:</div>
-              <span className='text-black font-semibold'>{order?.addressLine1}</span>
+            <div className="flex items-center">
+              <div className="mr-2 underline">Address:</div>
+              <span className="text-black font-semibold">
+                {order?.addressLine1}
+              </span>
             </div>
-            <div className='flex items-center'>
-              <div className='mr-2 underline'>Phone number:</div>
-              <span className='text-black font-semibold'>{`+${order?.phoneNumber}`}</span>
+            <div className="flex items-center">
+              <div className="mr-2 underline">Phone number:</div>
+              <span className="text-black font-semibold">{`+${order?.phoneNumber}`}</span>
             </div>
           </div>
         </div>
@@ -271,7 +277,7 @@ const UnitPrice = ({ amount }) => {
     locale: 'us',
     currencyCode: code
   });
-  return <span className='text-black font-semibold'>{price}</span>;
+  return <span className="text-black font-semibold">{price}</span>;
 };
 
 OrderDetailsPage.Layout = AppLayout;

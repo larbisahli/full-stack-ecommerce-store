@@ -196,7 +196,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
           </div>
 
           {/* BUTTONS */}
-          <div className="min-w-[350px] ml-5">
+          <div className="md:w-full md:max-w-[350px]  md:ml-5 md:mx-0">
             <div className="pt-1.5 lg:pt-3 xl:pt-4 space-y-2.5 md:space-y-3.5 mt-5">
               <div className="flex items-center">
                 <Button

@@ -49,7 +49,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   );
 
   return (
-    <Link href={`/product/${item?.slug}`}>
+    <Link href={`/${item?.slug}`}>
       <a
         role={'button'}
         className="cardHover mx-auto flex flex-col max-w-[305px] group overflow-hidden rounded-md cursor-pointer transition-all duration-300 relative h-full"

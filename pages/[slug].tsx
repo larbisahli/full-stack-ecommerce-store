@@ -54,14 +54,20 @@ export default function ProductPage({
         <title>{product?.name}</title>
       </Head>
       <div className="relative py-35px px-4 md:px-50px max-w-[1300px] mx-auto overflow-hidden">
-        <div className="pt-6 lg:pt-7">
-          <div className="mx-auto max-w-[1920px]">
-            <Breadcrumb />
-          </div>
-        </div>
-        <div className="mb-52">
-          <ProductDetails product={product} />
-        </div>
+        {isEmpty(product) ? (
+          <div className="pt-10px h-[500px] md:pt-40px lg:pt-20px pb-40px"></div>
+        ) : (
+          <>
+            <div className="pt-6 lg:pt-7">
+              <div className="mx-auto max-w-[1920px]">
+                <Breadcrumb />
+              </div>
+            </div>
+            <div className="mb-52">
+              <ProductDetails product={product} />
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   );
@@ -111,6 +117,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       settings,
       error
     },
-    revalidate: 60*5
+    revalidate: 60 * 5
   };
 };

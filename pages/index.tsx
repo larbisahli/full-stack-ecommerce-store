@@ -68,7 +68,7 @@ export default function Home({
       </Head>
       <HeroBlock heroBanners={banners} />
       <HowItWorks />
-      <div className="w-full max-w-[1380px] mx-auto">
+      <div className="w-full max-w-[1430px] px-3 mx-auto">
         <ProductTopSells items={products} />
         <CategorySlider categories={categories} label="Shop by category" />
         <Products items={products} ref={elRef} />
@@ -114,6 +114,6 @@ export async function getStaticProps() {
       settings,
       error
     },
-    revalidate: 60*5
+    revalidate: 60 * 5
   };
 }

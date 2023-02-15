@@ -41,8 +41,8 @@ const Carousel: React.FunctionComponent<CarouselPropsType> = ({
   buttonGroupClassName = '',
   prevActivateId = '',
   nextActivateId = '',
-  prevButtonClassName = 'left-2 lg:-start-4 xl:-start-5',
-  nextButtonClassName = 'right-2 lg:-end-4 xl:-end-5',
+  prevButtonClassName = 'left-2',
+  nextButtonClassName = 'right-2',
   buttonSize = 'default',
   breakpoints,
   navigation = true,
@@ -59,12 +59,12 @@ const Carousel: React.FunctionComponent<CarouselPropsType> = ({
   const dir = 'ltr';
 
   let nextButtonClasses = cn(
-    'w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 bg-white xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl cursor-pointer flex items-center justify-center rounded-full bg-skin-fill absolute transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform shadow-navigation',
+    'w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl cursor-pointer absolute text-white focus:outline-none mx-2',
     { '3xl:text-2xl': buttonSize === 'default' },
     nextButtonClassName
   );
   let prevButtonClasses = cn(
-    'w-7 h-7 md:w-8 md:h-8 lg:w-9 bg-white lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl cursor-pointer flex items-center justify-center rounded-full bg-skin-fill absolute transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform shadow-navigation',
+    'w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl cursor-pointer absolute text-white focus:outline-none mx-1',
     { '3xl:text-2xl': buttonSize === 'default' },
     prevButtonClassName
   );
@@ -101,25 +101,25 @@ const Carousel: React.FunctionComponent<CarouselPropsType> = ({
       </Swiper>
       {Boolean(navigation) && (
         <div
-          className={`flex items-center w-full absolute top-2/4 z-10 ${buttonGroupClassName}`}
+          className={`flex items-center w-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 ${buttonGroupClassName}`}
         >
           {prevActivateId.length > 0 ? (
             <div className={prevButtonClasses} id={prevActivateId}>
-              <ArrowBack />
+              <ArrowBack width="3rem" height="3rem" />
             </div>
           ) : (
             <div ref={prevRef} className={prevButtonClasses}>
-              <ArrowBack />
+              <ArrowBack width="3rem" height="3rem" />
             </div>
           )}
 
           {nextActivateId.length > 0 ? (
             <div className={nextButtonClasses} id={nextActivateId}>
-              <ArrowForward />
+              <ArrowForward width="3rem" height="3rem" />
             </div>
           ) : (
             <div ref={nextRef} className={nextButtonClasses}>
-              <ArrowForward />
+              <ArrowForward width="3rem" height="3rem" />
             </div>
           )}
         </div>

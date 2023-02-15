@@ -1,5 +1,8 @@
 import ConfirmationCard from '@components/common/confirmation-card';
-import { useModalAction, useModalState } from '@components/ui/modal/modal.context';
+import {
+  useModalAction,
+  useModalState
+} from '@components/ui/modal/modal.context';
 import { useTime } from '@hooks/useTime';
 import { notify } from '@lib/notify';
 import { useTranslation } from 'next-i18next';
