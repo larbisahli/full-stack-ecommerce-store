@@ -5,7 +5,8 @@ import { useSettings } from '@contexts/settings.context';
 import { usePercentDecrease } from '@hooks/use_percent-decrease';
 import { usePrice } from '@hooks/use-price';
 import { siteSettings } from '@settings/site.settings';
-import { Product, ProductType } from '@ts-types/generated';
+import { Product } from '@ts-types/generated';
+import cn from 'classnames';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 
@@ -81,13 +82,20 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
         <div className="flex flex-col px-3 md:px-4 lg:px-[18px] pb-5 lg:pb-6 lg:pt-1.5 h-full">
           <h2
             title={name}
-            className="h-[55px] cut-line-2 text-skin-base !text-[14px] sm:text-sm lg:text-[15px] leading-5 sm:leading-6 mb-1.5"
+            className="h-[50px] cut-line-2 text-skin-base !text-[14px] sm:text-sm lg:text-[15px] leading-5 sm:leading-6 mb-1.5"
           >
             {name}
           </h2>
           <div className="flex items-center">
             <div className="leading-none">
-              <span className="inline-block font-bold text-red-700  text-[16px] lg:text-[19px] text-skin-base">
+              <span
+                className={cn(
+                  'inline-block font-bold text-[16px] lg:text-[19px] text-skin-base text-black',
+                  {
+                    'text-red-700': !!comparePrice && comparePrice !== 0
+                  }
+                )}
+              >
                 {productPrice}
               </span>
             </div>

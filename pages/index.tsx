@@ -93,7 +93,7 @@ export async function getStaticProps() {
       .then(({ banners }) => banners ?? []);
 
     products = await fetch(
-      `${process.env.URL}/api/store/product/products/home/10`
+      `${process.env.URL}/api/store/product/products/home/20`
     )
       .then((data) => data.json())
       .then(({ products }) => products ?? []);

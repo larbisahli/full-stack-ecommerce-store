@@ -93,18 +93,18 @@ const ThumbnailCarousel: React.FC<Props> = ({
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="items-center justify-between w-full absolute top-2/4 z-10 px-2.5 group-hover:flex hidden">
+        <div className="w-full absolute top-2/4 z-10 px-2.5">
           <div
             ref={prevRef}
-            className="w-7 h-7 md:w-8 md:h-8 bg-white lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl flex items-center cursor-pointer justify-center rounded-full bg-skin-fill transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform -translate-y-1/2 shadow-navigation"
+            className="left-0 w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl cursor-pointer absolute text-gray-600 focus:outline-none mx-1"
           >
-            <ArrowBack />
+            <ArrowBack width="initial" height="initial" />
           </div>
           <div
             ref={nextRef}
-            className="w-7 h-7 md:w-8 md:h-8  bg-white lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl flex items-center justify-center cursor-pointer rounded-full bg-skin-fill  transition duration-300 hover:bg-skin-primary hover:text-skin-inverted focus:outline-none transform -translate-y-1/2 shadow-navigation"
+            className="right-0 w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-base lg:text-lg xl:text-xl cursor-pointer absolute text-gray-600 focus:outline-none mx-2"
           >
-            <ArrowForward />
+            <ArrowForward width="initial" height="initial" />
           </div>
         </div>
       </div>

@@ -22,10 +22,10 @@ const HeroSliderBlock: React.FC<Props> = ({
       }
     >
       <Carousel
+        navigation={false}
         pagination={{
           clickable: true
         }}
-        navigation
         autoplay={{
           delay: 6000
         }}
