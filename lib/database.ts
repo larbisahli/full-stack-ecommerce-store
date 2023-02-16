@@ -31,13 +31,13 @@ const CRUDPool: PoolClient = registerService(
       database: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      max: 22
-      // ssl: {
-      //   rejectUnauthorized: false,
-      //   ca: fs
-      //     .readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
-      //     .toString()
-      // }
+      max: 22,
+      ssl: {
+        rejectUnauthorized: false,
+        ca: fs
+          .readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
+          .toString()
+      }
     })
 );
 
@@ -63,7 +63,6 @@ export default class PostgresClient {
     res: NextApiResponse,
     isAdmin?: boolean
   ): Promise<StaffType> => {
-    return;
     const jwtToken = req.cookies[this.CookieNames.STAFF_TOKEN_NAME];
     if (!jwtToken) {
       res.status(403).json({
