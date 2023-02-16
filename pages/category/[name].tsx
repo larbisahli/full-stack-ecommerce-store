@@ -1,4 +1,3 @@
-import DefaultSeo from '@components/ui/default-seo';
 import { useSettings } from '@contexts/settings.context';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import CategoryHeader from '@store/components/CategoryHeader';
@@ -14,6 +13,7 @@ import {
 import isEmpty from 'lodash/isEmpty';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { NextSeo } from 'next-seo';
 import { useEffect } from 'react';
 
 interface props {
@@ -49,7 +49,6 @@ export default function Home({
 
   return (
     <Layout categories={categories}>
-      <DefaultSeo />
       <Head>
         <meta
           name="viewport"
@@ -58,6 +57,65 @@ export default function Home({
         <meta name="Description" content={category?.description} />
         <title>{category?.name}</title>
       </Head>
+      <NextSeo
+        title={category?.name}
+        description={category?.description}
+        titleTemplate={category?.name ?? 'store'}
+        canonical={`${process.env.URL}/category/${category?.name}`}
+        openGraph={{
+          url: `${process.env.URL}/category/${category?.name}`,
+          title: category?.name,
+          description: category?.description,
+          images: [
+            {
+              url: `${process.env.S3_ENDPOINT}/${category.image}`,
+              width: 900,
+              height: 800,
+              alt: 'Og Image'
+            },
+            { url: `${process.env.S3_ENDPOINT}/${category?.image}` }
+          ],
+          site_name: settings?.storeName ?? ''
+        }}
+        twitter={{
+          handle: settings?.seo?.twitterHandle,
+          site: settings?.storeName,
+          cardType: 'summary_large_image'
+        }}
+        additionalMetaTags={[
+          {
+            name: 'viewport',
+            content: 'width=device-width, initial-scale=1 maximum-scale=1'
+          },
+          {
+            name: 'apple-mobile-web-app-capable',
+            content: 'yes'
+          },
+          {
+            name: 'theme-color',
+            content: '#ffffff'
+          }
+        ]}
+        additionalLinkTags={[
+          {
+            rel: 'icon',
+            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`
+          },
+          {
+            rel: 'apple-touch-icon',
+            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`,
+            sizes: '76x76'
+          },
+          {
+            rel: 'apple-touch-icon',
+            href: 'icons/apple-icon-180.png'
+          },
+          {
+            rel: 'manifest',
+            href: '/manifest.json'
+          }
+        ]}
+      />
       <div className="w-full max-w-[1380px] mx-auto">
         <CategoryHeader category={category} />
         <Products items={products} ref={elRef} label={category?.name} />

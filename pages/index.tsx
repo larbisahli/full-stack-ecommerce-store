@@ -58,7 +58,7 @@ export default function Home({
 
   return (
     <Layout categories={categories}>
-      <DefaultSeo />
+      <DefaultSeo settings={settings} />
       <Head>
         <meta
           name="viewport"

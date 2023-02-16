@@ -76,6 +76,9 @@ const moduleExports = {
   },
   eslint: {
     ignoreDuringBuilds: true
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production'
   }
 };
 

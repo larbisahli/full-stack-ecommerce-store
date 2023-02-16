@@ -1,7 +1,6 @@
-import { useSettings } from '@contexts/settings.context';
 import { DefaultSeo as NextDefaultSeo } from 'next-seo';
 
-const DefaultSeo = () => {
+const DefaultSeo = ({ settings }) => {
   const {
     favicon,
     seo: {
@@ -12,14 +11,25 @@ const DefaultSeo = () => {
       ogImage,
       twitterHandle
     },
+    storeName
+  } = settings;
+
+  const canonicalUrl = process.env.URL;
+  console.log({
+    favicon,
+    metaTitle,
+    metaDescription,
+    ogDescription,
+    ogTitle,
+    ogImage,
+    twitterHandle,
     canonicalUrl,
     storeName
-  } = useSettings();
-
+  });
   return (
     <NextDefaultSeo
       title={metaTitle ?? 'Store'}
-      titleTemplate={metaTitle ?? 'E-Commerce'}
+      titleTemplate={metaTitle ?? 'store'}
       description={metaDescription || ''}
       canonical={canonicalUrl ?? ''}
       openGraph={{

@@ -5,7 +5,7 @@ import ProductDetails from '@store/containers/product/product-details';
 import { Category, Product, Settings } from '@ts-types/generated';
 import isEmpty from 'lodash/isEmpty';
 import { GetStaticProps } from 'next';
-import Head from 'next/head';
+import { NextSeo, ProductJsonLd } from 'next-seo';
 import { useEffect } from 'react';
 
 interface ProductProps {
@@ -29,30 +29,75 @@ export default function ProductPage({
 
   return (
     <Layout style={{ height: 'auto' }} categories={categories}>
-      <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1"
-        />
-        <meta name="Description" content={product?.shortDescription} />
-        <meta property="og:title" content={product?.name}></meta>
-        <meta
-          property="og:image"
-          content={`${process.env.S3_ENDPOINT}/${product?.thumbnail?.image}`}
-        ></meta>
-        <meta property="og:image:width" content="436"></meta>
-        <meta property="og:image:height" content="228"></meta>
-        <meta
-          property="og:description"
-          content={product?.shortDescription}
-        ></meta>
-        <link
-          data-rh="true"
-          rel="canonical"
-          href={`${process.env.URL}/product/${product?.slug}`}
-        ></link>
-        <title>{product?.name}</title>
-      </Head>
+      <NextSeo
+        title={product?.name}
+        description={product?.shortDescription}
+        titleTemplate={product?.name ?? 'store'}
+        canonical={`${process.env.URL}/${product?.slug}`}
+        openGraph={{
+          url: `${process.env.URL}/${product?.slug}`,
+          title: product?.name,
+          description: product?.shortDescription,
+          images: [
+            {
+              url: `${process.env.S3_ENDPOINT}/${product?.thumbnail?.image}`,
+              width: 900,
+              height: 800,
+              alt: 'Og Image'
+            },
+            { url: `${process.env.S3_ENDPOINT}/${product?.thumbnail?.image}` },
+            ...(product?.gallery?.map(({ image }) => ({
+              url: `${process.env.S3_ENDPOINT}/${image}`
+            })) ?? [])
+          ],
+          site_name: settings?.storeName ?? ''
+        }}
+        twitter={{
+          handle: settings?.seo?.twitterHandle,
+          site: settings?.storeName,
+          cardType: 'summary_large_image'
+        }}
+        additionalMetaTags={[
+          {
+            name: 'viewport',
+            content: 'width=device-width, initial-scale=1 maximum-scale=1'
+          },
+          {
+            name: 'apple-mobile-web-app-capable',
+            content: 'yes'
+          },
+          {
+            name: 'theme-color',
+            content: '#ffffff'
+          }
+        ]}
+        additionalLinkTags={[
+          {
+            rel: 'icon',
+            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`
+          },
+          {
+            rel: 'apple-touch-icon',
+            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`,
+            sizes: '76x76'
+          },
+          {
+            rel: 'apple-touch-icon',
+            href: 'icons/apple-icon-180.png'
+          },
+          {
+            rel: 'manifest',
+            href: '/manifest.json'
+          }
+        ]}
+      />
+      <ProductJsonLd
+        productName={product?.name}
+        images={product?.gallery?.map(
+          ({ image }) => `${process.env.S3_ENDPOINT}/${image}`
+        )}
+        description={product?.shortDescription}
+      />
       <div className="relative py-35px px-4 md:px-50px max-w-[1300px] mx-auto overflow-hidden">
         {isEmpty(product) ? (
           <div className="pt-10px h-[500px] md:pt-40px flex items-center justify-center lg:pt-20px pb-40px">
