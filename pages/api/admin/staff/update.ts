@@ -25,21 +25,23 @@ class Handler extends PostgresClient {
             isAdmin = false
           } = body;
 
-          const { rows } = await this.query<StaffType, string | number>(
-            staffQueries.updateStaff(),
-            [
-              id,
-              firstName,
-              lastName,
-              phoneNumber,
-              email,
-              image,
-              isAdmin,
-              staff.id
-            ]
-          );
-
-          return res.status(200).json({ staff: rows[0] });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<StaffType, string | number>(
+              staffQueries.updateStaff(),
+              [
+                id,
+                firstName,
+                lastName,
+                phoneNumber,
+                email,
+                image,
+                isAdmin,
+                staff.id
+              ]
+            );
+            return { staff: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['POST']);

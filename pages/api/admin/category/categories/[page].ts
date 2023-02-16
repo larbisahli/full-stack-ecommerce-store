@@ -16,17 +16,20 @@ class Handler extends PostgresClient {
       await this.authorization(req, res);
       switch (method) {
         case this.GET: {
-          const { rows: categories } = await this.query<Category, number>(
-            categoryQueries.getCategoriesForAdmin(),
-            [this.limit, offset]
-          );
-          const { rows } = await this.query<{ count: number }, any>(
-            categoryQueries.getCategoriesCount(),
-            []
-          );
-          const { count: value } = rows[0];
-          const count = value ? Number(value) : 0;
-          return res.status(200).json({ categories, count });
+          const results = await this.tx(async (client) => {
+            const { rows: categories } = await client.query<Category, number>(
+              categoryQueries.getCategoriesForAdmin(),
+              [this.limit, offset]
+            );
+            const { rows } = await client.query<{ count: number }, any>(
+              categoryQueries.getCategoriesCount(),
+              []
+            );
+            const { count: value } = rows[0];
+            const count = value ? Number(value) : 0;
+            return { categories, count };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['GET']);

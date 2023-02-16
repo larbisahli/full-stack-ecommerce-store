@@ -15,13 +15,14 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.POST: {
           const { id } = body;
-
-          const { rows } = await this.query<StaffType, string>(
-            staffQueries.deleteStaff(),
-            [id]
-          );
-
-          return res.status(200).json({ staff: rows[0] });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<StaffType, string>(
+              staffQueries.deleteStaff(),
+              [id]
+            );
+            return { staff: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['POST']);

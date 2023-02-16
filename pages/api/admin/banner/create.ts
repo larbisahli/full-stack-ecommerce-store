@@ -24,21 +24,25 @@ class Handler extends PostgresClient {
             published,
             styles
           } = body;
-          const { rows } = await this.query<
-            HeroCarouselType,
-            [keyof HeroCarouselType]
-          >(carouselQueries.insertSlide(), [
-            title,
-            destinationUrl,
-            thumbnail?.image,
-            description,
-            btnLabel,
-            displayOrder,
-            published,
-            styles,
-            staff?.id
-          ]);
-          return res.status(200).json({ banner: rows[0] });
+
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<
+              HeroCarouselType,
+              [keyof HeroCarouselType]
+            >(carouselQueries.insertSlide(), [
+              title,
+              destinationUrl,
+              thumbnail?.image,
+              description,
+              btnLabel,
+              displayOrder,
+              published,
+              styles,
+              staff?.id
+            ]);
+            return { banner: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['POST']);

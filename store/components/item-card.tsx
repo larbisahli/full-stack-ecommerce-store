@@ -82,7 +82,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
         <div className="flex flex-col px-3 md:px-4 lg:px-[18px] pb-5 lg:pb-6 lg:pt-1.5 h-full">
           <h2
             title={name}
-            className="h-[50px] cut-line-2 text-skin-base !text-[14px] sm:text-sm lg:text-[15px] leading-5 sm:leading-6 mb-1.5"
+            className="h-[2.71rem] text-skin-base !text-[14px] sm:text-sm lg:text-[15px] leading-5 sm:leading-6 mb-1.5 cut-line-2"
           >
             {name}
           </h2>

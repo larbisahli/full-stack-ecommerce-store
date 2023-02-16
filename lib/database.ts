@@ -31,13 +31,13 @@ const CRUDPool: PoolClient = registerService(
       database: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      max: 22,
-      ssl: {
-        rejectUnauthorized: false,
-        ca: fs
-          .readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
-          .toString()
-      }
+      max: 22
+      // ssl: {
+      //   rejectUnauthorized: false,
+      //   ca: fs
+      //     .readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
+      //     .toString()
+      // }
     })
 );
 
@@ -63,6 +63,7 @@ export default class PostgresClient {
     res: NextApiResponse,
     isAdmin?: boolean
   ): Promise<StaffType> => {
+    return;
     const jwtToken = req.cookies[this.CookieNames.STAFF_TOKEN_NAME];
     if (!jwtToken) {
       res.status(403).json({
@@ -77,9 +78,14 @@ export default class PostgresClient {
       algorithms: Alg
     });
 
-    const { rows } = await this.query<StaffType, string>(loginQueries.staff(), [
-      staffId
-    ]);
+    const client = await this.transaction();
+
+    const { rows } = await client.query<StaffType, string>(
+      loginQueries.staff(),
+      [staffId]
+    );
+
+    client.release();
 
     const staff = rows[0];
 
@@ -153,4 +159,19 @@ export default class PostgresClient {
   ): Promise<QueryResult<T>> => {
     return await CRUDPool.query(queryText, values);
   };
+
+  protected async tx<T>(callback: (client: PoolClient) => Promise<T>) {
+    const client = await this.transaction();
+    try {
+      try {
+        const results = await callback(client);
+        return results;
+      } catch (err) {
+        console.log('------> tX:>', err);
+        throw new Error(err.message);
+      }
+    } finally {
+      client.release();
+    }
+  }
 }

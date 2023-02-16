@@ -21,12 +21,14 @@ class Handler extends PostgresClient {
             description,
             thumbnail: { image = null }
           } = body;
-          const { rows } = await this.query<CategoryType, string>(
-            categoryQueries.updateCategory(),
-            [id, parentId, name, description, image, staff?.id]
-          );
-          console.log(rows, { id, parentId, name, description });
-          return res.status(200).json({ category: rows[0] });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<CategoryType, string>(
+              categoryQueries.updateCategory(),
+              [id, parentId, name, description, image, staff?.id]
+            );
+            return { category: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['POST']);

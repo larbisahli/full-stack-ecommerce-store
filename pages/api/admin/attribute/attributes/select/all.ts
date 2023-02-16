@@ -16,11 +16,14 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           await this.authorization(req, res);
-          const { rows: attributes } = await this.query<Attribute, number>(
-            attributeQueries.getAttributesForAdmin(),
-            [999, 0]
-          );
-          return res.status(200).json({ attributes });
+          const results = await this.tx(async (client) => {
+            const { rows: attributes } = await client.query<Attribute, number>(
+              attributeQueries.getAttributesForAdmin(),
+              [999, 0]
+            );
+            return { attributes };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['GET']);

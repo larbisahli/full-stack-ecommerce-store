@@ -4,28 +4,18 @@ const DefaultSeo = ({ settings }) => {
   const {
     favicon,
     seo: {
-      metaTitle,
-      metaDescription,
-      ogDescription,
-      ogTitle,
-      ogImage,
-      twitterHandle
-    },
+      metaTitle = '',
+      metaDescription = '',
+      ogDescription = '',
+      ogTitle = '',
+      ogImage = '',
+      twitterHandle = ''
+    } = {},
     storeName
   } = settings;
 
   const canonicalUrl = process.env.URL;
-  console.log({
-    favicon,
-    metaTitle,
-    metaDescription,
-    ogDescription,
-    ogTitle,
-    ogImage,
-    twitterHandle,
-    canonicalUrl,
-    storeName
-  });
+
   return (
     <NextDefaultSeo
       title={metaTitle ?? 'Store'}

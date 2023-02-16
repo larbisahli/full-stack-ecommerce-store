@@ -17,11 +17,14 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           await this.authorization(req, res);
-          const { rows } = await this.query<CategoryType, string | number>(
-            categoryQueries.getCategoriesParentsSelectForAdmin(),
-            [limit]
-          );
-          return res.status(200).json({ categories: rows });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<CategoryType, string | number>(
+              categoryQueries.getCategoriesParentsSelectForAdmin(),
+              [limit]
+            );
+            return { categories: rows };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['GET']);

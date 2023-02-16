@@ -14,11 +14,14 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.GET: {
-          const { rows: products } = await this.query<Product, number>(
-            productQueries.getPopularProducts(),
-            [limit]
-          );
-          return res.status(200).json({ products });
+          const results = await this.tx(async (client) => {
+            const { rows: products } = await client.query<Product, number>(
+              productQueries.getPopularProducts(),
+              [limit]
+            );
+            return { products };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['GET']);

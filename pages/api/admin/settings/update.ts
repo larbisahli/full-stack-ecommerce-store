@@ -34,29 +34,30 @@ class Handler extends PostgresClient {
             storeNumber
           } = body;
 
-          console.log(socials);
-
-          const { rows } = await this.query<Settings, string>(
-            settingsQueries.updateSettings(),
-            [
-              favicon?.image,
-              logo?.image,
-              currency,
-              metaTitle,
-              metaDescription,
-              metaTags,
-              ogTitle,
-              ogDescription,
-              seo?.ogImage?.image,
-              twitterHandle,
-              socials,
-              maxCheckoutQuantity,
-              storeEmail,
-              storeName,
-              storeNumber
-            ]
-          );
-          return res.status(200).json({ settings: rows[0] });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<Settings, string>(
+              settingsQueries.updateSettings(),
+              [
+                favicon?.image,
+                logo?.image,
+                currency,
+                metaTitle,
+                metaDescription,
+                metaTags,
+                ogTitle,
+                ogDescription,
+                seo?.ogImage?.image,
+                twitterHandle,
+                socials,
+                maxCheckoutQuantity,
+                storeEmail,
+                storeName,
+                storeNumber
+              ]
+            );
+            return { settings: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['POST']);

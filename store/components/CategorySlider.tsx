@@ -118,11 +118,13 @@ const CategorySlider = ({ categories, label }: props) => {
         {!isEmpty(categories) && (
           <>
             <div className="flex items-center justify-between">
-              <div className="my-8 font-bold text-2xl">{label}</div>
+              <div className="my-8 text-md sm:text-lg font-bold text-2xl">
+                {label}
+              </div>
               <div
                 onClick={showMenu}
                 role="button"
-                className=" text-green text-lg flex justify-center items-center mx-1 p-1 px-2 h-full cursor-pointer hover:bg-gray-100"
+                className=" text-green text-md sm:text-lg flex justify-center items-center mx-1 p-1 px-2 h-full cursor-pointer hover:bg-gray-100"
               >
                 <CategoriesSvg />
                 <div className="font-semibold px-2">All Categories</div>
@@ -142,18 +144,15 @@ const CategorySlider = ({ categories, label }: props) => {
                 {categories?.map((cate, index) => {
                   return (
                     <ActiveLink key={index} href={`/category/${cate?.name}`}>
-                      <a className="h-[135px] w-[135px] sm:w-[125px] sm:h-[125px] md:h-[140px] md:w-[140px] lg:h-[150px] lg:w-[150px] 2xl:h-[180px] 2xl:w-[180px] relative inline-flex font-bold items-center border border-gray-300 rounded shadow mr-3">
+                      <a className="w-[120px] h-[120px] md:h-[140px] md:w-[140px] lg:h-[150px] lg:w-[150px] 2xl:h-[180px] 2xl:w-[180px] relative inline-flex font-bold items-center border border-gray-300 rounded shadow mr-3">
                         <div
                           style={{ background: 'rgba(0,0,0,0.2)' }}
                           className="absolute rounded top-0 left-0 right-0 bottom-0 z-40"
                         ></div>
                         <ImageComponent
-                          // objectFit="cover"
                           className="rounded"
                           layout="fill"
                           objectFit="cover"
-                          // height={200}
-                          // width={200}
                           src={
                             cate?.image
                               ? `${process.env.S3_ENDPOINT}/${cate?.image}`
@@ -161,7 +160,9 @@ const CategorySlider = ({ categories, label }: props) => {
                           }
                         />
                         <div className="absolute z-50 top-0 px-2 py-1 w-full">
-                          <p className="text-2xl text-white">{cate?.name}</p>
+                          <p className="text-lg ms:text-2xl text-white">
+                            {cate?.name}
+                          </p>
                           <p className="italic underline text-white">
                             Shop now
                           </p>

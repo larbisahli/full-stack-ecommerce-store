@@ -13,11 +13,14 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.GET: {
-          const { rows } = await this.query<Settings, string>(
-            settingsQueries.getSettings(),
-            []
-          );
-          return res.status(200).json({ settings: rows[0] });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<Settings, string>(
+              settingsQueries.getSettings(),
+              []
+            );
+            return { settings: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['GET']);

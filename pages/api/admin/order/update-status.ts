@@ -14,11 +14,14 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.POST: {
           const { id, order_status = 'pending' } = body;
-          const { rows } = await this.query<any, string>(
-            orderQueries.updateOrderStatus(),
-            [id, order_status]
-          );
-          return res.status(200).json({ order: rows[0] });
+          const results = await this.tx(async (client) => {
+            const { rows } = await client.query<any, string>(
+              orderQueries.updateOrderStatus(),
+              [id, order_status]
+            );
+            return { order: rows[0] };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['POST']);

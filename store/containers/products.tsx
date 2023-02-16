@@ -11,7 +11,7 @@ const Products = React.forwardRef(
     return (
       <div className="w-full mt-35px xxl:mt-60px px-4 mb-26 mb-40" ref={ref}>
         {!isEmpty(items) && (
-          <div className="my-8 text-3xl font-bold">{label}</div>
+          <div className="my-8 text-2xl sm:text-3xl font-bold">{label}</div>
         )}
         {items.length ? (
           <div className="py-4 rounded">

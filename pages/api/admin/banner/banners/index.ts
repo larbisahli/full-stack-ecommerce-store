@@ -15,20 +15,20 @@ class Handler extends PostgresClient {
 
       switch (method) {
         case this.GET: {
-          const { rows: banners } = await this.query<HeroCarouselType, unknown>(
-            carouselQueries.getHeroCarouselListForAdmin(),
-            []
-          );
-
-          const { rows } = await this.query<HeroCarouselType, unknown>(
-            carouselQueries.getHeroBannerCount(),
-            []
-          );
-
-          const { count: value } = rows[0];
-          const count = value ? Number(value) : 0;
-
-          return res.status(200).json({ banners, count });
+          const results = await this.tx(async (client) => {
+            const { rows: banners } = await client.query<
+              HeroCarouselType,
+              unknown
+            >(carouselQueries.getHeroCarouselListForAdmin(), []);
+            const { rows } = await client.query<HeroCarouselType, unknown>(
+              carouselQueries.getHeroBannerCount(),
+              []
+            );
+            const { count: value } = rows[0];
+            const count = value ? Number(value) : 0;
+            return { banners, count };
+          });
+          return res.status(200).json(results);
         }
         default:
           res.setHeader('Allow', ['GET']);

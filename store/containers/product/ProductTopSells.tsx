@@ -28,7 +28,7 @@ const PrevButton: React.FC<NavButtonProps> = ({ onClick, children }) => {
         onClick();
       }}
       aria-label="prev-button"
-      className="w-40px h-40px  shadow-xl text-gray-800 rounded-full bg-white p-1 ml-3 flex items-center justify-center absolute left-0 focus:outline-none"
+      className="w-40px h-40px  shadow-xl text-gray-800 rounded-full bg-white p-1 ml-2 flex items-center justify-center absolute left-0 focus:outline-none"
     >
       {children}
     </button>
@@ -42,7 +42,7 @@ const NextButton: React.FC<NavButtonProps> = ({ onClick, children }) => {
         onClick();
       }}
       aria-label="next-button"
-      className="w-40px h-40px shadow-xl text-gray-800 rounded-full mr-3 bg-white flex items-center justify-center absolute right-0 focus:outline-none"
+      className="w-40px h-40px shadow-xl text-gray-800 rounded-full mr-2 bg-white flex items-center justify-center absolute right-0 focus:outline-none"
     >
       {children}
     </button>
@@ -86,11 +86,11 @@ const ProductTopSells = ({ items = [] }: any) => {
       items: 3
     },
     tabletSmall: {
-      breakpoint: { max: 860, min: 465 },
+      breakpoint: { max: 860, min: 500 },
       items: 2
     },
     mobile: {
-      breakpoint: { max: 464, min: 0 },
+      breakpoint: { max: 500, min: 0 },
       items: 1
     }
   };
@@ -100,7 +100,9 @@ const ProductTopSells = ({ items = [] }: any) => {
       <div className="my-5 overflow-auto">
         {!isEmpty(items) && (
           <>
-            <div className="my-8 font-bold text-2xl">Our Top Sales</div>
+            <div className="my-8 text-xl sm:text-2xl font-bold">
+              Our Top Sales
+            </div>
             <div className="relative overflow-hidden">
               <Carousel
                 responsive={responsive}
@@ -110,7 +112,7 @@ const ProductTopSells = ({ items = [] }: any) => {
                 arrows={false}
                 renderButtonGroupOutside={true}
                 customButtonGroup={<ButtonGroup />}
-                className="flex items-center mt-30px p-1 pt-0 -mx-4 px-10"
+                className="flex items-center mt-30px p-1 pt-0"
               >
                 {items.map((item) => (
                   <ItemCard key={item.id} item={item} />
