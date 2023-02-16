@@ -27,34 +27,46 @@ export default function ProductPage({
     }
   }, [settings]);
 
+  const {
+    storeName = '',
+    seo: { twitterHandle = '' } = {},
+    favicon: { image: faviconImage = '' }
+  } = settings;
+  const {
+    name = '',
+    shortDescription = '',
+    slug = '',
+    thumbnail: { image = '' } = {}
+  } = product;
+
   return (
     <Layout style={{ height: 'auto' }} categories={categories}>
       <NextSeo
-        title={product?.name}
-        description={product?.shortDescription}
-        titleTemplate={product?.name ?? 'store'}
-        canonical={`${process.env.URL}/${product?.slug}`}
+        title={name}
+        description={shortDescription}
+        titleTemplate={name ?? 'store'}
+        canonical={`${process.env.URL}/${slug}`}
         openGraph={{
-          url: `${process.env.URL}/${product?.slug}`,
-          title: product?.name,
-          description: product?.shortDescription,
+          url: `${process.env.URL}/${slug}`,
+          title: name,
+          description: shortDescription,
           images: [
             {
-              url: `${process.env.S3_ENDPOINT}/${product?.thumbnail?.image}`,
+              url: `${process.env.S3_ENDPOINT}/${image}`,
               width: 900,
               height: 800,
               alt: 'Og Image'
             },
-            { url: `${process.env.S3_ENDPOINT}/${product?.thumbnail?.image}` },
-            ...(product?.gallery?.map(({ image }) => ({
-              url: `${process.env.S3_ENDPOINT}/${image}`
+            { url: `${process.env.S3_ENDPOINT}/${image}` },
+            ...(product?.gallery?.map(({ image: gaImage }) => ({
+              url: `${process.env.S3_ENDPOINT}/${gaImage}`
             })) ?? [])
           ],
-          site_name: settings?.storeName ?? ''
+          site_name: storeName ?? ''
         }}
         twitter={{
-          handle: settings?.seo?.twitterHandle,
-          site: settings?.storeName,
+          handle: twitterHandle,
+          site: storeName,
           cardType: 'summary_large_image'
         }}
         additionalMetaTags={[
@@ -74,11 +86,11 @@ export default function ProductPage({
         additionalLinkTags={[
           {
             rel: 'icon',
-            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`
+            href: `${process.env.S3_ENDPOINT}/${faviconImage}`
           },
           {
             rel: 'apple-touch-icon',
-            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`,
+            href: `${process.env.S3_ENDPOINT}/${faviconImage}`,
             sizes: '76x76'
           },
           {
@@ -94,9 +106,9 @@ export default function ProductPage({
       <ProductJsonLd
         productName={product?.name}
         images={product?.gallery?.map(
-          ({ image }) => `${process.env.S3_ENDPOINT}/${image}`
+          ({ image: gaImage }) => `${process.env.S3_ENDPOINT}/${gaImage}`
         )}
-        description={product?.shortDescription}
+        description={shortDescription}
       />
       <div className="relative py-35px px-4 md:px-50px max-w-[1300px] mx-auto overflow-hidden">
         {isEmpty(product) ? (

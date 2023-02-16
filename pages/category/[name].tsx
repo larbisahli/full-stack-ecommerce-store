@@ -47,6 +47,13 @@ export default function Home({
     }
   }, [settings]);
 
+  const { name = '', description = '', image = '' } = category;
+  const {
+    storeName = '',
+    seo: { twitterHandle = '' } = {},
+    favicon: { image: faviconImage = '' }
+  } = settings;
+
   return (
     <Layout categories={categories}>
       <Head>
@@ -54,32 +61,32 @@ export default function Home({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
-        <meta name="Description" content={category?.description} />
-        <title>{category?.name}</title>
+        <meta name="Description" content={description} />
+        <title>{name}</title>
       </Head>
       <NextSeo
-        title={category?.name}
-        description={category?.description}
-        titleTemplate={category?.name ?? 'store'}
-        canonical={`${process.env.URL}/category/${category?.name}`}
+        title={name}
+        description={description}
+        titleTemplate={name ?? 'store'}
+        canonical={`${process.env.URL}/category/${name}`}
         openGraph={{
-          url: `${process.env.URL}/category/${category?.name}`,
-          title: category?.name,
-          description: category?.description,
+          url: `${process.env.URL}/category/${name}`,
+          title: name,
+          description: description,
           images: [
             {
-              url: `${process.env.S3_ENDPOINT}/${category.image}`,
+              url: `${process.env.S3_ENDPOINT}/${image}`,
               width: 900,
               height: 800,
               alt: 'Og Image'
             },
-            { url: `${process.env.S3_ENDPOINT}/${category?.image}` }
+            { url: `${process.env.S3_ENDPOINT}/${image}` }
           ],
-          site_name: settings?.storeName ?? ''
+          site_name: storeName ?? ''
         }}
         twitter={{
-          handle: settings?.seo?.twitterHandle,
-          site: settings?.storeName,
+          handle: twitterHandle,
+          site: storeName,
           cardType: 'summary_large_image'
         }}
         additionalMetaTags={[
@@ -99,11 +106,11 @@ export default function Home({
         additionalLinkTags={[
           {
             rel: 'icon',
-            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`
+            href: `${process.env.S3_ENDPOINT}/${faviconImage}`
           },
           {
             rel: 'apple-touch-icon',
-            href: `${process.env.S3_ENDPOINT}/${settings?.favicon?.image}`,
+            href: `${process.env.S3_ENDPOINT}/${faviconImage}`,
             sizes: '76x76'
           },
           {
@@ -118,7 +125,7 @@ export default function Home({
       />
       <div className="w-full max-w-[1380px] mx-auto">
         <CategoryHeader category={category} />
-        <Products items={products} ref={elRef} label={category?.name} />
+        <Products items={products} ref={elRef} label={name} />
       </div>
     </Layout>
   );
