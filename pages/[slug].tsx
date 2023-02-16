@@ -31,13 +31,13 @@ export default function ProductPage({
     storeName = '',
     seo: { twitterHandle = '' } = {},
     favicon: { image: faviconImage = '' }
-  } = settings;
+  } = settings ?? {};
   const {
     name = '',
     shortDescription = '',
     slug = '',
     thumbnail: { image = '' } = {}
-  } = product;
+  } = product ?? {};
 
   return (
     <Layout style={{ height: 'auto' }} categories={categories}>

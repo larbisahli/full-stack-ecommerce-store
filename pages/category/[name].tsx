@@ -47,12 +47,12 @@ export default function Home({
     }
   }, [settings]);
 
-  const { name = '', description = '', image = '' } = category;
+  const { name = '', description = '', image = '' } = category ?? {};
   const {
     storeName = '',
     seo: { twitterHandle = '' } = {},
     favicon: { image: faviconImage = '' }
-  } = settings;
+  } = settings ?? {};
 
   return (
     <Layout categories={categories}>
