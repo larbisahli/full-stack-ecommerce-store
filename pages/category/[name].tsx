@@ -51,19 +51,11 @@ export default function Home({
   const {
     storeName = '',
     seo: { twitterHandle = '' } = {},
-    favicon: { image: faviconImage = '' }
+    favicon: { image: faviconImage = '' } = {}
   } = settings ?? {};
 
   return (
     <Layout categories={categories}>
-      <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1"
-        />
-        <meta name="Description" content={description} />
-        <title>{name}</title>
-      </Head>
       <NextSeo
         title={name}
         description={description}

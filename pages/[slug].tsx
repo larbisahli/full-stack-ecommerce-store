@@ -30,7 +30,7 @@ export default function ProductPage({
   const {
     storeName = '',
     seo: { twitterHandle = '' } = {},
-    favicon: { image: faviconImage = '' }
+    favicon: { image: faviconImage = '' } = {}
   } = settings ?? {};
   const {
     name = '',
