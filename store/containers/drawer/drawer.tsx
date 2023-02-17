@@ -1,9 +1,14 @@
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
+import { Category } from '@ts-types/generated';
 import React, { useContext } from 'react';
 
 import Cart from './views/cart';
 import Checkout from './views/checkout';
 import DrawerMenu from './views/menus';
+
+interface Props {
+  categories: Category[];
+}
 
 export const CartDrawer = () => {
   const { state, dispatch } = useContext(DrawerContext);
@@ -43,7 +48,7 @@ export const CartDrawer = () => {
   );
 };
 
-export const Drawer = () => {
+export const Drawer = ({ categories = [] }: Props) => {
   const { state, dispatch }: any = useContext(DrawerContext);
   const handleClose = () =>
     dispatch({
@@ -67,7 +72,7 @@ export const Drawer = () => {
       <div
         className={`drawer drawer-menu ${state?.menu === true ? 'open' : ''}`}
       >
-        <DrawerMenu />
+        <DrawerMenu categories={categories} />
       </div>
     </React.Fragment>
   );

@@ -12,7 +12,6 @@ import {
 } from '@ts-types/generated';
 import isEmpty from 'lodash/isEmpty';
 import { GetStaticProps } from 'next';
-import Head from 'next/head';
 import { NextSeo } from 'next-seo';
 import { useEffect } from 'react';
 

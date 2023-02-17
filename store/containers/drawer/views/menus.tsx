@@ -4,14 +4,11 @@
 import { PhoneIcon } from '@components/icons/phone';
 import ImageComponent from '@components/ImageComponent';
 import { useSettings } from '@contexts/settings.context';
-import { useErrorLogger } from '@hooks/useErrorLogger';
 import ChevronDown from '@store/assets/icons/chevron-down';
 import CloseIcon from '@store/assets/icons/close';
 import {
   Facebook,
-  Github,
   Instagram,
-  Linkedin,
   Twitter,
   Youtube
 } from '@store/assets/icons/social-icons';
@@ -19,12 +16,10 @@ import ActiveLink from '@store/components/active-link';
 import { Scrollbar } from '@store/components/scrollbar';
 import { DrawerContext } from '@store/contexts/drawer/drawer.provider';
 import { Category } from '@ts-types/generated';
-import { fetcher } from '@utils/utils';
 import cd from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
-import useSwr from 'swr';
 
 interface TCategory {
   categories: Category[];
@@ -69,17 +64,12 @@ const social = [
   }
 ];
 
-export default function DrawerMenu() {
+interface Props {
+  categories: Category[];
+}
+
+export default function DrawerMenu({ categories = [] }: Props) {
   const { dispatch } = useContext(DrawerContext);
-
-  const { data, error } = useSwr<TCategory>(
-    `/api/store/category/categories`,
-    fetcher
-  );
-
-  const { categories = [] } = data ?? {};
-
-  useErrorLogger(error);
 
   const hideMenu = () => {
     dispatch({

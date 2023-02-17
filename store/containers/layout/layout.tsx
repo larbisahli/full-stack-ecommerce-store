@@ -32,7 +32,7 @@ const Layout = (props) => {
         <div className="pt-60px flex-auto">{props.children}</div>
         <Footer />
       </div>
-      <CartDrawer />
+      <CartDrawer categories={props.categories} />
     </main>
   );
 };
