@@ -141,7 +141,7 @@ export async function getStaticPaths() {
         }
       }
     ],
-    fallback: true
+    fallback: 'blocking'
   };
 }
 
