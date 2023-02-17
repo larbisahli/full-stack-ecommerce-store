@@ -147,20 +147,26 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
+    let revalidate = 60*5
     const {
       categories = [],
       product = [],
-      settings = {}
+      settings = {},
+      error
     } = await fetch(`${process.env.URL}/api/store/product/${params?.slug}`)
       .then((data) => data.json())
       .then((data) => data);
+
+    if(!isEmpty(error)){
+        revalidate = 60
+      }
 
     return {
       props: {
         product,
         categories,
         settings,
-        revalidate: 60 * 5
+        revalidate
       }
     };
   } catch (err) {

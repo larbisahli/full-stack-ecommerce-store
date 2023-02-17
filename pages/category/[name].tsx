@@ -138,15 +138,21 @@ export async function getStaticPaths() {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { name } = params;
   try {
+    let revalidate = 60*5
     const {
       categories = [],
       banners = [],
       category = {},
       products = [],
-      settings = {}
+      settings = {},
+      error
     } = await fetch(`${process.env.URL}/api/store/category-request/${name}`)
       .then((data) => data.json())
       .then((data) => data ?? {});
+
+    if(!isEmpty(error)){
+        revalidate = 60
+      }
 
     return {
       props: {
@@ -155,7 +161,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         category,
         products,
         settings,
-        revalidate: 60 * 5
+        revalidate
       }
     };
   } catch (err) {
