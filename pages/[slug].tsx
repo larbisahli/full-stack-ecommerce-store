@@ -166,7 +166,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         product,
         categories,
         settings,
-        error,
+        error: JSON.stringify(error),
         revalidate
       }
     };
