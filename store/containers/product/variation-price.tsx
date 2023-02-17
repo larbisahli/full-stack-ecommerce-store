@@ -22,7 +22,7 @@ function VariationPrice({
   const { locale } = router;
 
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const selectedSalePrice = isVariableType

@@ -147,7 +147,7 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
-    let revalidate = 60*5
+    let revalidate = 60 * 5;
     const {
       categories = [],
       product = [],
@@ -157,9 +157,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       .then((data) => data.json())
       .then((data) => data);
 
-    if(!isEmpty(error)){
-        revalidate = 60
-      }
+    if (!isEmpty(error)) {
+      revalidate = 60;
+    }
 
     return {
       props: {

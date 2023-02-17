@@ -20,7 +20,7 @@ import { useTranslation } from 'next-i18next';
 
 const RenderPrice = ({ salePrice, record }) => {
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const minPrice = usePrice({

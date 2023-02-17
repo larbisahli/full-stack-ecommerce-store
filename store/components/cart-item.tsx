@@ -19,7 +19,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 
   const dispatch = useAppDispatch();
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const {

@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 
 const ProductItem = ({ product, index }) => {
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const price = usePrice({

@@ -158,7 +158,7 @@ export default function OrderDetailsPage({ client }: SSRProps) {
   ];
 
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const total = usePrice({
@@ -269,7 +269,7 @@ export default function OrderDetailsPage({ client }: SSRProps) {
 
 const UnitPrice = ({ amount }) => {
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const price = usePrice({

@@ -237,8 +237,8 @@ export default function SettingsForm({ settings = {} }: IProps) {
             <SelectInput
               name="currency"
               control={control}
-              getOptionLabel={(option: any) => option.name}
-              getOptionValue={(option: any) => option.code}
+              getOptionLabel={(option: any) => option?.name}
+              getOptionValue={(option: any) => option?.code}
               options={CURRENCY}
             />
             <ValidationError message={t(errors.currency?.message)} />

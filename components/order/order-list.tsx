@@ -26,7 +26,7 @@ const Price = ({ total }) => {
   const router = useRouter();
   const { locale } = router;
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const price = usePrice({

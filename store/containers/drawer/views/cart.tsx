@@ -16,7 +16,7 @@ export default function Cart() {
   const { locale } = router;
 
   const {
-    currency: { code }
+    currency: { code = 'USD' }
   } = useSettings();
 
   const items = useAppSelector((state) => state.cart.items);
