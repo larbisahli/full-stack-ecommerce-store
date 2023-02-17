@@ -166,6 +166,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         product,
         categories,
         settings,
+        error,
         revalidate
       }
     };

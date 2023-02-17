@@ -100,6 +100,7 @@ export async function getStaticProps() {
         banners,
         products,
         settings,
+        error,
         revalidate
       }
     };
