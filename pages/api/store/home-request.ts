@@ -1,6 +1,16 @@
 import PostgresClient from '@lib/database';
-import { productQueries } from '@lib/sql';
-import { Product } from '@ts-types/generated';
+import {
+  carouselQueries,
+  categoryQueries,
+  productQueries,
+  settingsQueries
+} from '@lib/sql';
+import {
+  Category,
+  HeroCarouselType,
+  Product,
+  Settings
+} from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -9,17 +19,32 @@ class Handler extends PostgresClient {
   }
 
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { query, method } = req;
-    const limit = parseInt(query.limit as string, 10);
+    const { method } = req;
     try {
       switch (method) {
         case this.GET: {
           const results = await this.tx(async (client) => {
+            // Categories
+            const { rows: categories } = await client.query<Category, number>(
+              categoryQueries.getCategories(),
+              []
+            );
+            // Banner
+            const { rows: banners } = await client.query<HeroCarouselType, any>(
+              carouselQueries.getHeroBanners(),
+              []
+            );
+            // Products
             const { rows: products } = await client.query<Product, number>(
               productQueries.getPopularProducts(),
-              [limit]
+              []
             );
-            return { products };
+            // Settings
+            const { rows: settings } = await client.query<Settings, string>(
+              settingsQueries.getSettings(),
+              []
+            );
+            return { categories, banners, products, settings: settings[0] };
           });
           return res.status(200).json(results);
         }
@@ -28,12 +53,11 @@ class Handler extends PostgresClient {
           res.status(405).end(`There was some error!`);
       }
     } catch (error) {
-      console.log(error);
       res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'products'
+          from: 'categories'
         }
       });
     }

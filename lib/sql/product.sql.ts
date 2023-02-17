@@ -281,7 +281,7 @@ export function getPopularProducts(): string {
     WHEN pd.product_type = 'simple' THEN pd.compare_price::FLOAT END AS "comparePrice",
   
   (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
-  FROM products AS pd WHERE pd.published IS TRUE LIMIT $1`;
+  FROM products AS pd WHERE pd.published IS TRUE`;
 }
 
 export function getCategoryProduct(): string {
@@ -306,7 +306,7 @@ export function getCategoryProduct(): string {
     WHEN pd.product_type = 'simple' THEN pd.compare_price::FLOAT END AS "comparePrice",
   
   (SELECT gal.image FROM gallery AS gal WHERE gal.product_id = pd.id AND gal.is_thumbnail = true) AS thumbnail
-  FROM products AS pd WHERE pd.published IS TRUE AND pd.id IN (SELECT pc.product_id FROM product_categories pc WHERE pc.category_id = (SELECT cate.id FROM categories cate WHERE cate.name = $1)) LIMIT $2`;
+  FROM products AS pd WHERE pd.published IS TRUE AND pd.id IN (SELECT pc.product_id FROM product_categories pc WHERE pc.category_id = (SELECT cate.id FROM categories cate WHERE cate.name = $1))`;
 }
 
 export function deleteProduct(): string {

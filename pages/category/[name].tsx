@@ -137,38 +137,41 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  let products = [],
-    categories = [],
-    category = {},
-    error = null,
-    settings = {};
+  const { name } = params;
   try {
-    categories = await fetch(`${process.env.URL}/api/store/category/categories`)
+    const {
+      categories = [],
+      banners = [],
+      category = {},
+      products = [],
+      settings = {}
+    } = await fetch(`${process.env.URL}/api/store/category-request/${name}`)
       .then((data) => data.json())
-      .then(({ categories }) => categories ?? []);
+      .then((data) => data ?? {});
 
-    const data = await fetch(
-      `${process.env.URL}/api/store/category/${params?.name}`
-    ).then((data) => data.json());
-    products = data?.products ?? [];
-    category = data?.category ?? {};
-
-    settings = await fetch(`${process.env.URL}/api/store/settings`)
-      .then((data) => data.json())
-      .then(({ settings }) => settings ?? {});
+    return {
+      props: {
+        categories,
+        banners,
+        category,
+        products,
+        settings,
+        revalidate: 60 * 5
+      }
+    };
   } catch (err) {
     console.log('error :::>', err);
-    error = err?.message ?? null;
+    const error = err?.message ?? null;
+    return {
+      props: {
+        categories: [],
+        banners: [],
+        category: {},
+        products: [],
+        settings: {},
+        error,
+        revalidate: 60
+      }
+    };
   }
-
-  return {
-    props: {
-      products,
-      categories,
-      category,
-      settings,
-      error
-    },
-    revalidate: 60 * 5
-  };
 };

@@ -12,7 +12,7 @@ const DefaultSeo = ({ settings }) => {
       twitterHandle = ''
     } = {},
     storeName
-  } = settings;
+  } = settings ?? {};
 
   const canonicalUrl = process.env.URL;
 

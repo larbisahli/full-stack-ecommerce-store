@@ -137,7 +137,7 @@ export async function getStaticPaths() {
     paths: [
       {
         params: {
-          slug: 'dolor-sit-amet-consectetur-adipiscing-2'
+          slug: 'my-product'
         }
       }
     ],
@@ -146,36 +146,34 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  let product = {},
-    categories = [],
-    settings = {},
-    error = null;
   try {
-    categories = await fetch(`${process.env.URL}/api/store/category/categories`)
+    const {
+      categories = [],
+      product = [],
+      settings = {}
+    } = await fetch(`${process.env.URL}/api/store/product/${params?.slug}`)
       .then((data) => data.json())
-      .then(({ categories }) => categories ?? []);
+      .then((data) => data);
 
-    product = await fetch(
-      `${process.env.URL}/api/store/product/${params?.slug}`
-    )
-      .then((data) => data.json())
-      .then(({ product }) => product ?? {});
-
-    settings = await fetch(`${process.env.URL}/api/store/settings`)
-      .then((data) => data.json())
-      .then(({ settings }) => settings ?? {});
+    return {
+      props: {
+        product,
+        categories,
+        settings,
+        revalidate: 60 * 5
+      }
+    };
   } catch (err) {
     console.log('error :::>', err);
-    error = err?.message ?? null;
+    const error = err?.message ?? null;
+    return {
+      props: {
+        product: {},
+        categories: [],
+        settings: {},
+        error,
+        revalidate: 60
+      }
+    };
   }
-
-  return {
-    props: {
-      product,
-      categories,
-      settings,
-      error
-    },
-    revalidate: 60 * 5
-  };
 };

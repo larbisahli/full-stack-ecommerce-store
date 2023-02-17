@@ -1,6 +1,6 @@
 import PostgresClient from '@lib/database';
-import { productQueries } from '@lib/sql';
-import { Category, Product } from '@ts-types/generated';
+import { categoryQueries, productQueries, settingsQueries } from '@lib/sql';
+import { Category, Product, Settings } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -15,11 +15,22 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           const results = await this.tx(async (client) => {
+            // Categories
+            const { rows: categories } = await client.query<Category, number>(
+              categoryQueries.getCategories(),
+              []
+            );
+            // Product
             const { rows } = await client.query<Product, string>(
               productQueries.getProduct(),
               [slug]
             );
-            return { product: rows[0] };
+            // Settings
+            const { rows: settings } = await client.query<Settings, string>(
+              settingsQueries.getSettings(),
+              []
+            );
+            return { product: rows[0], categories, settings };
           });
           return res.status(200).json(results);
         }

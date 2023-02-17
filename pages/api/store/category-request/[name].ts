@@ -1,6 +1,16 @@
 import PostgresClient from '@lib/database';
-import { categoryQueries, productQueries } from '@lib/sql';
-import { Product } from '@ts-types/generated';
+import {
+  carouselQueries,
+  categoryQueries,
+  productQueries,
+  settingsQueries
+} from '@lib/sql';
+import {
+  Category,
+  HeroCarouselType,
+  Product,
+  Settings
+} from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -15,15 +25,32 @@ class Handler extends PostgresClient {
       switch (method) {
         case this.GET: {
           const results = await this.tx(async (client) => {
-            const { rows } = await client.query<Product, string | number>(
-              productQueries.getCategoryProduct(),
-              [name, this.limit]
+            // Categories
+            const { rows: categories } = await client.query<Category, number>(
+              categoryQueries.getCategories(),
+              []
             );
+            // SubCategory
+            const { rows: products } = await client.query<
+              Product,
+              string | number
+            >(productQueries.getCategoryProduct(), [name]);
+            // Products
             const { rows: categoryRows } = await client.query<
               Product,
               string | number
             >(categoryQueries.getCategoryByName(), [name]);
-            return { products: rows, category: categoryRows[0] };
+            // Settings
+            const { rows: settings } = await client.query<Settings, string>(
+              settingsQueries.getSettings(),
+              []
+            );
+            return {
+              categories,
+              products,
+              settings: settings[0],
+              category: categoryRows[0] ?? {}
+            };
           });
           return res.status(200).json(results);
         }
@@ -36,7 +63,7 @@ class Handler extends PostgresClient {
         error: {
           type: this.ErrorNames.SERVER_ERROR,
           message: error?.message,
-          from: 'categories->productCategories'
+          from: 'categories'
         }
       });
     }

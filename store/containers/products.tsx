@@ -1,6 +1,7 @@
 import NotFound from '@store/assets/icons/not-found';
 import ItemCard from '@store/components/item-card';
 import isEmpty from 'lodash/isEmpty';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 const Products = React.forwardRef(
@@ -8,6 +9,20 @@ const Products = React.forwardRef(
     { items = [], label = 'Recommended Products' }: any,
     ref: React.RefObject<HTMLDivElement>
   ) => {
+    const { query, push } = useRouter();
+
+    const page = Number(query.page) as number;
+
+    const handleSeeMore = () => {
+      console.log(page);
+      if (!isNaN(page)) {
+        push({
+          pathname: '[page]',
+          query: { page: page + 1 }
+        });
+      }
+    };
+
     return (
       <div className="w-full mt-35px xxl:mt-60px px-4 mb-26 mb-40" ref={ref}>
         {!isEmpty(items) && (
@@ -21,7 +36,10 @@ const Products = React.forwardRef(
               ))}
             </div>
             <div className="mt-20 mb-4 flex items-center justify-center">
-              <button className="hover:bg-gray-50 border border-solid w-[402px] border-gray-400 rounded py-2 px-5 font-semibold">
+              <button
+                onClick={handleSeeMore}
+                className="hover:bg-gray-50 border border-solid w-[402px] border-gray-400 rounded py-2 px-5 font-semibold"
+              >
                 Show more results
               </button>
             </div>
