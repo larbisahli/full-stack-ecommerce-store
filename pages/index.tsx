@@ -85,7 +85,7 @@ export async function getStaticProps() {
       banners = [],
       products = [],
       settings = {},
-      error
+      error = null
     } = await fetch(`${process.env.URL}/api/store/home-request`)
       .then((data) => data.json())
       .then((data) => data ?? {})
@@ -113,7 +113,7 @@ export async function getStaticProps() {
         banners: [],
         products: [],
         settings: {},
-        error,
+        error: JSON.stringify(error),
         revalidate: 60
       }
     };

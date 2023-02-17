@@ -152,7 +152,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       categories = [],
       product = [],
       settings = {},
-      error
+      error = null
     } = await fetch(`${process.env.URL}/api/store/product/${params?.slug}`)
       .then((data) => data.json())
       .then((data) => data);
@@ -178,7 +178,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         product: {},
         categories: [],
         settings: {},
-        error,
+        error: JSON.stringify(error),
         revalidate: 60
       }
     };
