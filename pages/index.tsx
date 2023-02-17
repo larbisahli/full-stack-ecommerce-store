@@ -79,7 +79,6 @@ export default function Home({
 
 export async function getStaticProps() {
   try {
-    let revalidate = 60 * 5;
     const {
       categories = [],
       banners = [],
@@ -90,10 +89,6 @@ export async function getStaticProps() {
       .then((data) => data.json())
       .then((data) => data ?? {});
 
-    if (!isEmpty(error)) {
-      revalidate = 60;
-    }
-
     return {
       props: {
         categories,
@@ -101,7 +96,6 @@ export async function getStaticProps() {
         products,
         settings,
         error: JSON.stringify(error),
-        revalidate
       }
     };
   } catch (err) {
@@ -114,7 +108,6 @@ export async function getStaticProps() {
         products: [],
         settings: {},
         error: JSON.stringify(error),
-        revalidate: 60
       }
     };
   }
