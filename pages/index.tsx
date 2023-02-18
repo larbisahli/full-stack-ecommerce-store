@@ -106,14 +106,13 @@ export async function getStaticProps() {
     };
   } catch (err) {
     console.log('error :::>', err);
-    const error = err?.message ?? null;
     return {
       props: {
         categories: [],
         banners: [],
         products: [],
         settings: {},
-        error: JSON.stringify(error),
+        error: JSON.stringify(err),
         revalidate: 60
       }
     };

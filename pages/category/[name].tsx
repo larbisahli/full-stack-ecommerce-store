@@ -167,7 +167,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
   } catch (err) {
     console.log('error :::>', err);
-    const error = err?.message ?? null;
     return {
       props: {
         categories: [],
@@ -175,7 +174,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         category: {},
         products: [],
         settings: {},
-        error: JSON.stringify(error),
+        error: JSON.stringify(err),
         revalidate: 60
       }
     };
