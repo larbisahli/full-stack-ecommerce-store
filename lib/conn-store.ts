@@ -2,10 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { Client, PoolClient } from 'pg';
 
-let PgClientStore: PoolClient;
+import { GlobalRef } from './global';
 
-if (!PgClientStore) {
-  PgClientStore = new Client({
+const databaseConn = new GlobalRef('PgClientStore');
+if (!databaseConn.value) {
+  databaseConn.value = new Client({
     host: process.env.DATABASE_END_POINT,
     port: process.env.PORT,
     database: process.env.POSTGRES_DB,
@@ -17,7 +18,12 @@ if (!PgClientStore) {
         .readFileSync(path.join(process.cwd(), 'lib', 'ca-certificate.crt'))
         .toString()
     }
-  });
+  })
+}
+
+const PgClientStore: PoolClient = databaseConn.value;
+
+if(!PgClientStore?._connected){
   PgClientStore.connect()
 }
 

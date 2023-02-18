@@ -89,7 +89,6 @@ export default class PostgresClient {
   protected async tx<T>(
     callback: ({ query }: { query: QueryResult }) => Promise<T>
   ) {
-    let client: PoolClient;
     try {
       const results = await callback(PgClient);
       return results;
