@@ -42,7 +42,7 @@ class Handler extends PostgresClient {
       res.status(500).json({
         error: {
           type: this.ErrorNames.SERVER_ERROR,
-          message: error?.message,
+          message: JSON.stringify(error),
           from: 'product'
         }
       });
