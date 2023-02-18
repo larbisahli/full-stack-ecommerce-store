@@ -91,22 +91,11 @@ export default class PostgresClient {
   ) {
     let client: PoolClient;
     try {
-      console.log(
-        '_________START________',
-        PgClient?.processID,
-        PgClient?._connected
-      );
-      if (!PgClient?._connected) {
-        PgClient.connect();
-      }
       const results = await callback(PgClient);
       return results;
     } catch (err) {
       console.log('------> tX:>', err);
       throw new Error(err.message);
-    } finally {
-      console.log('2_________END________');
-      // PgClient.end()
     }
   }
 
@@ -114,17 +103,11 @@ export default class PostgresClient {
     callback: ({ query }: { query: QueryResult }) => Promise<T>
   ) {
     try {
-      if (!PgClientStore?._connected) {
-        PgClientStore.connect();
-      }
       const results = await callback(PgClientStore);
       return results;
     } catch (err) {
       console.log('------> tX:>', err);
       throw new Error(err.message);
-    } finally {
-      console.log('2_________END________');
-      // PgClientStore.end()
     }
   }
 }

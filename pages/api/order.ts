@@ -17,7 +17,6 @@ class Handler extends PostgresClient {
         case this.POST: {
           // **** TRANSACTION ****
           try {
-            PgClient.connect();
             await PgClient.query('BEGIN');
             const {
               shippingInfo: { fullName, address, city, phoneNumber },

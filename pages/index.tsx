@@ -89,7 +89,7 @@ export async function getStaticProps() {
       error = null
     } = await fetch(`${process.env.URL}/api/store/home-request`)
       .then((data) => data.json())
-      .then((data) => data ?? {});
+      .then((data) => data ?? {})
 
     if (!isEmpty(error)) {
       revalidate = 60;

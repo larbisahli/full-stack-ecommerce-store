@@ -29,7 +29,6 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.POST: {
-          PgClient.connect();
           const { rows } = await PgClient.query<StaffType, string>(
             loginQueries.staffLogin(),
             [email]

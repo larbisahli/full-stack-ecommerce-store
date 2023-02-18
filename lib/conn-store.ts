@@ -18,6 +18,7 @@ if (!PgClientStore) {
         .toString()
     }
   });
+  PgClientStore.connect()
 }
 
 export default PgClientStore;

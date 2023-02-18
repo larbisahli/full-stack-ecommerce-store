@@ -16,7 +16,6 @@ class Handler extends PostgresClient {
         // **** TRANSACTION ****
         case this.POST: {
           try {
-            PgClient.connect();
             const staff = await this.authorization(PgClient, req, res);
 
             await PgClient.query('BEGIN');
