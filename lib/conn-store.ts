@@ -10,7 +10,7 @@ if (!PgClientStore) {
     port: process.env.PORT,
     database: process.env.POSTGRES_DB,
     user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD
+    password: process.env.POSTGRES_PASSWORD,
     ssl: {
       rejectUnauthorized: false,
       ca: fs
