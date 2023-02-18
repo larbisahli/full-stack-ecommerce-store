@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { PublicKEY } from '@middleware/jwt.keys';
 import { CookieNames, ErrorNames } from '@ts-types/enums';
 import { StaffType } from '@ts-types/generated';
@@ -8,7 +9,7 @@ import { isEmpty } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PoolClient, QueryResult } from 'pg';
 
-import CRUDPool from './conn';
+import CRUDPool, { random } from './conn';
 import { loginQueries } from './sql';
 
 export default class PostgresClient {
@@ -55,7 +56,6 @@ export default class PostgresClient {
     );
 
     client.release();
-    client.end();
 
     const staff = rows[0];
 
@@ -94,28 +94,12 @@ export default class PostgresClient {
     const query = client.query;
     const release = client.release;
 
-    // set a timeout of 5 seconds, after which we will log this client's last query
-    const timeout = setTimeout(() => {
-      console.error('A client has been checked out for more than 5 seconds!');
-      console.error(
-        `The last executed query on this client was: ${client.lastQuery}`
-      );
-    }, 5000);
-
-    // monkey patch the query method to keep track of the last query executed
     client.query = (...args: unknown[]) => {
       client.lastQuery = args;
       return query.apply(client, args);
     };
 
     client.release = async () => {
-      // Resetting the session's state
-      await client.query('DISCARD ALL', []);
-      client.store = null;
-
-      // Clear our timeout
-      clearTimeout(timeout);
-      // set the methods back to their old un-monkey-patched version
       client.query = query;
       client.release = release;
       return release.apply(client);
@@ -130,19 +114,25 @@ export default class PostgresClient {
     return await CRUDPool.query(queryText, values);
   };
 
-  protected async tx<T>(callback: (client: PoolClient) => Promise<T>) {
-    const client = await this.transaction();
+  protected async tx<T>(
+    callback: ({
+      query,
+      connections
+    }: {
+      query: QueryResult;
+      connections: number;
+    }) => Promise<T>
+  ) {
+    console.log('---->>>>>', CRUDPool._clients?.length);
     try {
-      try {
-        const results = await callback(client);
-        return results;
-      } catch (err) {
-        console.log('------> tX:>', err);
-        throw new Error(err.message);
-      }
-    } finally {
-      client.release();
-      client.end();
+      const results = await callback({
+        query: this.query,
+        connections: CRUDPool?._clients?.length
+      });
+      return results;
+    } catch (err) {
+      console.log('------> tX:>', err);
+      throw new Error(err.message);
     }
   }
 }

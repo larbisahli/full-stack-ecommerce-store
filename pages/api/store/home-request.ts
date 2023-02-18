@@ -44,7 +44,13 @@ class Handler extends PostgresClient {
               settingsQueries.getSettings(),
               []
             );
-            return { categories, banners, products, settings: settingsRow[0] };
+            return {
+              categories,
+              banners,
+              products,
+              settings: settingsRow[0],
+              connections: client.connections
+            };
           });
           return res.status(200).json(results);
         }

@@ -79,19 +79,20 @@ export default function Home({
 
 export async function getStaticProps() {
   try {
-    let revalidate = 60 * 5
+    let revalidate = 60 * 5;
     const {
       categories = [],
       banners = [],
       products = [],
       settings = {},
+      connections = 0,
       error = null
     } = await fetch(`${process.env.URL}/api/store/home-request`)
       .then((data) => data.json())
-      .then((data) => data ?? {})
+      .then((data) => data ?? {});
 
-    if(!isEmpty(error)){
-      revalidate = 60
+    if (!isEmpty(error)) {
+      revalidate = 60;
     }
 
     return {
@@ -100,6 +101,7 @@ export async function getStaticProps() {
         banners,
         products,
         settings,
+        connections,
         error: JSON.stringify(error),
         revalidate
       }
