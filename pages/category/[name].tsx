@@ -164,8 +164,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         settings,
         processID,
         error: JSON.stringify(error),
-        revalidate
-      }
+      },
+      revalidate
     };
   } catch (err) {
     console.log('error :::>', err);
@@ -177,8 +177,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         products: [],
         settings: {},
         error: JSON.stringify(err),
-        revalidate: 60
-      }
+      },
+      revalidate: 60
     };
   }
 };

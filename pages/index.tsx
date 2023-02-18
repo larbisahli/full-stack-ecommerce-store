@@ -103,8 +103,8 @@ export async function getStaticProps() {
         settings,
         processID,
         error: JSON.stringify(error),
-        revalidate
-      }
+      },
+      revalidate
     };
   } catch (err) {
     console.log('error :::>', err);
@@ -115,8 +115,8 @@ export async function getStaticProps() {
         products: [],
         settings: {},
         error: JSON.stringify(err),
-        revalidate: 60
-      }
+      },
+      revalidate: 60
     };
   }
 }
