@@ -1,3 +1,4 @@
+import PgClient from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { productQueries } from '@lib/sql';
 import {
@@ -19,13 +20,14 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      const staff = await this.authorization(req, res);
-      const client = await this.transaction();
-
       switch (method) {
         case this.POST: {
+          // **** TRANSACTION ****
           try {
-            await client.query('BEGIN');
+            PgClient.connect();
+            const staff = await this.authorization(PgClient, req, res);
+
+            await PgClient.query('BEGIN');
 
             const values = body;
 
@@ -34,7 +36,7 @@ class Handler extends PostgresClient {
             )?.toLowerCase();
 
             // ---------------- products ----------------
-            const { rows } = await client.query<
+            const { rows } = await PgClient.query<
               ProductType,
               ProductType[keyof ProductType][]
             >(productQueries.insertProduct(), [
@@ -58,7 +60,7 @@ class Handler extends PostgresClient {
             // ---------------- images ----------------
             // Thumbnail
             if (!isEmpty(values.thumbnail)) {
-              await client.query<ImageType, (string | boolean)[]>(
+              await PgClient.query<ImageType, (string | boolean)[]>(
                 productQueries.insertImage(),
                 [productId, values.thumbnail?.image, true]
               );
@@ -67,7 +69,7 @@ class Handler extends PostgresClient {
             // Gallery
             if (!isEmpty(values.gallery)) {
               for await (const { image } of values.gallery) {
-                await client.query<ImageType, (string | boolean)[]>(
+                await PgClient.query<ImageType, (string | boolean)[]>(
                   productQueries.insertImage(),
                   [productId, image, false]
                 );
@@ -76,7 +78,7 @@ class Handler extends PostgresClient {
 
             // ---------------- categories ---------------
             for await (const { id: categoryId } of values.categories) {
-              await client.query<unknown, string[]>(
+              await PgClient.query<unknown, string[]>(
                 productQueries.insertProductCategory(),
                 [productId, categoryId]
               );
@@ -87,7 +89,7 @@ class Handler extends PostgresClient {
               attribute,
               selectedValues
             } of values.variations) {
-              const { rows } = await client.query<Attribute, string[]>(
+              const { rows } = await PgClient.query<Attribute, string[]>(
                 productQueries.insertProductAttribute(),
                 [productId, attribute?.id]
               );
@@ -95,7 +97,7 @@ class Handler extends PostgresClient {
               const productAttributeId = rows[0]?.id;
 
               for await (const { id: attributeValueId } of selectedValues) {
-                await client.query<AttributeValue, string[]>(
+                await PgClient.query<AttributeValue, string[]>(
                   productQueries.insertProductAttributeValue(),
                   [productAttributeId, attributeValueId]
                 );
@@ -105,7 +107,7 @@ class Handler extends PostgresClient {
             // ---------------- variation_options ----------------
             for await (const optValues of values.variationOptions) {
               // query image id
-              const { rows: galleryRows } = await client.query<
+              const { rows: galleryRows } = await PgClient.query<
                 { id: string },
                 string[]
               >(productQueries.getImage(), [optValues?.image]);
@@ -113,7 +115,7 @@ class Handler extends PostgresClient {
               const imageId = galleryRows[0]?.id;
 
               // insert variant_options
-              const { rows: VariantOptionsRows } = await client.query<
+              const { rows: VariantOptionsRows } = await PgClient.query<
                 VariationOptionsType,
                 VariationOptionsType[keyof VariationOptionsType][]
               >(productQueries.insertVariantOption(), [
@@ -130,7 +132,7 @@ class Handler extends PostgresClient {
 
               const variantOptionId = VariantOptionsRows[0]?.id;
 
-              const { rows: variantRows } = await client.query<
+              const { rows: variantRows } = await PgClient.query<
                 { id: string },
                 string[]
               >(productQueries.insertVariant(), [
@@ -142,14 +144,14 @@ class Handler extends PostgresClient {
               const variantId = variantRows[0]?.id;
 
               for await (const attributeValueId of optValues.options) {
-                const { rows: AttributeValueRows } = await client.query<
+                const { rows: AttributeValueRows } = await PgClient.query<
                   { attributeId: string },
                   string[]
                 >(productQueries.getAttributeValue(), [attributeValueId]);
 
                 const attributeId = AttributeValueRows[0]?.attributeId;
 
-                const { rows: ProductAttributeRows } = await client.query<
+                const { rows: ProductAttributeRows } = await PgClient.query<
                   { id: string },
                   string[]
                 >(productQueries.getProductAttribute(), [
@@ -159,27 +161,25 @@ class Handler extends PostgresClient {
 
                 const productAttributeId = ProductAttributeRows[0]?.id;
 
-                const { rows: ProductAttributeValueRows } = await client.query<
-                  { id: string },
-                  string[]
-                >(productQueries.getProductAttributeValue(), [
-                  productAttributeId,
-                  attributeValueId
-                ]);
+                const { rows: ProductAttributeValueRows } =
+                  await PgClient.query<{ id: string }, string[]>(
+                    productQueries.getProductAttributeValue(),
+                    [productAttributeId, attributeValueId]
+                  );
 
                 const productAttributeValueId =
                   ProductAttributeValueRows[0]?.id;
 
-                await client.query<unknown, string[]>(
+                await PgClient.query<unknown, string[]>(
                   productQueries.insertVariantValue(),
                   [variantId, productAttributeValueId]
                 );
               }
             }
-            await client.query('COMMIT');
+            await PgClient.query('COMMIT');
             return res.status(200).json({ product: rows[0] });
           } catch (error) {
-            await client.query('ROLLBACK');
+            await PgClient.query('ROLLBACK');
 
             if (
               error?.code === '23505' &&
@@ -204,8 +204,7 @@ class Handler extends PostgresClient {
               });
             }
           } finally {
-            client.release();
-            client.end();
+            PgClient.end();
           }
         }
         default:

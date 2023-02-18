@@ -11,11 +11,11 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      await this.authorization(req, res, true);
       switch (method) {
         case this.POST: {
           const { id } = body;
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res, true);
             const { rows } = await client.query<StaffType, string>(
               staffQueries.deleteStaff(),
               [id]

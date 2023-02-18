@@ -13,10 +13,10 @@ class Handler extends PostgresClient {
     const page = parseInt(query.page as string, 10);
     const offset = page === 0 ? 0 : (page - 1) * this.limit;
     try {
-      await this.authorization(req, res);
       switch (method) {
         case this.GET: {
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res);
             const { rows: products } = await client.query<ProductType, number>(
               productQueries.getProductsForAdmin(),
               [this.limit, offset]

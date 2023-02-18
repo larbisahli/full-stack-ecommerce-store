@@ -1,3 +1,4 @@
+import PgClient from '@lib/conn';
 import PostgresClient from '@lib/database';
 import S3 from 'aws-sdk/clients/s3';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -22,10 +23,12 @@ class Handler extends PostgresClient {
       body: { image }
     } = req;
     try {
-      await this.authorization(req, res);
-
       switch (method) {
         case this.POST: {
+          PgClient.connect();
+          await this.authorization(PgClient, req, res);
+          PgClient.end();
+
           await s3.deleteObjects(
             {
               Bucket: process.env.S3_BUCKET_NAME,

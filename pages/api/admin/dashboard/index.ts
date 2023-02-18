@@ -11,10 +11,10 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
     try {
-      await this.authorization(req, res);
       switch (method) {
         case this.GET: {
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res);
             // TotalOrders last 30 days
             const { rows: totalOrdersRows } = await client.query<
               Category,

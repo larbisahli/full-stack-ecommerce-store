@@ -1,3 +1,4 @@
+import PgClient from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { attributeQueries } from '@lib/sql';
 import { Attribute, AttributeValue } from '@ts-types/generated';
@@ -11,19 +12,18 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      const staff = await this.authorization(req, res);
-
-      // **** TRANSACTION ****
       switch (method) {
         case this.POST: {
-          const client = await this.transaction();
-
+          // **** TRANSACTION ****
           try {
-            await client.query('BEGIN');
+            PgClient.connect();
+            const staff = await this.authorization(PgClient, req, res);
+
+            await PgClient.query('BEGIN');
             const { id, name, values } = body;
 
             // attributes
-            const { rows } = await client.query<Attribute, string[]>(
+            const { rows } = await PgClient.query<Attribute, string[]>(
               attributeQueries.updateAttribute(),
               [id, name, staff?.id]
             );
@@ -36,27 +36,26 @@ class Handler extends PostgresClient {
                 continue;
               }
               if (value.id) {
-                await client.query<AttributeValue, string[]>(
+                await PgClient.query<AttributeValue, string[]>(
                   attributeQueries.updateAttributeValues(),
                   [value.id, value.value, value.color]
                 );
               } else {
-                await client.query<AttributeValue, string[]>(
+                await PgClient.query<AttributeValue, string[]>(
                   attributeQueries.insertAttributeValues(),
                   [attribute_id, value.value, value.color]
                 );
               }
             }
 
-            await client.query('COMMIT');
+            await PgClient.query('COMMIT');
             return res.status(200).json({ attribute: rows[0] });
           } catch (error) {
-            await client.query('ROLLBACK');
+            await PgClient.query('ROLLBACK');
             console.log(error);
             throw Error(error?.message);
           } finally {
-            client.release();
-            client.end();
+            PgClient.end();
           }
         }
         default:

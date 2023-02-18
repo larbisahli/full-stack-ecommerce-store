@@ -12,11 +12,10 @@ class Handler extends PostgresClient {
     const { query, method } = req;
     const id = query.id as string;
     try {
-      await this.authorization(req, res);
-
       switch (method) {
         case this.GET: {
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res);
             const { rows } = await client.query<HeroCarouselType, string>(
               carouselQueries.getHeroSlideForAdmin(),
               [id]

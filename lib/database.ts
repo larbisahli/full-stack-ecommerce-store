@@ -9,7 +9,8 @@ import { isEmpty } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PoolClient, QueryResult } from 'pg';
 
-import CRUDPool, { random } from './conn';
+import PgClient from './conn';
+import PgClientStore from './conn-store';
 import { loginQueries } from './sql';
 
 export default class PostgresClient {
@@ -30,6 +31,7 @@ export default class PostgresClient {
   }
 
   public authorization = async (
+    PgClient: PoolClient,
     req: NextApiRequest,
     res: NextApiResponse,
     isAdmin?: boolean
@@ -48,14 +50,10 @@ export default class PostgresClient {
       algorithms: Alg
     });
 
-    const client = await this.transaction();
-
-    const { rows } = await client.query<StaffType, string>(
+    const { rows } = await PgClient.query<StaffType, string>(
       loginQueries.staff(),
       [staffId]
     );
-
-    client.release();
 
     const staff = rows[0];
 
@@ -88,51 +86,45 @@ export default class PostgresClient {
     return staff;
   };
 
-  public transaction = async (): Promise<PoolClient> => {
-    const client: PoolClient = await CRUDPool.connect();
-
-    const query = client.query;
-    const release = client.release;
-
-    client.query = (...args: unknown[]) => {
-      client.lastQuery = args;
-      return query.apply(client, args);
-    };
-
-    client.release = async () => {
-      client.query = query;
-      client.release = release;
-      return release.apply(client);
-    };
-    return client;
-  };
-
-  public query = async <T, V>(
-    queryText: string,
-    values: V[]
-  ): Promise<QueryResult<T>> => {
-    return await CRUDPool.query(queryText, values);
-  };
-
   protected async tx<T>(
-    callback: ({
-      query,
-      connections
-    }: {
-      query: QueryResult;
-      connections: number;
-    }) => Promise<T>
+    callback: ({ query }: { query: QueryResult }) => Promise<T>
   ) {
-    console.log('---->>>>>', CRUDPool._clients?.length);
+    let client: PoolClient;
     try {
-      const results = await callback({
-        query: this.query,
-        connections: CRUDPool?._clients?.length
-      });
+      console.log(
+        '_________START________',
+        PgClient?.processID,
+        PgClient?._connected
+      );
+      if (!PgClient?._connected) {
+        PgClient.connect();
+      }
+      const results = await callback(PgClient);
       return results;
     } catch (err) {
       console.log('------> tX:>', err);
       throw new Error(err.message);
+    } finally {
+      console.log('2_________END________');
+      // PgClient.end()
+    }
+  }
+
+  protected async store_tx<T>(
+    callback: ({ query }: { query: QueryResult }) => Promise<T>
+  ) {
+    try {
+      if (!PgClientStore?._connected) {
+        PgClientStore.connect();
+      }
+      const results = await callback(PgClientStore);
+      return results;
+    } catch (err) {
+      console.log('------> tX:>', err);
+      throw new Error(err.message);
+    } finally {
+      console.log('2_________END________');
+      // PgClientStore.end()
     }
   }
 }

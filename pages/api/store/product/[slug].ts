@@ -14,7 +14,7 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.GET: {
-          const results = await this.tx(async (client) => {
+          const results = await this.store_tx(async (client) => {
             // Categories
             const { rows: categories } = await client.query<Category, number>(
               categoryQueries.getCategories(),
@@ -30,7 +30,12 @@ class Handler extends PostgresClient {
               settingsQueries.getSettings(),
               []
             );
-            return { product: rows[0], categories, settings: settingsRow[0] };
+            return {
+              product: rows[0],
+              categories,
+              settings: settingsRow[0],
+              processID: client?.processID
+            };
           });
           return res.status(200).json(results);
         }

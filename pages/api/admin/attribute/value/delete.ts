@@ -14,11 +14,10 @@ class Handler extends PostgresClient {
       body: { id }
     } = req;
     try {
-      await this.authorization(req, res);
-
       switch (method) {
         case this.POST: {
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res);
             const { rows } = await client.query<AttributeValue, string>(
               attributeQueries.deleteAttributeValue(),
               [id]

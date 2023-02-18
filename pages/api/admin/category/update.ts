@@ -11,7 +11,6 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      const staff = await this.authorization(req, res);
       switch (method) {
         case this.POST: {
           const {
@@ -22,6 +21,7 @@ class Handler extends PostgresClient {
             thumbnail: { image = null }
           } = body;
           const results = await this.tx(async (client) => {
+            const staff = await this.authorization(client, req, res);
             const { rows } = await client.query<CategoryType, string>(
               categoryQueries.updateCategory(),
               [id, parentId, name, description, image, staff?.id]

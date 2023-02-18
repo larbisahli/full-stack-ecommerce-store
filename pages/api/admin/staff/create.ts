@@ -1,3 +1,4 @@
+import PgClient from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { staffQueries } from '@lib/sql';
 import { StaffType } from '@ts-types/generated';
@@ -22,26 +23,29 @@ class Handler extends PostgresClient {
     } = body;
 
     try {
-      const staff = await this.authorization(req, res, true);
       switch (method) {
         case this.POST: {
-          const query = this.query;
-          const results = await new Promise((resolve, reject) => {
-            bcrypt.genSalt(10, async function (err_genSalt, salt) {
-              if (err_genSalt) {
-                reject(err_genSalt);
-              }
+          PgClient.connect();
+          const staff = await this.authorization(PgClient, req, res, true);
 
-              bcrypt.hash(password, salt, async (errHash, passwordHash) => {
-                if (errHash) {
-                  console.log(`errHash:>`, errHash);
-                  reject(errHash);
+          try {
+            const results = await new Promise((resolve, reject) => {
+              bcrypt.genSalt(10, async function (err_genSalt, salt) {
+                if (err_genSalt) {
+                  reject(err_genSalt);
                 }
 
-                try {
-                  const { rows } = await query<StaffType, string | number>(
-                    staffQueries.insertStaff(),
-                    [
+                bcrypt.hash(password, salt, async (errHash, passwordHash) => {
+                  if (errHash) {
+                    console.log(`errHash:>`, errHash);
+                    reject(errHash);
+                  }
+
+                  try {
+                    const { rows } = await PgClient.query<
+                      StaffType,
+                      string | number
+                    >(staffQueries.insertStaff(), [
                       firstName,
                       lastName,
                       phoneNumber,
@@ -50,17 +54,18 @@ class Handler extends PostgresClient {
                       profile?.image,
                       isAdmin,
                       staff.id
-                    ]
-                  );
-                  resolve(rows[0]);
-                } catch (error) {
-                  reject(error);
-                }
+                    ]);
+                    resolve(rows[0]);
+                  } catch (error) {
+                    reject(error);
+                  }
+                });
               });
             });
-          });
-          console.log({ results });
-          return res.status(200).json({ staff: results });
+            return res.status(200).json({ staff: results });
+          } finally {
+            PgClient.end();
+          }
         }
         default:
           res.setHeader('Allow', ['POST']);

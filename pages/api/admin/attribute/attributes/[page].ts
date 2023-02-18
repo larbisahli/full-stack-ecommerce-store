@@ -13,12 +13,10 @@ class Handler extends PostgresClient {
     const page = parseInt(query.page as string, 10);
     const offset = page === 0 ? 0 : (page - 1) * this.limit;
     try {
-      await this.authorization(req, res);
-
       switch (method) {
         case this.GET: {
-          await this.authorization(req, res);
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res);
             const { rows: attributes } = await client.query<Attribute, number>(
               attributeQueries.getAttributesForAdmin(),
               [this.limit, offset]

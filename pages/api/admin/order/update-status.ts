@@ -10,11 +10,11 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      await this.authorization(req, res);
       switch (method) {
         case this.POST: {
           const { id, order_status = 'pending' } = body;
           const results = await this.tx(async (client) => {
+            await this.authorization(client, req, res);
             const { rows } = await client.query<any, string>(
               orderQueries.updateOrderStatus(),
               [id, order_status]

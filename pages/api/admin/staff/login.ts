@@ -1,3 +1,4 @@
+import PgClient from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { loginQueries } from '@lib/sql';
 import { PrivateKEY } from '@middleware/jwt.keys';
@@ -28,10 +29,12 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.POST: {
-          const { rows } = await this.query<StaffType, string>(
+          PgClient.connect();
+          const { rows } = await PgClient.query<StaffType, string>(
             loginQueries.staffLogin(),
             [email]
           );
+          PgClient.end();
 
           const results = rows[0];
 

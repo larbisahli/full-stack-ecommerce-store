@@ -48,22 +48,22 @@ const moduleExports = {
     ]
   },
   env: {
-    URL: 'https://myecomwebsite.vercel.app',
+    // URL: 'https://myecomwebsite.vercel.app',
     GTAG_MEASUREMENT_ID: '',
     FB_APPID: '',
     // DATABASE
-    POSTGRES_USER: 'doadmin',
-    POSTGRES_PASSWORD: 'AVNS_b_bPDDFxhgU4mPl21qW',
-    POSTGRES_DB: 'production',
-    PORT: 25060,
-    DATABASE_END_POINT:
-      'db-postgresql-lon1-37795-do-user-9047386-0.b.db.ondigitalocean.com',
-    // URL: 'http://localhost:3001',
-    // POSTGRES_USER: 'crud_user',
-    // POSTGRES_PASSWORD: 'crud_password',
-    // POSTGRES_DB: 'development',
-    // PORT: 5432,
-    // DATABASE_END_POINT: '127.0.0.1',
+    // POSTGRES_USER: 'doadmin',
+    // POSTGRES_PASSWORD: 'AVNS_b_bPDDFxhgU4mPl21qW',
+    // POSTGRES_DB: 'production',
+    // PORT: 25060,
+    // DATABASE_END_POINT:
+    //   'db-postgresql-lon1-37795-do-user-9047386-0.b.db.ondigitalocean.com',
+    URL: 'http://localhost:3001',
+    POSTGRES_USER: 'crud_user',
+    POSTGRES_PASSWORD: 'crud_password',
+    POSTGRES_DB: 'development',
+    PORT: 5432,
+    DATABASE_END_POINT: '127.0.0.1',
     // S3 BUCKET
     S3_BUCKET_NAME: 'ecom-bucket',
     S3_REGION: 'fra1',

@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { Client, PoolClient } from 'pg';
 
-let PgClient: PoolClient;
+let PgClientStore: PoolClient;
 
-if (!PgClient) {
-  PgClient = new Client({
+if (!PgClientStore) {
+  PgClientStore = new Client({
     host: process.env.DATABASE_END_POINT,
     port: process.env.PORT,
     database: process.env.POSTGRES_DB,
@@ -20,4 +20,4 @@ if (!PgClient) {
   });
 }
 
-export default PgClient;
+export default PgClientStore;

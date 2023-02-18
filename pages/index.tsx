@@ -85,7 +85,7 @@ export async function getStaticProps() {
       banners = [],
       products = [],
       settings = {},
-      connections = 0,
+      processID = null,
       error = null
     } = await fetch(`${process.env.URL}/api/store/home-request`)
       .then((data) => data.json())
@@ -101,7 +101,7 @@ export async function getStaticProps() {
         banners,
         products,
         settings,
-        connections,
+        processID,
         error: JSON.stringify(error),
         revalidate
       }

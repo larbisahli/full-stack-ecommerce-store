@@ -1,3 +1,4 @@
+import PgClient from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { orderQueries } from '@lib/sql';
 import { HeroCarouselType } from '@ts-types/generated';
@@ -12,18 +13,18 @@ class Handler extends PostgresClient {
   execute = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req;
     try {
-      const client = await this.transaction();
-
       switch (method) {
         case this.POST: {
+          // **** TRANSACTION ****
           try {
-            await client.query('BEGIN');
+            PgClient.connect();
+            await PgClient.query('BEGIN');
             const {
               shippingInfo: { fullName, address, city, phoneNumber },
               items = []
             } = body;
             const key = orderId('key').generate();
-            const { rows } = await client.query<HeroCarouselType, any>(
+            const { rows } = await PgClient.query<HeroCarouselType, any>(
               orderQueries.insertOrder(),
               [key, fullName, address, city, phoneNumber, 'pending']
             );
@@ -36,16 +37,16 @@ class Handler extends PostgresClient {
               quantity,
               orderVariationOption: { id: optionId } = { id: null }
             } of items) {
-              await client.query<HeroCarouselType, any>(
+              await PgClient.query<HeroCarouselType, any>(
                 orderQueries.insertOrderItem(),
                 [product_id, order_id, price, quantity, optionId]
               );
             }
-            await client.query('COMMIT');
+            await PgClient.query('COMMIT');
             return res.status(200).json({ order: rows[0] });
           } catch (error) {
             console.log(error);
-            await client.query('ROLLBACK');
+            await PgClient.query('ROLLBACK');
             return res.status(500).json({
               error: {
                 type: 'SERVER_ERROR',
@@ -55,8 +56,7 @@ class Handler extends PostgresClient {
               }
             });
           } finally {
-            client.release();
-            client.end();
+            PgClient.end();
           }
         }
         default:
