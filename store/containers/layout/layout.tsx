@@ -26,13 +26,13 @@ const Layout = (props) => {
         ...props.style
       }}
     >
-      <Drawer />
+      <Drawer categories={props.categories} />
       <Header categories={props.categories} />
       <div className="flex flex-col w-full h-full flex-grow">
         <div className="pt-60px flex-auto">{props.children}</div>
         <Footer />
       </div>
-      <CartDrawer categories={props.categories} />
+      <CartDrawer />
     </main>
   );
 };
