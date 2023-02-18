@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Client, PoolClient } from 'pg';
 
-import { GlobalRef } from './global';
+import { GlobalRef } from './conn-global';
 
 const databaseConn = new GlobalRef('PgClient');
 if (!databaseConn.value) {
