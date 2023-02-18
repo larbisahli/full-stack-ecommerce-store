@@ -113,7 +113,7 @@ export async function getStaticProps() {
         banners: [],
         products: [],
         settings: {},
-        error: ,
+        error: JSON.stringify(error),
         revalidate: 60
       }
     };
