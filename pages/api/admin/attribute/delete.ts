@@ -1,7 +1,6 @@
-import PgClient from '@lib/conn';
+import databaseConn from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { attributeQueries } from '@lib/sql';
-import { Attribute } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -16,24 +15,25 @@ class Handler extends PostgresClient {
         case this.POST: {
           // **** TRANSACTION ****
           try {
-            await this.authorization(PgClient, req, res);
+            await databaseConn.connect();
+            await this.authorization(databaseConn, req, res);
 
-            await PgClient.query('BEGIN');
+            await databaseConn.query('BEGIN');
             const { id } = body;
 
-            const { rows } = await PgClient.query<Attribute, string[]>(
+            const { rows } = await databaseConn.query(
               attributeQueries.deleteAttribute(),
               [id]
             );
 
-            await PgClient.query('COMMIT');
+            await databaseConn.query('COMMIT');
             return res.status(200).json({ attribute: rows[0] });
           } catch (error) {
-            await PgClient.query('ROLLBACK');
+            await databaseConn.query('ROLLBACK');
             console.log(error);
             throw Error(error?.message);
           } finally {
-            PgClient.end();
+            databaseConn.clean();
           }
         }
         default:

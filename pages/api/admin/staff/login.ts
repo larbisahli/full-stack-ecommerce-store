@@ -1,8 +1,7 @@
-import PgClient from '@lib/conn';
+import databaseConn from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { loginQueries } from '@lib/sql';
 import { PrivateKEY } from '@middleware/jwt.keys';
-import { StaffType } from '@ts-types/generated';
 import { setCookie } from '@utils/cookies';
 import bcrypt from 'bcryptjs';
 import jwt, { Algorithm } from 'jsonwebtoken';
@@ -29,11 +28,10 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.POST: {
-          const { rows } = await PgClient.query<StaffType, string>(
-            loginQueries.staffLogin(),
-            [email]
-          );
-          PgClient.end();
+          const { rows } = await databaseConn.query(loginQueries.staffLogin(), [
+            email
+          ]);
+          databaseConn.end();
 
           const results = rows[0];
 

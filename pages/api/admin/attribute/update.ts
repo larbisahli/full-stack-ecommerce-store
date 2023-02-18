@@ -1,7 +1,6 @@
-import PgClient from '@lib/conn';
+import databaseConn from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { attributeQueries } from '@lib/sql';
-import { Attribute, AttributeValue } from '@ts-types/generated';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 class Handler extends PostgresClient {
@@ -16,13 +15,14 @@ class Handler extends PostgresClient {
         case this.POST: {
           // **** TRANSACTION ****
           try {
-            const staff = await this.authorization(PgClient, req, res);
+            await databaseConn.connect();
+            const staff = await this.authorization(databaseConn, req, res);
 
-            await PgClient.query('BEGIN');
+            await databaseConn.query('BEGIN');
             const { id, name, values } = body;
 
             // attributes
-            const { rows } = await PgClient.query<Attribute, string[]>(
+            const { rows } = await databaseConn.query(
               attributeQueries.updateAttribute(),
               [id, name, staff?.id]
             );
@@ -35,26 +35,26 @@ class Handler extends PostgresClient {
                 continue;
               }
               if (value.id) {
-                await PgClient.query<AttributeValue, string[]>(
+                await databaseConn.query(
                   attributeQueries.updateAttributeValues(),
                   [value.id, value.value, value.color]
                 );
               } else {
-                await PgClient.query<AttributeValue, string[]>(
+                await databaseConn.query(
                   attributeQueries.insertAttributeValues(),
                   [attribute_id, value.value, value.color]
                 );
               }
             }
 
-            await PgClient.query('COMMIT');
+            await databaseConn.query('COMMIT');
             return res.status(200).json({ attribute: rows[0] });
           } catch (error) {
-            await PgClient.query('ROLLBACK');
+            await databaseConn.query('ROLLBACK');
             console.log(error);
             throw Error(error?.message);
           } finally {
-            PgClient.end();
+            databaseConn.clean();
           }
         }
         default:

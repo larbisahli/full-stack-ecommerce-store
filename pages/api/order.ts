@@ -1,4 +1,4 @@
-import PgClient from '@lib/conn';
+import databaseConn from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { orderQueries } from '@lib/sql';
 import { HeroCarouselType } from '@ts-types/generated';
@@ -17,13 +17,14 @@ class Handler extends PostgresClient {
         case this.POST: {
           // **** TRANSACTION ****
           try {
-            await PgClient.query('BEGIN');
+            await databaseConn.connect();
+            await databaseConn.query('BEGIN');
             const {
               shippingInfo: { fullName, address, city, phoneNumber },
               items = []
             } = body;
             const key = orderId('key').generate();
-            const { rows } = await PgClient.query<HeroCarouselType, any>(
+            const { rows } = await databaseConn.query<HeroCarouselType, any>(
               orderQueries.insertOrder(),
               [key, fullName, address, city, phoneNumber, 'pending']
             );
@@ -36,16 +37,16 @@ class Handler extends PostgresClient {
               quantity,
               orderVariationOption: { id: optionId } = { id: null }
             } of items) {
-              await PgClient.query<HeroCarouselType, any>(
+              await databaseConn.query<HeroCarouselType, any>(
                 orderQueries.insertOrderItem(),
                 [product_id, order_id, price, quantity, optionId]
               );
             }
-            await PgClient.query('COMMIT');
+            await databaseConn.query('COMMIT');
             return res.status(200).json({ order: rows[0] });
           } catch (error) {
             console.log(error);
-            await PgClient.query('ROLLBACK');
+            await databaseConn.query('ROLLBACK');
             return res.status(500).json({
               error: {
                 type: 'SERVER_ERROR',
@@ -55,7 +56,7 @@ class Handler extends PostgresClient {
               }
             });
           } finally {
-            PgClient.end();
+            databaseConn.clean();
           }
         }
         default:

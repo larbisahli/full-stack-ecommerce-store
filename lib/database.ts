@@ -7,10 +7,8 @@ import { limit } from '@utils/utils';
 import jwt, { Algorithm } from 'jsonwebtoken';
 import { isEmpty } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PoolClient, QueryResult } from 'pg';
 
-import PgClient from './conn';
-import PgClientStore from './conn-store';
+import databaseConn from './conn';
 import { loginQueries } from './sql';
 
 export default class PostgresClient {
@@ -31,7 +29,7 @@ export default class PostgresClient {
   }
 
   public authorization = async (
-    PgClient: PoolClient,
+    PgClient,
     req: NextApiRequest,
     res: NextApiResponse,
     isAdmin?: boolean
@@ -50,7 +48,7 @@ export default class PostgresClient {
       algorithms: Alg
     });
 
-    const { rows } = await PgClient.query<StaffType, string>(
+    const { rows } = await PgClient.query(
       loginQueries.staff(),
       [staffId]
     );
@@ -90,19 +88,9 @@ export default class PostgresClient {
     callback: ({ query }: { query: QueryResult }) => Promise<T>
   ) {
     try {
-      const results = await callback(PgClient);
-      return results;
-    } catch (err) {
-      console.log('------> tX:>', err);
-      throw new Error(err.message);
-    }
-  }
-
-  protected async store_tx<T>(
-    callback: ({ query }: { query: QueryResult }) => Promise<T>
-  ) {
-    try {
-      const results = await callback(PgClientStore);
+      await databaseConn.connect();
+      const results = await callback(databaseConn);
+      await databaseConn.clean();
       return results;
     } catch (err) {
       console.log('------> tX:>', err);

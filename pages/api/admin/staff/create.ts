@@ -1,4 +1,4 @@
-import PgClient from '@lib/conn';
+import databaseConn from '@lib/conn';
 import PostgresClient from '@lib/database';
 import { staffQueries } from '@lib/sql';
 import { StaffType } from '@ts-types/generated';
@@ -25,7 +25,8 @@ class Handler extends PostgresClient {
     try {
       switch (method) {
         case this.POST: {
-          const staff = await this.authorization(PgClient, req, res, true);
+          await databaseConn.connect();
+          const staff = await this.authorization(databaseConn, req, res, true);
 
           try {
             const results = await new Promise((resolve, reject) => {
@@ -41,19 +42,19 @@ class Handler extends PostgresClient {
                   }
 
                   try {
-                    const { rows } = await PgClient.query<
-                      StaffType,
-                      string | number
-                    >(staffQueries.insertStaff(), [
-                      firstName,
-                      lastName,
-                      phoneNumber,
-                      email,
-                      passwordHash,
-                      profile?.image,
-                      isAdmin,
-                      staff.id
-                    ]);
+                    const { rows } = await databaseConn.query(
+                      staffQueries.insertStaff(),
+                      [
+                        firstName,
+                        lastName,
+                        phoneNumber,
+                        email,
+                        passwordHash,
+                        profile?.image,
+                        isAdmin,
+                        staff.id
+                      ]
+                    );
                     resolve(rows[0]);
                   } catch (error) {
                     reject(error);
@@ -63,7 +64,7 @@ class Handler extends PostgresClient {
             });
             return res.status(200).json({ staff: results });
           } finally {
-            PgClient.end();
+            databaseConn.clean();
           }
         }
         default:
