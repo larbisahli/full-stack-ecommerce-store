@@ -342,6 +342,7 @@ class Handler extends PostgresClient {
             }
           } finally {
             client.release();
+            client.end();
           }
         }
         default:

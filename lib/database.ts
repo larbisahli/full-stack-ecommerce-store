@@ -55,6 +55,7 @@ export default class PostgresClient {
     );
 
     client.release();
+    client.end();
 
     const staff = rows[0];
 
@@ -141,6 +142,7 @@ export default class PostgresClient {
       }
     } finally {
       client.release();
+      client.end();
     }
   }
 }

@@ -150,7 +150,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     let revalidate = 60 * 5;
     const {
       categories = [],
-      product = [],
+      product = {},
       settings = {},
       error = null
     } = await fetch(`${process.env.URL}/api/store/product/${params?.slug}`)

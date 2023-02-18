@@ -26,11 +26,11 @@ class Handler extends PostgresClient {
               [slug]
             );
             // Settings
-            const { rows: settings } = await client.query<Settings, string>(
+            const { rows: settingsRow } = await client.query<Settings, string>(
               settingsQueries.getSettings(),
               []
             );
-            return { product: rows[0], categories, settings };
+            return { product: rows[0], categories, settings: settingsRow[0] };
           });
           return res.status(200).json(results);
         }

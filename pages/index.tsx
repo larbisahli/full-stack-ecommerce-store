@@ -79,6 +79,7 @@ export default function Home({
 
 export async function getStaticProps() {
   try {
+    let revalidate = 60 * 5
     const {
       categories = [],
       banners = [],
@@ -87,7 +88,11 @@ export async function getStaticProps() {
       error = null
     } = await fetch(`${process.env.URL}/api/store/home-request`)
       .then((data) => data.json())
-      .then((data) => data ?? {});
+      .then((data) => data ?? {})
+
+    if(!isEmpty(error)){
+      revalidate = 60
+    }
 
     return {
       props: {
@@ -96,6 +101,7 @@ export async function getStaticProps() {
         products,
         settings,
         error: JSON.stringify(error),
+        revalidate
       }
     };
   } catch (err) {
@@ -107,7 +113,8 @@ export async function getStaticProps() {
         banners: [],
         products: [],
         settings: {},
-        error: JSON.stringify(error),
+        error: ,
+        revalidate: 60
       }
     };
   }

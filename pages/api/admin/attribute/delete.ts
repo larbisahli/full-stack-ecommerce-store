@@ -35,6 +35,7 @@ class Handler extends PostgresClient {
             throw Error(error?.message);
           } finally {
             client.release();
+            client.end();
           }
         }
         default:

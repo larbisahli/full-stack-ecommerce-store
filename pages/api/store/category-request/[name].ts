@@ -41,14 +41,14 @@ class Handler extends PostgresClient {
               string | number
             >(categoryQueries.getCategoryByName(), [name]);
             // Settings
-            const { rows: settings } = await client.query<Settings, string>(
+            const { rows: settingsRow } = await client.query<Settings, string>(
               settingsQueries.getSettings(),
               []
             );
             return {
               categories,
               products,
-              settings: settings[0],
+              settings: settingsRow[0],
               category: categoryRows[0] ?? {}
             };
           });
