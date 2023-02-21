@@ -48,10 +48,7 @@ export default class PostgresClient {
       algorithms: Alg
     });
 
-    const { rows } = await PgClient.query(
-      loginQueries.staff(),
-      [staffId]
-    );
+    const { rows } = await PgClient.query(loginQueries.staff(), [staffId]);
 
     const staff = rows[0];
 

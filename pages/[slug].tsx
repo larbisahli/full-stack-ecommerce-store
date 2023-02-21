@@ -147,7 +147,7 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
-    let revalidate = 60 * 5;
+    let revalidate = 60 * 10;
     const {
       categories = [],
       product = {},
@@ -168,7 +168,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         categories,
         settings,
         processID,
-        error: JSON.stringify(error),
+        error: JSON.stringify(error)
       },
       revalidate
     };
@@ -179,7 +179,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         product: {},
         categories: [],
         settings: {},
-        error: JSON.stringify(err),
+        error: JSON.stringify(err)
       },
       revalidate: 60
     };

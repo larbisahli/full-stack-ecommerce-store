@@ -15,6 +15,7 @@ import TextArea from '@components/ui/text-area';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useErrorLogger, useWarnIfUnsavedChanges } from '@hooks/index';
 import { notify } from '@lib/index';
+import { NoteNotify } from '@lib/notify';
 import type { Product } from '@ts-types/generated';
 import { ProductStatus, ProductType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
@@ -140,6 +141,7 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
         .then((data) => {
           if (data?.product?.id) {
             notify(t('common:successfully-created'), 'success');
+            NoteNotify('Your changes will be live in 10 minutes.');
             router.push(ROUTES.PRODUCTS);
             reset();
           }
@@ -161,6 +163,7 @@ function CreateOrUpdateProductForm({ initialValues }: IProps) {
         .then((data) => {
           if (data?.product?.id) {
             notify(t('common:successfully-updated'), 'success');
+            NoteNotify('Your changes will be live in 10 minutes.');
             router.push(ROUTES.PRODUCTS);
           }
           setLoading(false);

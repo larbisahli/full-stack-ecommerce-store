@@ -17,7 +17,7 @@ function ProductInfoForm({ initialValues }: IProps) {
   } = useFormContext();
   const { t } = useTranslation();
 
-  const { currency } = useSettings();
+  const { currency: { symbol = '$' } = {} } = useSettings();
 
   return (
     <div className="flex flex-wrap pb-8 border-b border-dashed border-border-base my-5 sm:my-8">
@@ -33,7 +33,7 @@ function ProductInfoForm({ initialValues }: IProps) {
 
       <Card className="w-full sm:w-8/12 md:w-2/3">
         <Input
-          label={`${t('form:input-label-sale-price')} (${currency})`}
+          label={`${t('form:input-label-sale-price')} (${symbol})`}
           {...register('salePrice')}
           type="number"
           min={0}
@@ -42,7 +42,7 @@ function ProductInfoForm({ initialValues }: IProps) {
           className="mb-5"
         />
         <Input
-          label={`${t('form:input-label-compare-price')} (${currency})`}
+          label={`${t('form:input-label-compare-price')} (${symbol})`}
           {...register('comparePrice')}
           type="number"
           min={0}
@@ -51,7 +51,7 @@ function ProductInfoForm({ initialValues }: IProps) {
           className="mb-5"
         />
         <Input
-          label={`${t('form:input-label-buying-price')} (${currency})`}
+          label={`${t('form:input-label-buying-price')} (${symbol})`}
           {...register('buyingPrice')}
           type="number"
           min={0}

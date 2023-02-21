@@ -6,7 +6,8 @@ export interface State extends Settings {
 
 const initialState = {
   currency: {
-    code: 'USD'
+    code: 'USD',
+    symbol: '$'
   },
   seo: {},
   socials: {},

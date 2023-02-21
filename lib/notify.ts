@@ -15,7 +15,7 @@ type Type = 'success' | 'error' | 'info' | 'warning';
 /** types: success | error | info | warning */
 export function notify(Message: string, type: Type): void {
   const Options: OptionsType = {
-    position: 'bottom-right',
+    position: 'top-right',
     autoClose: 5000,
     hideProgressBar: true,
     closeOnClick: true,
@@ -40,4 +40,17 @@ export function notify(Message: string, type: Type): void {
     default:
       break;
   }
+}
+
+export function NoteNotify(Message: string): void {
+  const Options: OptionsType = {
+    position: 'top-right',
+    autoClose: 10000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined
+  };
+  toast.info(Message, Options);
 }

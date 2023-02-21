@@ -123,6 +123,7 @@ export interface Category extends CreatedUpdatedByAt {
   children?: Nullable<Array<CategoryRef>>;
   subCategories?: Nullable<Array<CategoryRef>>;
   active?: Scalars['Boolean'];
+  thumbnail?: { image: string };
   image?: string;
   icon?: Nullable<Scalars['String']>;
   hasChildren?: Scalars['Boolean'];

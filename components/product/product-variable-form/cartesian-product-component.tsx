@@ -25,7 +25,7 @@ const CartesianProductComponent = ({
 }: CartesianProductProps) => {
   const { t } = useTranslation();
 
-  const { currency } = useSettings();
+  const { currency: { symbol = '$' } = {} } = useSettings();
 
   const options = useMemo(
     () => variationOption?.options,
@@ -65,7 +65,7 @@ const CartesianProductComponent = ({
 
       <div className="grid grid-cols-2 gap-5">
         <Input
-          label={`${t('form:input-label-sale-price')} (${currency})*`}
+          label={`${t('form:input-label-sale-price')} (${symbol})*`}
           type="number"
           id={`salePrice-${index}`}
           name="salePrice"
@@ -76,7 +76,7 @@ const CartesianProductComponent = ({
           className="mb-5"
         />
         <Input
-          label={`${t('form:input-label-compare-price')} (${currency})`}
+          label={`${t('form:input-label-compare-price')} (${symbol})`}
           name="comparePrice"
           onChange={HandleInputChange}
           value={variationOption.comparePrice}
@@ -86,7 +86,7 @@ const CartesianProductComponent = ({
           className="mb-5"
         />
         <Input
-          label={`${t('form:input-label-buying-price')} (${currency})`}
+          label={`${t('form:input-label-buying-price')} (${symbol})`}
           type="number"
           name="buyingPrice"
           onChange={HandleInputChange}

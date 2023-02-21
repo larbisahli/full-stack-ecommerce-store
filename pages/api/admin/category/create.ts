@@ -21,7 +21,7 @@ class Handler extends PostgresClient {
           } = body;
 
           const results = await this.tx(async (client) => {
-            await this.authorization(client, req, res);
+            const staff = await this.authorization(client, req, res);
             const { rows } = await client.query<CategoryType, string>(
               categoryQueries.insertCategory(),
               [parentId, name, description, image, staff?.id]

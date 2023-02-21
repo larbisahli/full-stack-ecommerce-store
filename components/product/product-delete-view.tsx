@@ -4,7 +4,7 @@ import {
   useModalState
 } from '@components/ui/modal/modal.context';
 import { useTime } from '@hooks/useTime';
-import { notify } from '@lib/notify';
+import { NoteNotify, notify } from '@lib/notify';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
@@ -27,6 +27,7 @@ const ProductDeleteView = () => {
       .then((data) => {
         if (data?.product?.id) {
           notify(t('common:successfully-deleted'), 'success');
+          NoteNotify('Your changes will be live in 10 minutes.');
           revalidate();
         }
         setLoading(false);

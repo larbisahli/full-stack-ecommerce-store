@@ -12,6 +12,7 @@ import Radio from '@components/ui/radio';
 import TextArea from '@components/ui/text-area';
 import { useErrorLogger, useWarnIfUnsavedChanges } from '@hooks/index';
 import { notify } from '@lib/index';
+import { NoteNotify } from '@lib/notify';
 import { Nullable } from '@ts-types/custom.types';
 import { HeroCarouselType, ImageType } from '@ts-types/generated';
 import { ROUTES } from '@utils/routes';
@@ -112,6 +113,7 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
         .then((data) => {
           if (data?.banner?.id) {
             notify(t('common:successfully-created'), 'success');
+            NoteNotify('Your changes will be live in 10 minutes.');
             router.push(ROUTES.HERO_CAROUSEL);
             reset();
           }
@@ -127,6 +129,7 @@ export default function CreateOrUpdateSlideForm({ initialValues }: IProps) {
         .then((data) => {
           if (data?.banner?.id) {
             notify(t('common:successfully-updated'), 'success');
+            NoteNotify('Your changes will be live in 10 minutes.');
             router.push(ROUTES.HERO_CAROUSEL);
           }
           setLoading(false);

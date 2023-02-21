@@ -10,7 +10,7 @@ import Label from '@components/ui/label';
 import SelectInput from '@components/ui/select-input';
 import TextArea from '@components/ui/text-area';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { notify } from '@lib/notify';
+import { NoteNotify, notify } from '@lib/notify';
 import { siteSettings } from '@settings/site.settings';
 import { CURRENCY } from '@utils/currency';
 import isEmpty from 'lodash/isEmpty';
@@ -159,6 +159,7 @@ export default function SettingsForm({ settings = {} }: IProps) {
       .then((data) => {
         if (data?.settings?.id) {
           notify(t('common:successfully-updated'), 'success');
+          NoteNotify('Your changes will be live in 10 minutes.');
         }
         setLoading(false);
       })

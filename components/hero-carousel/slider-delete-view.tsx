@@ -5,7 +5,7 @@ import {
 } from '@components/ui/modal/modal.context';
 import { useErrorLogger } from '@hooks/useErrorLogger';
 import { useTime } from '@hooks/useTime';
-import { notify } from '@lib/notify';
+import { NoteNotify, notify } from '@lib/notify';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
@@ -32,6 +32,7 @@ const SliderDeleteView = () => {
       .then((data) => {
         if (data?.banner?.id) {
           notify(t('common:successfully-deleted'), 'success');
+          NoteNotify('Your changes will be live in 10 minutes.');
           revalidate();
         }
         setLoading(false);

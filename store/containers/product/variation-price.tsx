@@ -68,7 +68,7 @@ function VariationPrice({
       <div className="text-skin-base font-bold text-3xl">
         {!!selectedSalePrice && productPrice}
       </div>
-      {selectedComparePrice && (
+      {!!selectedComparePrice && (
         <div className="flex items-center mt-1">
           <del className="text-base text-red-700">{productDiscount}</del>
           <div className="text-white mx-1 px-2 font-semibold bg-red-600">

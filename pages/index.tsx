@@ -79,7 +79,7 @@ export default function Home({
 
 export async function getStaticProps() {
   try {
-    let revalidate = 60 * 5;
+    let revalidate = 60 * 10;
     const {
       categories = [],
       banners = [],
@@ -102,7 +102,7 @@ export async function getStaticProps() {
         products,
         settings,
         processID,
-        error: JSON.stringify(error),
+        error: JSON.stringify(error)
       },
       revalidate
     };
@@ -114,7 +114,7 @@ export async function getStaticProps() {
         banners: [],
         products: [],
         settings: {},
-        error: JSON.stringify(err),
+        error: JSON.stringify(err)
       },
       revalidate: 60
     };

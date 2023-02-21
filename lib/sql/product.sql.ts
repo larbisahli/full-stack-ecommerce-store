@@ -312,3 +312,7 @@ export function getCategoryProduct(): string {
 export function deleteProduct(): string {
   return `DELETE FROM products WHERE id = $1 RETURNING id`;
 }
+
+export function getProductImages(): string {
+  return `SELECT id, image FROM gallery WHERE product_id = $1`;
+}

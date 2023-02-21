@@ -58,7 +58,7 @@ function App({ Component, pageProps }: AppProps) {
         <meta name="theme-color" content="#ffffff" />
       </Head>
       <ToastContainer
-        position="bottom-right"
+        position="top-right"
         autoClose={5000}
         className="text-sm"
         // hideProgressBar
