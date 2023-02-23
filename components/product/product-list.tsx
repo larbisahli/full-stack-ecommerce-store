@@ -83,15 +83,15 @@ const ProductList = ({
       align: alignLeft,
       width: 85,
       render: (thumbnail: string) => (
-        <div className="shadow min-w-0 overflow-hidden">
+        <div className="shadow min-w-0 overflow-hidden rounded-sm w-[56px] h-[56px]">
           <ImageComponent
             src={
               `${process.env.S3_ENDPOINT}/${thumbnail}` ??
               siteSettings.product.image
             }
-            layout="fill"
-            objectFit="contain"
-            className="overflow-hidden"
+            width={100}
+            height={100}
+            objectFit="cover"
           />
         </div>
       )

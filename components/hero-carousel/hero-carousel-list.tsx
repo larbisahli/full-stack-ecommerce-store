@@ -45,16 +45,16 @@ const HeroCarouselList = ({
       render: (thumbnail: ImageType) => (
         <div
           style={{ maxWidth: '100px' }}
-          className="rounded shadow min-w-0 overflow-hidden"
+          className="shadow min-w-0 overflow-hidden rounded-sm w-[56px] h-[56px]"
         >
           <ImageComponent
             src={
               `${process.env.S3_ENDPOINT}/${thumbnail?.image}` ??
               siteSettings.product.image
             }
-            layout="fill"
-            objectFit="contain"
-            className="rounded"
+            width={100}
+            height={100}
+            objectFit="cover"
           />
         </div>
       )
